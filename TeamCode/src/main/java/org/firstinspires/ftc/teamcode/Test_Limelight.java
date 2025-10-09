@@ -26,9 +26,6 @@ public class Test_Limelight extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
-
         limelight = hardwareMap.get(Limelight3A.class, "limelight-paulcam");
         imu = hardwareMap.get(IMU.class, "imu");
 
@@ -36,9 +33,15 @@ public class Test_Limelight extends LinearOpMode {
 
         limelight.pipelineSwitch(0);
 
+        telemetry.addData("Status", "Initialized");
+        telemetry.update();
+
         // Wait for the game to start (driver presses START)
         waitForStart();
         runtime.reset();
+
+        telemetry.addData("Status", "Running");
+        telemetry.update();
 
         limelight.start();
 
@@ -52,6 +55,7 @@ public class Test_Limelight extends LinearOpMode {
                     telemetry.addData("tx", result.getTx());
                     telemetry.addData("ty", result.getTy());
                     telemetry.addData("Bot pose", botpose.toString());
+                    telemetry.update();
                 }
             }
         }

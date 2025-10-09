@@ -42,10 +42,10 @@ public class Drive extends SubsystemBase {
         rightFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightBackMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        leftFrontMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftBackMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightFrontMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightBackMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        leftFrontMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        leftBackMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightFrontMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightBackMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         leftFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -112,10 +112,10 @@ public class Drive extends SubsystemBase {
     }
     public void runToPosition(double distanceInches, double power){
         int distanceCounts = getCountFromInches(distanceInches);
-        leftFrontMotor.setTargetPosition(distanceCounts);
-        leftBackMotor.setTargetPosition(distanceCounts);
-        rightFrontMotor.setTargetPosition(distanceCounts);
-        rightBackMotor.setTargetPosition(distanceCounts);
+        leftFrontMotor.setTargetPosition(-distanceCounts);
+        leftBackMotor.setTargetPosition(-distanceCounts);
+        rightFrontMotor.setTargetPosition(-distanceCounts);
+        rightBackMotor.setTargetPosition(-distanceCounts);
 
         leftFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         leftBackMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
