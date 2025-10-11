@@ -15,6 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.subsystems.Drive;
 import org.firstinspires.ftc.teamcode.subsystems.LauncherSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.LimelightSubsystem;
 
 import java.util.List;
 
@@ -29,25 +30,10 @@ public class Teleop extends LinearOpMode {
     public void runOpMode() {
         Drive drive = new Drive(hardwareMap, telemetry);
         LauncherSubsystem launcher = new LauncherSubsystem(hardwareMap, telemetry);
+        LimelightSubsystem limelight = new LimelightSubsystem(hardwareMap, telemetry);
         telemetry.addData("Status", "Initialized");
         telemetry.update();
         telemetry.setMsTransmissionInterval(11);
-
-        imuParameters = new IMU.Parameters(
-                new RevHubOrientationOnRobot(
-                        RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
-                        RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
-                )
-        );
-
-        limelight = hardwareMap.get(Limelight3A.class, "limelight-gurtcam");
-        imu = hardwareMap.get(IMU.class, "imu");
-        imu.initialize(imuParameters);
-
-        //limelight.setPollRateHz(90);
-
-        limelight.pipelineSwitch(0);
-
 
         // Wait for the game to start (driver presses START)
         waitForStart();
@@ -60,81 +46,7 @@ public class Teleop extends LinearOpMode {
         telemetry.update();
 
         while (opModeIsActive()) {
-            LLStatus status = limelight.getStatus();
-            telemetry.addData("Name", "%s",
-                    status.getName());
-            telemetry.addData("LL", "Temp: %.1fC, CPU: %.1f%%, FPS: %d",
-                    status.getTemp(), status.getCpu(),(int)status.getFps());
-            telemetry.addData("Pipeline", "Index: %d, Type: %s",
-                    status.getPipelineIndex(), status.getPipelineType());
-
-            YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
-
-//            double Yaw   = orientation.getYaw(AngleUnit.DEGREES);
-//            double Pitch = orientation.getPitch(AngleUnit.DEGREES);
-//            double Roll  = orientation.getRoll(AngleUnit.DEGREES);
-//            telemetry.addData("imuYaw", Yaw);
-//            telemetry.addData("imuPitch", Pitch);
-//            telemetry.addData("imuRoll", Roll);
-
-            limelight.updateRobotOrientation(orientation.getYaw(AngleUnit.DEGREES));
-            LLResult result = limelight.getLatestResult();
-            if (result != null) {
-                if (result.isValid()) {
-                    Pose3D botpose_mt2 = result.getBotpose_MT2();
-                    if (botpose_mt2 != null) {
-                        double x = botpose_mt2.getPosition().x;
-                        double y = botpose_mt2.getPosition().y;
-                        telemetry.addData("MT2 Location:", "(" + x + ", " + y + ")");
-                    }
-
-                    //                    // Access general information
-//                    Pose3D botpose = result.getBotpose();
-//                    double captureLatency = result.getCaptureLatency();
-//                    double targetingLatency = result.getTargetingLatency();
-//                    double parseLatency = result.getParseLatency();
-//                    telemetry.addData("LL Latency", captureLatency + targetingLatency);
-//                    telemetry.addData("Parse Latency", parseLatency);
-//                    telemetry.addData("PythonOutput", java.util.Arrays.toString(result.getPythonOutput()));
-//
-//                    telemetry.addData("tx", result.getTx());
-//                    telemetry.addData("txnc", result.getTxNC());
-//                    telemetry.addData("ty", result.getTy());
-//                    telemetry.addData("tync", result.getTyNC());
-//
-//                    telemetry.addData("Botpose", botpose.toString());
-//
-//                    // Access barcode results
-//                    List<LLResultTypes.BarcodeResult> barcodeResults = result.getBarcodeResults();
-//                    for (LLResultTypes.BarcodeResult br : barcodeResults) {
-//                        telemetry.addData("Barcode", "Data: %s", br.getData());
-//                    }
-//
-//                    // Access classifier results
-//                    List<LLResultTypes.ClassifierResult> classifierResults = result.getClassifierResults();
-//                    for (LLResultTypes.ClassifierResult cr : classifierResults) {
-//                        telemetry.addData("Classifier", "Class: %s, Confidence: %.2f", cr.getClassName(), cr.getConfidence());
-//                    }
-//
-//                    // Access detector results
-//                    List<LLResultTypes.DetectorResult> detectorResults = result.getDetectorResults();
-//                    for (LLResultTypes.DetectorResult dr : detectorResults) {
-//                        telemetry.addData("Detector", "Class: %s, Area: %.2f", dr.getClassName(), dr.getTargetArea());
-//                    }
-//
-//                    // Access fiducial results
-//                    List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
-//                    for (LLResultTypes.FiducialResult fr : fiducialResults) {
-//                        telemetry.addData("Fiducial", "ID: %d, Family: %s, X: %.2f, Y: %.2f", fr.getFiducialId(), fr.getFamily(), fr.getTargetXDegrees(), fr.getTargetYDegrees());
-//                    }
-//
-//                    // Access color results
-//                    List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
-//                    for (LLResultTypes.ColorResult cr : colorResults) {
-//                        telemetry.addData("Color", "X: %.2f, Y: %.2f", cr.getTargetXDegrees(), cr.getTargetYDegrees());
-//                    }
-                }
-            }
+            limelight.read();
 
             drive.arcadeDrive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, false);
 
@@ -144,16 +56,19 @@ public class Teleop extends LinearOpMode {
                 telemetry.addData("Motors", "Off");
             }
 
+            if (limelight.can_shoot()) {
+                telemetry.addData("Can shoot", "Yes");
+            } else {
+                telemetry.addData("Can shoot", "No");
+            }
+
             if (gamepad1.x && !launcher.isPrepped()) {
                 launcher.prepare_shoot(1.0);
             } else if (gamepad1.b && launcher.isPrepped()) {
                 launcher.stop_motors();
             }
-            if (gamepad1.y && launcher.isPrepped()) {
+            if (gamepad1.y && launcher.isPrepped() && limelight.can_shoot()) {
                 launcher.shoot();
-            }
-            if (gamepad1.a) {
-
             }
 
             telemetry.update();
