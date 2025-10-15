@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -13,6 +14,7 @@ public class LauncherSubsystem extends SubsystemBase {
 
     private DcMotorEx leftMotor;
     private DcMotorEx rightMotor;
+    private CRServo belt;
     private Telemetry t;
 
     private boolean prepped;
@@ -22,6 +24,7 @@ public class LauncherSubsystem extends SubsystemBase {
 
         leftMotor = hardwareMap.get(DcMotorEx.class, "leftLauncherMotor");
         rightMotor = hardwareMap.get(DcMotorEx.class, "rightLauncherMotor");
+        belt = hardwareMap.get(CRServo.class, "beltServo");
 
         leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -35,21 +38,40 @@ public class LauncherSubsystem extends SubsystemBase {
         prepped = false;
     }
 
-    public void prepare_shoot (double power) {
+    @Override
+    public void periodic() {
+        super.periodic();
+
+        t.addData("launcher power", leftMotor.getPower());
+    }
+
+    public void prepare_shoot () {
+        double power = leftMotor.getPower();
+        if (power < 1.0) {
+            power += 1;
+        } else {
+            power = 0.0;
+        }
+        t.addData("launcher power", power);
         leftMotor.setPower(power);
         rightMotor.setPower(power);
         prepped = true;
     }
     
-    public void shoot () {
+    public void shoot () throws InterruptedException {
         if (!prepped) {
             return;
         }
-        // TODO: when we add the belt, add support here
+        belt.setDirection(DcMotorSimple.Direction.FORWARD);
+        belt.setPower(1.0);
+        Thread.sleep(500);
+        belt.setPower(0.0);
     }
     
     public void stop_motors () {
-        prepare_shoot(0.0);
+        leftMotor.setPower(0.0);
+        rightMotor.setPower(0.0);
+        belt.setPower(0.0);
         prepped = false;
     }
 

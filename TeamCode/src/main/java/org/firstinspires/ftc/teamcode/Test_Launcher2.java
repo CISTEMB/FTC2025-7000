@@ -29,7 +29,7 @@ public class Test_Launcher2 extends LinearOpMode {
         telemetry.addData("Status", "Running");
         telemetry.update();
 
-        launcher.prepare_shoot(1.0);
+        launcher.prepare_shoot();
 
         while (opModeIsActive()) {}
     }

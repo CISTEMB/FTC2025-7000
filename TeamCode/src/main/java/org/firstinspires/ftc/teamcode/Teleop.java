@@ -27,7 +27,7 @@ public class Teleop extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
 
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException {
         Drive drive = new Drive(hardwareMap, telemetry);
         LauncherSubsystem launcher = new LauncherSubsystem(hardwareMap, telemetry);
         LimelightSubsystem limelight = new LimelightSubsystem(hardwareMap, telemetry);
@@ -62,8 +62,8 @@ public class Teleop extends LinearOpMode {
                 telemetry.addData("Can shoot", "No");
             }
 
-            if (gamepad1.x && !launcher.isPrepped()) {
-                launcher.prepare_shoot(1.0);
+            if (gamepad1.x) {
+                launcher.prepare_shoot();
             } else if (gamepad1.b && launcher.isPrepped()) {
                 launcher.stop_motors();
             }
@@ -71,6 +71,7 @@ public class Teleop extends LinearOpMode {
                 launcher.shoot();
             }
 
+            launcher.periodic();
             telemetry.update();
         }
 
