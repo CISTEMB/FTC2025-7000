@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.util.Range;
+
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.LLStatus;
@@ -11,6 +13,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.subsystems.Drive;
@@ -48,6 +51,11 @@ public class Teleop extends LinearOpMode {
         while (opModeIsActive()) {
             limelight.read();
 
+            if (limelight.botpose_mt2 != null) {
+                telemetry.addData("tx (cm)", limelight.botpose_mt2.getPosition().toUnit(DistanceUnit.CM).x);
+            }
+
+            drive.fastMode = gamepad1.left_trigger >= 0.75;
             drive.arcadeDrive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, false);
 
             if (launcher.isPrepped()) {
@@ -62,13 +70,33 @@ public class Teleop extends LinearOpMode {
                 telemetry.addData("Can shoot", "No");
             }
 
-            if (gamepad1.x) {
+            if (gamepad1.right_trigger >= 0.75 && !launcher.isPrepped()) {
                 launcher.prepare_shoot();
-            } else if (gamepad1.b && launcher.isPrepped()) {
+            } else if (gamepad1.right_bumper && launcher.isPrepped()) {
                 launcher.stop_motors();
             }
             if (gamepad1.y && launcher.isPrepped() && limelight.can_shoot()) {
                 launcher.shoot();
+            }
+            if (gamepad1.x) {
+                if (limelight.botpose_mt2 != null) {
+                    double x = limelight.botpose_mt2.getPosition().toUnit(DistanceUnit.CM).x;
+                    while (limelight.botpose_mt2 != null && !(new Range<>(-5.0, 5.0)).contains(x)) {
+                        if (x < 0.0) {
+                            drive.arcadeDrive(0.0, -0.2, 0.0, false);
+                        } else {
+                            drive.arcadeDrive(0.0, 0.2, 0.0, false);
+                        }
+                        limelight.read();
+                        x = limelight.botpose_mt2.getPosition().toUnit(DistanceUnit.CM).x;
+                    }
+
+                }
+            }
+            if (gamepad1.a) {
+                launcher.pickup();
+            } else {
+                launcher.stop_pickup();
             }
 
             launcher.periodic();

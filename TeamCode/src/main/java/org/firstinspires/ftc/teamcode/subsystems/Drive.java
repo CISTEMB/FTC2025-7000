@@ -22,8 +22,10 @@ public class Drive extends SubsystemBase {
     private Telemetry t;
 //    private BNO055IMU imu;
 
+    public boolean fastMode = false;
 
-    public Drive(HardwareMap hardwareMap, Telemetry t){
+
+    public Drive(HardwareMap hardwareMap, Telemetry t) {
         this.t = t;
 
 
@@ -75,6 +77,8 @@ public class Drive extends SubsystemBase {
             strafe = inputCurve(strafe);
         }
 
+        turn *= 0.75;
+
         //Calculate speed for each motor
         double frontLeft = forward + turn + strafe;
         double frontRight = forward - turn - strafe;
@@ -86,11 +90,13 @@ public class Drive extends SubsystemBase {
         rightFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightBackMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        double multiple = fastMode ? 2.0 : 1.0;
+
         //set motor
-        leftFrontMotor.setPower(frontLeft);
-        leftBackMotor.setPower(backLeft);
-        rightFrontMotor.setPower(frontRight);
-        rightBackMotor.setPower(backRight);
+        leftFrontMotor.setPower(frontLeft * multiple);
+        leftBackMotor.setPower(backLeft * multiple);
+        rightFrontMotor.setPower(frontRight * multiple);
+        rightBackMotor.setPower(backRight * multiple);
     }
 
     public void stop() {

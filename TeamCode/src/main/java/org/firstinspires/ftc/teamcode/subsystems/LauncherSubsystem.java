@@ -15,6 +15,7 @@ public class LauncherSubsystem extends SubsystemBase {
     private DcMotorEx leftMotor;
     private DcMotorEx rightMotor;
     private CRServo belt;
+    private CRServo pickup;
     private Telemetry t;
 
     private boolean prepped;
@@ -24,7 +25,8 @@ public class LauncherSubsystem extends SubsystemBase {
 
         leftMotor = hardwareMap.get(DcMotorEx.class, "leftLauncherMotor");
         rightMotor = hardwareMap.get(DcMotorEx.class, "rightLauncherMotor");
-        belt = hardwareMap.get(CRServo.class, "beltServo");
+//        belt = hardwareMap.get(CRServo.class, "beltServo");
+        pickup = hardwareMap.get(CRServo.class, "pickupServo");
 
         leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -62,20 +64,32 @@ public class LauncherSubsystem extends SubsystemBase {
         if (!prepped) {
             return;
         }
-        belt.setDirection(DcMotorSimple.Direction.FORWARD);
-        belt.setPower(1.0);
+//        belt.setDirection(DcMotorSimple.Direction.FORWARD);
+//        belt.setPower(1.0);
         Thread.sleep(500);
-        belt.setPower(0.0);
+//        belt.setPower(0.0);
     }
     
     public void stop_motors () {
         leftMotor.setPower(0.0);
         rightMotor.setPower(0.0);
-        belt.setPower(0.0);
+//        belt.setPower(0.0);
         prepped = false;
     }
 
     public boolean isPrepped () {
         return prepped;
+    }
+
+    public void pickup() {
+        pickup.setDirection(DcMotorSimple.Direction.REVERSE);
+        pickup.setPower(0.75);
+//        belt.setDirection(DcMotorSimple.Direction.REVERSE);
+//        belt.setPower(1.0);
+    }
+
+    public void stop_pickup() {
+        pickup.setPower(0.0);
+//        belt.setPower(0.0);
     }
 }

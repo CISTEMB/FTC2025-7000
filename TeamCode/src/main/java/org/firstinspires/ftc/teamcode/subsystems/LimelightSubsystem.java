@@ -14,8 +14,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
-import javax.annotation.Nullable;
-import limelight.LimelightHelpers;
 public class LimelightSubsystem extends SubsystemBase {
     public static final double margin = 5.0;
     public static final double yaw_to_shoot = 18.0;
@@ -50,7 +48,7 @@ public class LimelightSubsystem extends SubsystemBase {
 
         // Send the orientation data to the Limelight
         // The last three parameters (tx, ty, ta) are for angular velocity, often set to 0 initially
-        LimelightHelpers.SetRobotOrientation("limelight-gurtcam", robotYaw, robotPitch, robotRoll, 0, 0, 0);
+        //LimelightHelpers.SetRobotOrientation("limelight-gurtcam", robotYaw, robotPitch, robotRoll, 0, 0, 0);
 
         limelight.setPollRateHz(90);
 
@@ -69,6 +67,7 @@ public class LimelightSubsystem extends SubsystemBase {
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
         limelight.updateRobotOrientation(orientation.getYaw(AngleUnit.DEGREES));
         LLResult result = limelight.getLatestResult();
+        this.botpose_mt2 = null;
         if (result != null) {
             if (result.isValid()) {
                 this.botpose_mt2 = result.getBotpose_MT2();
