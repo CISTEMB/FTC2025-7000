@@ -55,6 +55,19 @@ public class Teleop extends LinearOpMode {
                 telemetry.addData("tx (cm)", limelight.botpose_mt2.getPosition().toUnit(DistanceUnit.CM).x);
             }
 
+            LLResult result = limelight.getLatestResult();
+            if (result != null && result.isValid()) {
+                double tx = result.getTx(); // How far left or right the target is (degrees)
+                double ty = result.getTy(); // How far up or down the target is (degrees)
+                double ta = result.getTa(); // How big the target looks (0%-100% of the image)
+
+                telemetry.addData("Target X", tx);
+                telemetry.addData("Target Y", ty);
+                telemetry.addData("Target Area", ta);
+            } else {
+                telemetry.addData("Limelight", "No Targets");
+            }
+
             drive.fastMode = gamepad1.left_trigger >= 0.75;
             drive.arcadeDrive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, false);
 
