@@ -51,11 +51,7 @@ public class Teleop extends LinearOpMode {
         while (opModeIsActive()) {
             limelight.read();
 
-            if (limelight.botpose_mt2 != null) {
-                telemetry.addData("tx (cm)", limelight.botpose_mt2.getPosition().toUnit(DistanceUnit.CM).x);
-            }
-
-            LLResult result = limelight.getLatestResult();
+            LLResult result = limelight.result;
             if (result != null && result.isValid()) {
                 double tx = result.getTx(); // How far left or right the target is (degrees)
                 double ty = result.getTy(); // How far up or down the target is (degrees)
@@ -92,16 +88,16 @@ public class Teleop extends LinearOpMode {
                 launcher.shoot();
             }
             if (gamepad1.x) {
-                if (limelight.botpose_mt2 != null) {
-                    double x = limelight.botpose_mt2.getPosition().toUnit(DistanceUnit.CM).x;
-                    while (limelight.botpose_mt2 != null && !(new Range<>(-5.0, 5.0)).contains(x)) {
+                if (limelight.result != null) {
+                    double x = limelight.result.getTx();
+                    while (limelight.result != null && !(new Range<>(-5.0, 5.0)).contains(x)) {
                         if (x < 0.0) {
                             drive.arcadeDrive(0.0, -0.2, 0.0, false);
                         } else {
                             drive.arcadeDrive(0.0, 0.2, 0.0, false);
                         }
                         limelight.read();
-                        x = limelight.botpose_mt2.getPosition().toUnit(DistanceUnit.CM).x;
+                        x = limelight.result.getTx();
                     }
 
                 }

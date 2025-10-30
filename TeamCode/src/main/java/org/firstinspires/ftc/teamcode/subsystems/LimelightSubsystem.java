@@ -22,6 +22,7 @@ public class LimelightSubsystem extends SubsystemBase {
     private final IMU.Parameters imuParameters;
     private final Telemetry t;
     public Pose3D botpose_mt2;
+    public LLResult result;
 
     public LimelightSubsystem(HardwareMap hardwareMap, Telemetry t) {
         this.t = t;
@@ -68,8 +69,10 @@ public class LimelightSubsystem extends SubsystemBase {
         limelight.updateRobotOrientation(orientation.getYaw(AngleUnit.DEGREES));
         LLResult result = limelight.getLatestResult();
         this.botpose_mt2 = null;
+        this.result = null;
         if (result != null) {
             if (result.isValid()) {
+                this.result = result;
                 this.botpose_mt2 = result.getBotpose_MT2();
                 t.addData("botpose", botpose_mt2.toString());
             }
