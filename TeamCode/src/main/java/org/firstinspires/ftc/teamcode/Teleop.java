@@ -38,8 +38,23 @@ public class Teleop extends LinearOpMode {
         telemetry.update();
         telemetry.setMsTransmissionInterval(11);
 
-        // Wait for the game to start (driver presses START)
-        waitForStart();
+        boolean isRed = true;
+
+        while (opModeInInit()) {
+            if (gamepad1.b) {
+                limelight.limelight.pipelineSwitch(0);
+                isRed = true;
+            } else if (gamepad1.x) {
+                limelight.limelight.pipelineSwitch(1);
+                isRed = false;
+            }
+            if (isRed) {
+                telemetry.addData("Team", "Red");
+            } else {
+                telemetry.addData("Team", "Blue");
+            }
+        }
+
         runtime.reset();
 
         limelight.start();
@@ -92,9 +107,9 @@ public class Teleop extends LinearOpMode {
                     double x = limelight.result.getTx();
                     while (limelight.result != null && !(new Range<>(-5.0, 5.0)).contains(x)) {
                         if (x < 0.0) {
-                            drive.arcadeDrive(0.0, -0.2, 0.0, false);
+                            drive.arcadeDrive(0.0, -0.5, 0.0, false);
                         } else {
-                            drive.arcadeDrive(0.0, 0.2, 0.0, false);
+                            drive.arcadeDrive(0.0, 0.5, 0.0, false);
                         }
                         limelight.read();
                         x = limelight.result.getTx();

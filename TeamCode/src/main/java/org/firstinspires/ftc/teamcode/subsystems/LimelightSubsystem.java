@@ -17,7 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 public class LimelightSubsystem extends SubsystemBase {
     public static final double margin = 5.0;
     public static final double yaw_to_shoot = 18.0;
-    private final Limelight3A limelight;
+    public final Limelight3A limelight;
     private final IMU imu;
     private final IMU.Parameters imuParameters;
     private final Telemetry t;
@@ -91,4 +91,11 @@ public class LimelightSubsystem extends SubsystemBase {
                 this.botpose_mt2.getOrientation().getYaw()
         ) && this.is_in_shoot_area();
     }
+
+    /*
+    public double shoot_distance() {
+        ty = result.get_ty()
+        return table.get(ty)
+    }
+     */
 }
