@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -16,6 +17,7 @@ public class LauncherSubsystem extends SubsystemBase {
     private DcMotorEx rightMotor;
     private CRServo belt;
     private CRServo pickup;
+    public CRServo lifter;
     private Telemetry t;
 
     private boolean prepped;
@@ -25,8 +27,9 @@ public class LauncherSubsystem extends SubsystemBase {
 
         leftMotor = hardwareMap.get(DcMotorEx.class, "leftLauncherMotor");
         rightMotor = hardwareMap.get(DcMotorEx.class, "rightLauncherMotor");
-//        belt = hardwareMap.get(CRServo.class, "beltServo");
-        pickup = hardwareMap.get(CRServo.class, "pickupServo");
+        belt = hardwareMap.get(CRServo.class, "beltServo");
+        pickup = hardwareMap.get(CRServo.class, "intakeServo");
+        lifter = hardwareMap.get(CRServo.class, "lifterServo");
 
         leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -60,20 +63,22 @@ public class LauncherSubsystem extends SubsystemBase {
         prepped = true;
     }
     
-    public void shoot () throws InterruptedException {
+    public void shoot () {
         if (!prepped) {
             return;
         }
-//        belt.setDirection(DcMotorSimple.Direction.FORWARD);
-//        belt.setPower(1.0);
-        Thread.sleep(500);
-//        belt.setPower(0.0);
+        belt.setDirection(DcMotorSimple.Direction.FORWARD);
+        belt.setPower(1.0);
+    }
+
+    public void stop_shoot () {
+        belt.setPower(0.0);
     }
     
     public void stop_motors () {
         leftMotor.setPower(0.0);
         rightMotor.setPower(0.0);
-//        belt.setPower(0.0);
+        belt.setPower(0.0);
         prepped = false;
     }
 
@@ -83,13 +88,10 @@ public class LauncherSubsystem extends SubsystemBase {
 
     public void pickup() {
         pickup.setDirection(DcMotorSimple.Direction.REVERSE);
-        pickup.setPower(0.75);
-//        belt.setDirection(DcMotorSimple.Direction.REVERSE);
-//        belt.setPower(1.0);
+        pickup.setPower(1);
     }
 
     public void stop_pickup() {
         pickup.setPower(0.0);
-//        belt.setPower(0.0);
     }
 }

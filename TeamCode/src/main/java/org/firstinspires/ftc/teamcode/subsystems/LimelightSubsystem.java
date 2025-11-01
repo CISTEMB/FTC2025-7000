@@ -84,12 +84,7 @@ public class LimelightSubsystem extends SubsystemBase {
     }
 
     public boolean can_shoot() {
-        return this.botpose_mt2 != null && Range.create(
-                yaw_to_shoot - (margin / 2),
-                yaw_to_shoot + (margin / 2)
-        ).contains(
-                this.botpose_mt2.getOrientation().getYaw()
-        ) && this.is_in_shoot_area();
+        return this.botpose_mt2 != null && this.is_in_shoot_area();
     }
 
     /*

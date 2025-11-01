@@ -9,6 +9,7 @@ import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -101,6 +102,8 @@ public class Teleop extends LinearOpMode {
             }
             if (gamepad1.y && launcher.isPrepped() && limelight.can_shoot()) {
                 launcher.shoot();
+            } else if (!gamepad1.y) {
+                launcher.stop_shoot();
             }
             if (gamepad1.x) {
                 if (limelight.result != null) {
@@ -121,6 +124,15 @@ public class Teleop extends LinearOpMode {
                 launcher.pickup();
             } else {
                 launcher.stop_pickup();
+            }
+            if (gamepad1.dpad_down) {
+                launcher.lifter.setDirection(DcMotorSimple.Direction.REVERSE);
+                launcher.lifter.setPower(0.75);
+            } else if (gamepad1.dpad_up) {
+                launcher.lifter.setDirection(DcMotorSimple.Direction.FORWARD);
+                launcher.lifter.setPower(0.75);
+            } else {
+                launcher.lifter.setPower(0.0);
             }
 
             launcher.periodic();
