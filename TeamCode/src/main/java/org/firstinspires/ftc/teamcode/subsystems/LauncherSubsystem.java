@@ -49,6 +49,7 @@ public class LauncherSubsystem extends SubsystemBase {
 
         t.addData("launcher power", leftMotor.getPower());
         t.addData("belt power", belt.getPower());
+        t.addData("prepped", prepped);
     }
 
     public void prepare_shoot () {
@@ -64,20 +65,9 @@ public class LauncherSubsystem extends SubsystemBase {
         prepped = true;
     }
 
-    public void test_belt() {
-
-        belt.setPower(1.0);
-    }
-
-    public void stop_belt() {
-        belt.setPower(0.0);
-    }
-
     public void shoot () {
-        if (!prepped) {
-            return;
-        }
-        belt.setDirection(DcMotorSimple.Direction.FORWARD);
+        //belt only goes one way
+        //belt.setDirection(DcMotorSimple.Direction.FORWARD);
         belt.setPower(1.0);
     }
 

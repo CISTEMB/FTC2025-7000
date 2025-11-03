@@ -84,7 +84,9 @@ public class LimelightSubsystem extends SubsystemBase {
     }
 
     public boolean can_shoot() {
-        return this.botpose_mt2 != null && this.is_in_shoot_area();
+        //always shoot for now
+        return true;
+        //return this.botpose_mt2 != null && this.is_in_shoot_area();
     }
 
     /*
