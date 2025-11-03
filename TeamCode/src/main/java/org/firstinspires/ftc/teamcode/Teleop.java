@@ -51,8 +51,10 @@ public class Teleop extends LinearOpMode {
             }
             if (isRed) {
                 telemetry.addData("Team", "Red");
+                telemetry.update();
             } else {
                 telemetry.addData("Team", "Blue");
+                telemetry.update();
             }
         }
 
@@ -133,6 +135,12 @@ public class Teleop extends LinearOpMode {
                 launcher.lifter.setPower(0.75);
             } else {
                 launcher.lifter.setPower(0.0);
+            }
+
+            if (gamepad1.dpad_left) {
+                launcher.test_belt();
+            } else {
+                launcher.stop_belt();
             }
 
             launcher.periodic();

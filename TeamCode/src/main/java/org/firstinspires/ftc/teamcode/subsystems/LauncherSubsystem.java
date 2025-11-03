@@ -37,8 +37,8 @@ public class LauncherSubsystem extends SubsystemBase {
         leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
-        leftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        leftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         prepped = false;
     }
@@ -48,6 +48,7 @@ public class LauncherSubsystem extends SubsystemBase {
         super.periodic();
 
         t.addData("launcher power", leftMotor.getPower());
+        t.addData("belt power", belt.getPower());
     }
 
     public void prepare_shoot () {
@@ -62,7 +63,16 @@ public class LauncherSubsystem extends SubsystemBase {
         rightMotor.setPower(power);
         prepped = true;
     }
-    
+
+    public void test_belt() {
+
+        belt.setPower(1.0);
+    }
+
+    public void stop_belt() {
+        belt.setPower(0.0);
+    }
+
     public void shoot () {
         if (!prepped) {
             return;
