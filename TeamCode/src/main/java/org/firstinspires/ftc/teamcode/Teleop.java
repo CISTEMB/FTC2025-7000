@@ -139,7 +139,7 @@ public class Teleop extends LinearOpMode {
                 launcher.lifter.setDirection(DcMotorSimple.Direction.FORWARD);
                 launcher.lifter.setPower(0.25);
             } else {
-                launcher.lifter.setPower(0.01);
+                launcher.lifter.setPower(0.03);
             }
 
             launcher.periodic();
