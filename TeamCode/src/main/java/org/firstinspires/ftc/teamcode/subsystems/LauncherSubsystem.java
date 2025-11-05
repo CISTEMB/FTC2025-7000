@@ -20,6 +20,8 @@ public class LauncherSubsystem extends SubsystemBase {
     public CRServo lifter;
     private Telemetry t;
 
+    private Double motorVelocity = 0.0;
+
     private boolean prepped;
 
     public LauncherSubsystem (HardwareMap hardwareMap, Telemetry t) {
@@ -49,27 +51,24 @@ public class LauncherSubsystem extends SubsystemBase {
     public void periodic() {
         super.periodic();
 
-        t.addData("launcher power", leftMotor.getPower());
+        t.addData("actual launcher velocity", leftMotor.getVelocity());
+        t.addData("targetted launcher velocity", motorVelocity);
         t.addData("belt power", belt.getPower());
         t.addData("prepped", prepped);
     }
 
     public void prepare_shoot () {
-        double power = leftMotor.getPower();
-        if (power < 1.0) {
-            power += 1;
-        } else {
-            power = 0.0;
+        if (motorVelocity < 2500) {
+            motorVelocity += 200;
         }
-        t.addData("launcher power", power);
-        leftMotor.setPower(power);
-        rightMotor.setPower(power);
+
+        leftMotor.setVelocity(motorVelocity);
+        rightMotor.setVelocity(motorVelocity);
         prepped = true;
     }
 
     public void shoot () {
         //belt only goes one way
-        //belt.setDirection(DcMotorSimple.Direction.FORWARD);
         belt.setPower(1.0);
     }
 
@@ -78,8 +77,9 @@ public class LauncherSubsystem extends SubsystemBase {
     }
     
     public void stop_motors () {
-        leftMotor.setPower(0.0);
-        rightMotor.setPower(0.0);
+        leftMotor.setVelocity(0.0);
+        rightMotor.setVelocity(0.0);
+        motorVelocity = 0.0;
         belt.setPower(0.0);
         prepped = false;
     }

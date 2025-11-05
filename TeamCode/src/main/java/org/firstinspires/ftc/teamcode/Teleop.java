@@ -99,12 +99,15 @@ public class Teleop extends LinearOpMode {
                 telemetry.addData("Can shoot", "No");
             }
 
-            if (gamepad1.right_trigger >= 0.75 && !launcher.isPrepped()) {
-                launcher.prepare_shoot();
-            } else if (gamepad1.right_bumper && launcher.isPrepped()) {
+            if (gamepad1.right_trigger >= 0.75) {
                 launcher.stop_motors();
             }
-            if (gamepad1.y && launcher.isPrepped()) {
+
+            if (gamepad1.right_bumper) {
+                launcher.prepare_shoot();
+            }
+
+            if (gamepad1.y && launcher.isPrepped() && limelight.can_shoot()) {
                 launcher.shoot();
             } else {
                 launcher.stop_shoot();
@@ -136,13 +139,14 @@ public class Teleop extends LinearOpMode {
                 launcher.lifter.setDirection(DcMotorSimple.Direction.FORWARD);
                 launcher.lifter.setPower(0.25);
             } else {
-                launcher.lifter.setPower(0.0);
+                launcher.lifter.setPower(0.01);
             }
 
             launcher.periodic();
             telemetry.update();
         }
 
+        launcher.lifter.setPower(0.0);
         limelight.stop();
     }
 }
