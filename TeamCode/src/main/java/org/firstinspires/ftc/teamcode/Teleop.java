@@ -104,8 +104,7 @@ public class Teleop extends LinearOpMode {
             } else if (gamepad1.right_bumper && launcher.isPrepped()) {
                 launcher.stop_motors();
             }
-
-            if (gamepad1.y && launcher.isPrepped() && limelight.can_shoot()) {
+            if (gamepad1.y && launcher.isPrepped()) {
                 launcher.shoot();
             } else {
                 launcher.stop_shoot();

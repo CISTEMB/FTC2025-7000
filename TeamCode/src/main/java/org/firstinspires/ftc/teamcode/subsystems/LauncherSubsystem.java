@@ -31,14 +31,16 @@ public class LauncherSubsystem extends SubsystemBase {
         pickup = hardwareMap.get(CRServo.class, "intakeServo");
         lifter = hardwareMap.get(CRServo.class, "lifterServo");
 
-        leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         leftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         rightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        pickup.setDirection(DcMotorSimple.Direction.FORWARD);
 
         prepped = false;
     }
@@ -87,7 +89,6 @@ public class LauncherSubsystem extends SubsystemBase {
     }
 
     public void pickup() {
-        pickup.setDirection(DcMotorSimple.Direction.REVERSE);
         pickup.setPower(1);
     }
 
