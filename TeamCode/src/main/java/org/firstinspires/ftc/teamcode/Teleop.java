@@ -103,9 +103,13 @@ public class Teleop extends LinearOpMode {
                 launcher.stop_motors();
             }
 
-            if (gamepad1.right_bumper) {
+            if(gamepad1.rightBumperWasPressed() && gamepad1.rightBumperWasReleased()) {
                 launcher.prepare_shoot();
             }
+
+//            if (gamepad1.right_bumper) {
+//                launcher.prepare_shoot();
+//            }
 
             if (gamepad1.y && launcher.isPrepped() && limelight.can_shoot()) {
                 launcher.shoot();
@@ -124,7 +128,6 @@ public class Teleop extends LinearOpMode {
                         limelight.read();
                         x = limelight.result.getTx();
                     }
-
                 }
             }
             if (gamepad1.a) {
@@ -132,6 +135,7 @@ public class Teleop extends LinearOpMode {
             } else {
                 launcher.stop_pickup();
             }
+
             if (gamepad1.dpad_down) {
                 launcher.lifter.setDirection(DcMotorSimple.Direction.REVERSE);
                 launcher.lifter.setPower(0.25);

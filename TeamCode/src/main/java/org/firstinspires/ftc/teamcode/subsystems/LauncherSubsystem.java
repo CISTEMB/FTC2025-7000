@@ -67,6 +67,7 @@ public class LauncherSubsystem extends SubsystemBase {
         prepped = true;
     }
 
+
     public void shoot () {
         //belt only goes one way
         belt.setPower(1.0);
