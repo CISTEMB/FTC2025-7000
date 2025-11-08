@@ -52,16 +52,18 @@ public class LauncherSubsystem extends SubsystemBase {
         super.periodic();
 
         t.addData("actual launcher velocity", leftMotor.getVelocity());
-        t.addData("targetted launcher velocity", motorVelocity);
+        t.addData("targeted launcher velocity", motorVelocity);
+        t.addData("lift power", lifter.getPower());
         t.addData("belt power", belt.getPower());
         t.addData("prepped", prepped);
     }
 
     public void prepare_shoot () {
-        if (motorVelocity < 2500) {
-            motorVelocity += 200;
+        if (motorVelocity < 1300) {
+            motorVelocity += 100;
         }
 
+        //temp for testing
         leftMotor.setVelocity(motorVelocity);
         rightMotor.setVelocity(motorVelocity);
         prepped = true;
