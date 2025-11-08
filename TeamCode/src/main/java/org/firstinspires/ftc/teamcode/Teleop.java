@@ -117,6 +117,11 @@ public class Teleop extends LinearOpMode {
             } else {
                 launcher.stop_shoot();
             }
+
+            if (gamepad1.bWasReleased()) {
+                stalling = false;
+            }
+            
             if (gamepad1.x) {
                 if (limelight.result != null) {
                     double x = limelight.result.getTx();
