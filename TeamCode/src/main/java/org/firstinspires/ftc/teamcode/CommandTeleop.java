@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.commands.DriveWithGamepadCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Drive;
+import org.firstinspires.ftc.teamcode.subsystems.LEDSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LauncherSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LimelightSubsystem;
 
@@ -98,7 +99,7 @@ public class CommandTeleop extends CommandOpMode {
         gamepadEx = new GamepadEx(gamepad1);
         drive = new Drive(hardwareMap, telemetry);
         launcher = new LauncherSubsystem(hardwareMap, telemetry);
-        limelight = new LimelightSubsystem(hardwareMap, telemetry);
+        limelight = new LimelightSubsystem(hardwareMap, telemetry, new LEDSubsystem(hardwareMap, telemetry));
         telemetry.addData("Status", "Initialized");
         telemetry.setMsTransmissionInterval(11);
 
