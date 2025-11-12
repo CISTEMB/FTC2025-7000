@@ -152,7 +152,7 @@ public class Teleop extends LinearOpMode {
                 stalling = true;
             } else if (stalling) {
                 launcher.lifter.setDirection(DcMotorSimple.Direction.REVERSE);
-                launcher.lifter.setPower(0.065);
+                launcher.lifter.setPower(0.07);
             } else {
                 launcher.lifter.setPower(0.0);
             }
