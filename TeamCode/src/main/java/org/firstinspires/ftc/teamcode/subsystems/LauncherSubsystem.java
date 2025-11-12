@@ -59,8 +59,10 @@ public class LauncherSubsystem extends SubsystemBase {
     }
 
     public void prepare_shoot () {
-        if (motorVelocity < 1300) {
-            motorVelocity += 100;
+        if (motorVelocity < 950) {
+            motorVelocity = 950.0;
+        } else if (motorVelocity < 1250) {
+            motorVelocity = 1250.0;
         }
 
         //temp for testing

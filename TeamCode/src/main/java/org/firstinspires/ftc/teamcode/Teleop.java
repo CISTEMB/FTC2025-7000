@@ -87,7 +87,7 @@ public class Teleop extends LinearOpMode {
             }
 
             drive.fastMode = gamepad1.left_trigger >= 0.75;
-            drive.arcadeDrive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, false);
+            drive.arcadeDrive(gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x, false);
 
             if (launcher.isPrepped()) {
                 telemetry.addData("Motors", "On");
@@ -128,9 +128,9 @@ public class Teleop extends LinearOpMode {
                     double x = limelight.result.getTx();
                     while (limelight.result != null && !(new Range<>(-5.0, 5.0)).contains(x)) {
                         if (x < 0.0) {
-                            drive.arcadeDrive(0.0, -0.5, 0.0, false);
+                            drive.arcadeDrive(0.0, -0.3, 0.0, false);
                         } else {
-                            drive.arcadeDrive(0.0, 0.5, 0.0, false);
+                            drive.arcadeDrive(0.0, 0.3, 0.0, false);
                         }
                         limelight.read();
                         x = limelight.result.getTx();

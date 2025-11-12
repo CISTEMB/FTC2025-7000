@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.subsystems.Drive;
 
-@Autonomous(name = "Auto: Basic Drive", group = "Auto", preselectTeleOp = "Test_Launcher")
+@Autonomous(name = "Auto: Basic Drive", group = "Auto", preselectTeleOp = "Teleop")
 public class Auto_Basic extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
 
