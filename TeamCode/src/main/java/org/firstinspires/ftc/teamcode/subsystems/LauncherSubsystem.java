@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -16,11 +17,13 @@ public class LauncherSubsystem extends SubsystemBase {
     private DcMotorEx leftMotor;
     private DcMotorEx rightMotor;
     private CRServo belt;
-    private CRServo pickup;
+    private CRServo pickup1;
+    private CRServo pickup2;
     public CRServo lifter;
+    private AnalogInput lifter_angle;
     private Telemetry t;
 
-    private Double motorVelocity = 0.0;
+    private double motorVelocity = 0.0;
 
     private boolean prepped;
 
@@ -30,8 +33,10 @@ public class LauncherSubsystem extends SubsystemBase {
         leftMotor = hardwareMap.get(DcMotorEx.class, "leftLauncherMotor");
         rightMotor = hardwareMap.get(DcMotorEx.class, "rightLauncherMotor");
         belt = hardwareMap.get(CRServo.class, "beltServo");
-        pickup = hardwareMap.get(CRServo.class, "intakeServo");
+        pickup1 = hardwareMap.get(CRServo.class, "intakeServo1");
+        pickup2 = hardwareMap.get(CRServo.class, "intakeServo2");
         lifter = hardwareMap.get(CRServo.class, "lifterServo");
+//        lifter_angle = hardwareMap.get(AnalogInput.class, "lifterAngle");
 
         leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -42,7 +47,8 @@ public class LauncherSubsystem extends SubsystemBase {
         leftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         rightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        pickup.setDirection(DcMotorSimple.Direction.FORWARD);
+        pickup1.setDirection(DcMotorSimple.Direction.REVERSE);
+        pickup2.setDirection(DcMotorSimple.Direction.FORWARD);
 
         prepped = false;
     }
@@ -94,10 +100,16 @@ public class LauncherSubsystem extends SubsystemBase {
     }
 
     public void pickup() {
-        pickup.setPower(1);
+        pickup1.setPower(1);
+        pickup2.setPower(1);
     }
 
     public void stop_pickup() {
-        pickup.setPower(0.0);
+        pickup1.setPower(0.0);
+        pickup2.setPower(0.0);
+    }
+
+    public double getLifterAngle() {
+        return lifter_angle.getVoltage() / lifter_angle.getMaxVoltage();
     }
 }

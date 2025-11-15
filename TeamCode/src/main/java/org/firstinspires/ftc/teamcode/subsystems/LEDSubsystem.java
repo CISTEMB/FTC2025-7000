@@ -10,6 +10,7 @@ public class LEDSubsystem extends SubsystemBase {
     private final Servo led1;
     private final Servo led2;
     private final Telemetry t;
+    private boolean using_num2 = false;
     public enum Color {
         OFF,
         RED,
@@ -29,6 +30,22 @@ public class LEDSubsystem extends SubsystemBase {
         this.t = t;
     }
     public void displayColor(Color color) {
+        double rawColor = getColor(color);
+        led1.setPosition(rawColor);
+        if (!using_num2) {
+            led2.setPosition(rawColor);
+        }
+    }
+    public void displayColor2(Color color) {
+        if (color == Color.OFF) {
+            led2.setPosition(led1.getPosition());
+        } else {
+            double rawColor = getColor(color);
+            led2.setPosition(rawColor);
+        }
+        using_num2 = color == Color.OFF;
+    }
+    private double getColor(Color color) {
         double rawColor;
         switch (color) {
             case OFF:
@@ -65,7 +82,6 @@ public class LEDSubsystem extends SubsystemBase {
             default:
                 rawColor = 1.0;
         }
-        led1.setPosition(rawColor);
-        led2.setPosition(rawColor);
+        return rawColor;
     }
 }
