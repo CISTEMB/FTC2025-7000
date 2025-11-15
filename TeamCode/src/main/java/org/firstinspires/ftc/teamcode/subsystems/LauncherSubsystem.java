@@ -19,7 +19,7 @@ public class LauncherSubsystem extends SubsystemBase {
     private CRServo belt;
     private CRServo pickup1;
     private CRServo pickup2;
-    public CRServo lifter;
+    public Servo lifter;
     private AnalogInput lifter_angle;
     private Telemetry t;
 
@@ -35,8 +35,9 @@ public class LauncherSubsystem extends SubsystemBase {
         belt = hardwareMap.get(CRServo.class, "beltServo");
         pickup1 = hardwareMap.get(CRServo.class, "intakeServo1");
         pickup2 = hardwareMap.get(CRServo.class, "intakeServo2");
-        lifter = hardwareMap.get(CRServo.class, "lifterServo");
-//        lifter_angle = hardwareMap.get(AnalogInput.class, "lifterAngle");
+        lifter = hardwareMap.get(Servo.class, "lifterServo");
+        
+        lifter_angle = hardwareMap.get(AnalogInput.class, "lifterAngle");
 
         leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -59,7 +60,8 @@ public class LauncherSubsystem extends SubsystemBase {
 
         t.addData("actual launcher velocity", leftMotor.getVelocity());
         t.addData("targeted launcher velocity", motorVelocity);
-        t.addData("lift power", lifter.getPower());
+        t.addData("lift servo position", lifter.getPosition());
+        t.addData("lift angle calculated", getLifterAngle());
         t.addData("belt power", belt.getPower());
         t.addData("prepped", prepped);
     }

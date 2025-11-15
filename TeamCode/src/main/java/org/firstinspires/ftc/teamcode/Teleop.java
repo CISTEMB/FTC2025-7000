@@ -196,26 +196,31 @@ public class Teleop extends LinearOpMode {
             }
 
             if (gamepad1.dpad_down) {
-                launcher.lifter.setDirection(DcMotorSimple.Direction.FORWARD);
-                launcher.lifter.setPower(0.25);
-                stalling = true;
+                launcher.lifter.setPosition(0.0);
             } else if (gamepad1.dpad_up) {
-                launcher.lifter.setDirection(DcMotorSimple.Direction.REVERSE);
-                launcher.lifter.setPower(0.25);
-                stalling = true;
-            } else if (stalling) {
-                launcher.lifter.setDirection(DcMotorSimple.Direction.REVERSE);
-                launcher.lifter.setPower(0.07);
-            } else {
-                launcher.lifter.setPower(0.0);
+                launcher.lifter.setPosition(1.0);
             }
+//            if (gamepad1.dpad_down) {
+//                launcher.lifter.setDirection(DcMotorSimple.Direction.FORWARD);
+//                launcher.lifter.setPower(0.25);
+//                stalling = true;
+//            } else if (gamepad1.dpad_up) {
+//                launcher.lifter.setDirection(DcMotorSimple.Direction.REVERSE);
+//                launcher.lifter.setPower(0.25);
+//                stalling = true;
+//            } else if (stalling) {
+//                launcher.lifter.setDirection(DcMotorSimple.Direction.REVERSE);
+//                launcher.lifter.setPower(0.07);
+//            } else {
+//                launcher.lifter.setPower(0.0);
+//            }
 
             launcher.periodic();
             telemetry.update();
         }
 
         stalling = false;
-        launcher.lifter.setPower(0.0);
+        //launcher.lifter.setPower(0.0);
         limelight.stop();
     }
 }
