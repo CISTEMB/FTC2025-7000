@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
-import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -17,13 +16,11 @@ public class LauncherSubsystem extends SubsystemBase {
     private DcMotorEx leftMotor;
     private DcMotorEx rightMotor;
     private CRServo belt;
-    private CRServo pickup1;
-    private CRServo pickup2;
+    private CRServo pickup;
     public Servo lifter;
-    private AnalogInput lifter_angle;
     private Telemetry t;
 
-    private double motorVelocity = 0.0;
+    private Double motorVelocity = 0.0;
 
     private boolean prepped;
 
@@ -33,11 +30,8 @@ public class LauncherSubsystem extends SubsystemBase {
         leftMotor = hardwareMap.get(DcMotorEx.class, "leftLauncherMotor");
         rightMotor = hardwareMap.get(DcMotorEx.class, "rightLauncherMotor");
         belt = hardwareMap.get(CRServo.class, "beltServo");
-        pickup1 = hardwareMap.get(CRServo.class, "intakeServo1");
-        pickup2 = hardwareMap.get(CRServo.class, "intakeServo2");
+        pickup = hardwareMap.get(CRServo.class, "intakeServo");
         lifter = hardwareMap.get(Servo.class, "lifterServo");
-        
-        lifter_angle = hardwareMap.get(AnalogInput.class, "lifterAngle");
 
         leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -48,8 +42,7 @@ public class LauncherSubsystem extends SubsystemBase {
         leftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         rightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        pickup1.setDirection(DcMotorSimple.Direction.REVERSE);
-        pickup2.setDirection(DcMotorSimple.Direction.FORWARD);
+        pickup.setDirection(DcMotorSimple.Direction.FORWARD);
 
         prepped = false;
     }
@@ -60,8 +53,6 @@ public class LauncherSubsystem extends SubsystemBase {
 
         t.addData("actual launcher velocity", leftMotor.getVelocity());
         t.addData("targeted launcher velocity", motorVelocity);
-        t.addData("lift servo position", lifter.getPosition());
-        t.addData("lift angle calculated", getLifterAngle());
         t.addData("belt power", belt.getPower());
         t.addData("prepped", prepped);
     }
@@ -88,7 +79,7 @@ public class LauncherSubsystem extends SubsystemBase {
     public void stop_shoot () {
         belt.setPower(0.0);
     }
-    
+
     public void stop_motors () {
         leftMotor.setVelocity(0.0);
         rightMotor.setVelocity(0.0);
@@ -102,16 +93,10 @@ public class LauncherSubsystem extends SubsystemBase {
     }
 
     public void pickup() {
-        pickup1.setPower(1);
-        pickup2.setPower(1);
+        pickup.setPower(1);
     }
 
     public void stop_pickup() {
-        pickup1.setPower(0.0);
-        pickup2.setPower(0.0);
-    }
-
-    public double getLifterAngle() {
-        return lifter_angle.getVoltage() / lifter_angle.getMaxVoltage();
+        pickup.setPower(0.0);
     }
 }

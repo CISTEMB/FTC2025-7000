@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import android.util.Range;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.LLStatus;
@@ -17,15 +16,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
 import org.firstinspires.ftc.teamcode.subsystems.Drive;
 import org.firstinspires.ftc.teamcode.subsystems.LEDSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LauncherSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LimelightSubsystem;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @TeleOp(name = "Teleop", group = "000-Main")
@@ -34,21 +30,24 @@ public class Teleop extends LinearOpMode {
     private IMU imu;
     private IMU.Parameters imuParameters;
     private final ElapsedTime runtime = new ElapsedTime();
-    private Boolean stalling = false;
-    private Pose2d saved_pose;
+    //private Boolean stalling = false;
+    private Double lifterPosition;
+    private Double lifterIncrement = 0.1;
+
 
     @Override
     public void runOpMode() throws InterruptedException {
         Drive drive = new Drive(hardwareMap, telemetry);
         LauncherSubsystem launcher = new LauncherSubsystem(hardwareMap, telemetry);
-        LEDSubsystem led = new LEDSubsystem(hardwareMap, telemetry);
-        LimelightSubsystem limelight = new LimelightSubsystem(hardwareMap, telemetry, led);
-        StandardTrackingWheelLocalizer localizer = new StandardTrackingWheelLocalizer(hardwareMap, new ArrayList<>(), new ArrayList<>());
+        LimelightSubsystem limelight = new LimelightSubsystem(hardwareMap, telemetry, new LEDSubsystem(hardwareMap, telemetry));
         telemetry.addData("Status", "Initialized");
+        telemetry.addData("Lifter Position", lifterPosition);
         telemetry.update();
         telemetry.setMsTransmissionInterval(11);
+        lifterPosition = launcher.lifter.getPosition();
 
         boolean isRed = true;
+
 
         while (opModeInInit()) {
             if (gamepad1.b) {
@@ -77,7 +76,6 @@ public class Teleop extends LinearOpMode {
 
         while (opModeIsActive()) {
             limelight.read();
-            localizer.update();
             telemetry.addData("IsPrepped", launcher.isPrepped());
             telemetry.addData("CanShoot", limelight.can_shoot());
 
@@ -128,52 +126,13 @@ public class Teleop extends LinearOpMode {
             }
 
             if (gamepad1.bWasReleased()) {
-                stalling = false;
+                // stalling = false;
             }
 
-            if (saved_pose != null) {
-                led.displayColor2(LEDSubsystem.Color.VIOLET);
-                telemetry.addData("Saved pose", saved_pose);
-                Pose2d pose = localizer.getPoseEstimate();
-                telemetry.addData("Current pose", pose);
-                double a = pose.getX() - saved_pose.getX();
-                double b = pose.getY() - saved_pose.getY();
-                double c = Math.atan(b / a);
-                double x = localizer.getPoseEstimate().getHeading() - c;
-                telemetry.addData("a", a);
-                telemetry.addData("b", b);
-                telemetry.addData("c", c);
-                telemetry.addData("x", x);
-            }
-            
             if (gamepad1.x) {
-                if (saved_pose != null) {
-                    Pose2d pose = localizer.getPoseEstimate();
-                    double a = pose.getX() - saved_pose.getX();
-                    double b = pose.getY() - saved_pose.getY();
-                    double c = Math.atan(b / a);
-                    double x = localizer.getPoseEstimate().getHeading() - c;
-                    while (!(new Range<>(Math.toRadians(-5.0), Math.toRadians(5.0))).contains(x) && opModeIsActive()) {
-                        if (x < 0.0) {
-                            drive.arcadeDrive(0.0, 0.3, 0.0, false);
-                        } else {
-                            drive.arcadeDrive(0.0, -0.3, 0.0, false);
-                        }
-                        localizer.update();
-                        x = localizer.getPoseEstimate().getHeading() - c;
-                        pose = localizer.getPoseEstimate();
-                        telemetry.addData("Saved pose", saved_pose);
-                        telemetry.addData("Current pose", pose);
-                        telemetry.addData("a", a);
-                        telemetry.addData("b", b);
-                        telemetry.addData("c", c);
-                        telemetry.addData("x", x);
-                        telemetry.update();
-                    }
-
-                } else if (limelight.result != null) {
+                if (limelight.result != null) {
                     double x = limelight.result.getTx();
-                    while (limelight.result != null && !(new Range<>(-5.0, 5.0)).contains(x) && opModeIsActive()) {
+                    while (limelight.result != null && !(new Range<>(-5.0, 5.0)).contains(x)) {
                         if (x < 0.0) {
                             drive.arcadeDrive(0.0, -0.3, 0.0, false);
                         } else {
@@ -181,12 +140,7 @@ public class Teleop extends LinearOpMode {
                         }
                         limelight.read();
                         x = limelight.result.getTx();
-                        localizer.update();
                     }
-                    assert limelight.result != null;
-                    Position pos = limelight.result.getBotpose_MT2().getPosition().toUnit(DistanceUnit.INCH);
-                    saved_pose = localizer.getPoseEstimate();
-                    saved_pose = new Pose2d(saved_pose.getX() + pos.x, saved_pose.getY() + pos.y);
                 }
             }
             if (gamepad1.a) {
@@ -195,32 +149,33 @@ public class Teleop extends LinearOpMode {
                 launcher.stop_pickup();
             }
 
+
+
             if (gamepad1.dpad_down) {
-                launcher.lifter.setPosition(0.0);
+                if (lifterPosition > 0) {
+                    lifterPosition -= lifterIncrement;
+                    launcher.lifter.setPosition(lifterPosition);
+                }
+                // stalling = true;
+                // stalling shouldn't be required for non-continuous
             } else if (gamepad1.dpad_up) {
-                launcher.lifter.setPosition(1.0);
-            }
-//            if (gamepad1.dpad_down) {
-//                launcher.lifter.setDirection(DcMotorSimple.Direction.FORWARD);
-//                launcher.lifter.setPower(0.25);
-//                stalling = true;
-//            } else if (gamepad1.dpad_up) {
-//                launcher.lifter.setDirection(DcMotorSimple.Direction.REVERSE);
-//                launcher.lifter.setPower(0.25);
-//                stalling = true;
-//            } else if (stalling) {
-//                launcher.lifter.setDirection(DcMotorSimple.Direction.REVERSE);
-//                launcher.lifter.setPower(0.07);
-//            } else {
-//                launcher.lifter.setPower(0.0);
-//            }
+                if (lifterPosition < 0.1) {
+                    lifterPosition += lifterIncrement;
+                    launcher.lifter.setPosition(lifterPosition);
+                }
+                // stalling = true;
+            } /* else if (stalling) {
+                launcher.lifter.setDirection(DcMotorSimple.Direction.REVERSE);
+                launcher.lifter.setPower(0.07);
+            } else {
+                launcher.lifter.setPower(0.0);
+            } */
 
             launcher.periodic();
             telemetry.update();
         }
 
-        stalling = false;
-        //launcher.lifter.setPower(0.0);
+        //stalling = false;
         limelight.stop();
     }
 }
