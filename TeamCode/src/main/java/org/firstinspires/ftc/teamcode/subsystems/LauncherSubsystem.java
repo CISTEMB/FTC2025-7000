@@ -76,6 +76,22 @@ public class LauncherSubsystem extends SubsystemBase {
         prepped = true;
     }
 
+    public void updateMotors(int lifterPos){
+        if (lifterPos == 2 || lifterPos == 3){
+            motorVelocity = 950;
+            leftMotor.setVelocity(motorVelocity);
+            rightMotor.setVelocity(motorVelocity);
+        } else if (lifterPos == 1){
+            motorVelocity = 1200;
+            leftMotor.setVelocity(motorVelocity);
+            rightMotor.setVelocity(motorVelocity);
+        } else {
+            leftMotor.setVelocity(0);
+            rightMotor.setVelocity(0);
+        }
+
+    }
+
 
     public void shoot () {
         // belt now goes both ways :O

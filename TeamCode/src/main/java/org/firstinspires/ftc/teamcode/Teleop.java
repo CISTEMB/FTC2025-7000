@@ -34,8 +34,10 @@ public class Teleop extends LinearOpMode {
     private IMU imu;
     private IMU.Parameters imuParameters;
     private final ElapsedTime runtime = new ElapsedTime();
-    private Double lifterPosition;
-    final private Double lifterIncrement = 0.1;
+    private Integer lifterPosition;
+    private final List<Double> lifterPosList =
+            List.of(0.0, 0.3, 0.6, 0.8, 1.0); // all angles required for normal gameplay
+    // final private Double lifterIncrement = 0.1;
     private Pose2d saved_pose;
 
     @Override
@@ -50,7 +52,10 @@ public class Teleop extends LinearOpMode {
         telemetry.setMsTransmissionInterval(11);
 
         boolean isRed = true;
-        lifterPosition = launcher.lifter.getPosition();
+        lifterPosition = 0;
+        if (launcher.lifter.getPosition() > 0.9){
+            lifterPosition = 4;
+        }
 
         while (opModeInInit()) {
             if (gamepad1.b) {
@@ -201,15 +206,17 @@ public class Teleop extends LinearOpMode {
 
             if (gamepad1.dpadDownWasPressed() && gamepad1.dpadDownWasReleased()) {
                 if (lifterPosition > 0) {
-                    lifterPosition -= lifterIncrement;
-                    launcher.lifter.setPosition(lifterPosition);
+                    lifterPosition -= 1;
+                    launcher.lifter.setPosition(lifterPosList.get(lifterPosition));
+                    launcher.updateMotors(lifterPosition);
                 }
                 // stalling = true;
                 // stalling shouldn't be required for non-continuous
             } else if (gamepad1.dpadUpWasPressed() && gamepad1.dpadUpWasReleased()) {
-                if (lifterPosition < 1) {
-                    lifterPosition += lifterIncrement;
-                    launcher.lifter.setPosition(lifterPosition);
+                if (lifterPosition < 4) {
+                    lifterPosition += 1;
+                    launcher.lifter.setPosition(lifterPosList.get(lifterPosition));
+                    launcher.updateMotors(lifterPosition);
                 }
                 // stalling = true;
             } /* else if (stalling) {
