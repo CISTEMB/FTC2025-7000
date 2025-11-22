@@ -64,10 +64,8 @@ public class LauncherSubsystem extends SubsystemBase {
     }
 
     public void prepare_shoot () {
-        if (motorVelocity < 950) {
-            motorVelocity = 950.0;
-        } else if (motorVelocity < 1250) {
-            motorVelocity = 1250.0;
+        if (motorVelocity < 1300) {
+            motorVelocity += 100;
         }
 
         //temp for testing
@@ -86,8 +84,8 @@ public class LauncherSubsystem extends SubsystemBase {
             leftMotor.setVelocity(motorVelocity);
             rightMotor.setVelocity(motorVelocity);
         } else {
-            leftMotor.setVelocity(0);
-            rightMotor.setVelocity(0);
+            leftMotor.setVelocity(650);
+            rightMotor.setVelocity(650);
         }
 
     }
