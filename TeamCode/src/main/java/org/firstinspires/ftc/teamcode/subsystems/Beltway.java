@@ -30,4 +30,10 @@ public class Beltway extends SubsystemBase {
     public void reverse() {
         servo.setPower(-1);
     }
+
+    @Override
+    public void periodic() {
+        super.periodic();
+        tm.addData("belt power", servo.getPower());
+    }
 }

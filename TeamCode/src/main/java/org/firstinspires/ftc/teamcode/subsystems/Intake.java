@@ -5,6 +5,7 @@ import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.CRServoImplEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.apache.commons.math3.analysis.function.Max;
@@ -20,6 +21,9 @@ public class Intake extends SubsystemBase {
         tm = telemetry;
         servo1 = hardwareMap.get(CRServo.class, "intakeServo1");
         servo2 = hardwareMap.get(CRServo.class, "intakeServo2");
+
+        servo1.setDirection(DcMotorSimple.Direction.REVERSE);
+        servo2.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
     public void forward() {
