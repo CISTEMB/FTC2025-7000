@@ -56,6 +56,15 @@ public class LauncherMotors extends SubsystemBase {
         setPIDFCoefficients(kP, kI, kD, kF);
     }
 
+    public double leftError() {
+        return (motorVelocity - leftMotor.getVelocity()) / motorVelocity * 10;
+    }
+
+
+    public double rightError() {
+        return (motorVelocity - rightMotor.getVelocity()) / motorVelocity * 10;
+    }
+
     @Override
     public void periodic() {
         super.periodic();
