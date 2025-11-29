@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.RunCommand;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
@@ -18,6 +19,7 @@ import org.firstinspires.ftc.teamcode.commands.IntakeSlowRollCommand;
 import org.firstinspires.ftc.teamcode.commands.IntakeStopCommand;
 import org.firstinspires.ftc.teamcode.commands.PickupCommand;
 import org.firstinspires.ftc.teamcode.commands.PrepareShootCommand;
+import org.firstinspires.ftc.teamcode.commands.PrepareShootCommandV2;
 import org.firstinspires.ftc.teamcode.commands.ReverseBeltwayCommand;
 import org.firstinspires.ftc.teamcode.commands.ReverseIntakeCommand;
 import org.firstinspires.ftc.teamcode.commands.StopBeltwayCommand;
@@ -135,7 +137,7 @@ public class CommandTeleopV2 extends CommandOpMode {
 
         // Right bumper: Prepare to shoot
         driverGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-            .whenPressed(new PrepareShootCommand(launcherMotors));
+            .whenPressed(new PrepareShootCommandV2(launcherMotors, lifter));
 
         // Y button: Shoot (hold to shoot, release to stop)
         driverGamepad.getGamepadButton(GamepadKeys.Button.B)
@@ -172,15 +174,24 @@ public class CommandTeleopV2 extends CommandOpMode {
 
         // A button: Pickup (hold to run, release to stop)
         driverGamepad.getGamepadButton(GamepadKeys.Button.A)
-            .whenPressed(new PickupCommand(intake));
+            .whenPressed(new PickupCommand(intake))
+            .whenReleased(new IntakeStopCommand(intake));
 
         // D-pad up: Increase lifter position
         driverGamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP)
-            .whenPressed(new IncreaseLifterPositionCommand(lifter));
+            .whenPressed(
+                new SequentialCommandGroup(
+                    new IncreaseLifterPositionCommand(lifter),
+                    new PrepareShootCommandV2(launcherMotors, lifter)
+                ));
 
         // D-pad down: Decrease lifter position
         driverGamepad.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
-            .whenPressed(new DecreaseLifterPositionCommand(lifter));
+            .whenPressed(
+                new SequentialCommandGroup(
+                    new DecreaseLifterPositionCommand(lifter),
+                    new PrepareShootCommandV2(launcherMotors, lifter)
+                ));
     }
 
     private void updateTelemetry() {

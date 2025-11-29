@@ -100,10 +100,10 @@ public class Drive extends SubsystemBase {
     }
 
     public void stop() {
-        leftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftBackMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightBackMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftFrontMotor.setPower(0.0);
+        leftBackMotor.setPower(0.0);
+        rightFrontMotor.setPower(0.0);
+        rightBackMotor.setPower(0.0);
     }
 
     public double inputCurve(double input) {
