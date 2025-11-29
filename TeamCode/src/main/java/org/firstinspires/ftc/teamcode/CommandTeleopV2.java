@@ -18,6 +18,8 @@ import org.firstinspires.ftc.teamcode.commands.IntakeSlowRollCommand;
 import org.firstinspires.ftc.teamcode.commands.IntakeStopCommand;
 import org.firstinspires.ftc.teamcode.commands.PickupCommand;
 import org.firstinspires.ftc.teamcode.commands.PrepareShootCommand;
+import org.firstinspires.ftc.teamcode.commands.ReverseBeltwayCommand;
+import org.firstinspires.ftc.teamcode.commands.ReverseIntakeCommand;
 import org.firstinspires.ftc.teamcode.commands.StopBeltwayCommand;
 import org.firstinspires.ftc.teamcode.commands.StopLauncherMotorsCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Beltway;
@@ -136,11 +138,11 @@ public class CommandTeleopV2 extends CommandOpMode {
             .whenPressed(new PrepareShootCommand(launcherMotors));
 
         // Y button: Shoot (hold to shoot, release to stop)
-        driverGamepad.getGamepadButton(GamepadKeys.Button.Y)
-            .whenPressed(
+        driverGamepad.getGamepadButton(GamepadKeys.Button.B)
+            .whenHeld(
                     new ParallelCommandGroup(
-                            new ForwardBeltwayCommand(beltway),
-                            new IntakeSlowRollCommand(intake)
+                            new ReverseBeltwayCommand(beltway),
+                            new ReverseIntakeCommand(intake)
                     )
             )
             .whenReleased(
@@ -149,6 +151,20 @@ public class CommandTeleopV2 extends CommandOpMode {
                             new IntakeStopCommand(intake)
                     )
             );
+
+        driverGamepad.getGamepadButton(GamepadKeys.Button.Y)
+                .whenHeld(
+                        new ParallelCommandGroup(
+                                new ForwardBeltwayCommand(beltway),
+                                new IntakeSlowRollCommand(intake)
+                        )
+                )
+                .whenReleased(
+                        new ParallelCommandGroup(
+                                new StopBeltwayCommand(beltway),
+                                new IntakeStopCommand(intake)
+                        )
+                );
 
         // X button: Auto-align to target
         driverGamepad.getGamepadButton(GamepadKeys.Button.X)

@@ -59,7 +59,7 @@ public class LauncherMotors extends SubsystemBase {
 
     public void prepareShoot() {
         if (motorVelocity < 1300) {
-            motorVelocity += 100;
+            motorVelocity += 25;
         }
         leftMotor.setVelocity(motorVelocity);
         rightMotor.setVelocity(motorVelocity);
@@ -81,11 +81,22 @@ public class LauncherMotors extends SubsystemBase {
         }
     }
 
-    public void stop() {
-        leftMotor.setVelocity(0.0);
-        rightMotor.setVelocity(0.0);
-        motorVelocity = 0.0;
-        prepped = false;
+//    public void stop() {
+//        leftMotor.setVelocity(0.0);
+//        rightMotor.setVelocity(0.0);
+//        motorVelocity = 0.0;
+//        prepped = false;
+//    }
+
+    public void stop () {
+        if (motorVelocity > 0) {
+            motorVelocity -= 25;
+            leftMotor.setVelocity(motorVelocity);
+            rightMotor.setVelocity(motorVelocity);
+        }
+        if (motorVelocity < 0){
+            motorVelocity = 0;
+        }
     }
 
     public boolean isPrepped() {

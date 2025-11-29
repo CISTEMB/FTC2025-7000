@@ -15,7 +15,7 @@ public class Lifter extends SubsystemBase {
     private double position;
     private final double increment = 0.1;
     private final double minPosition = 0.0;
-    private final double maxPosition = 0.1;
+    private final double maxPosition = 1.0;
 
     public Lifter(HardwareMap hardwareMap, Telemetry telemetry) {
         tm = telemetry;

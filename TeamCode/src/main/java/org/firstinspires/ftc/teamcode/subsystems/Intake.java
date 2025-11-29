@@ -42,7 +42,7 @@ public class Intake extends SubsystemBase {
     }
 
     public void slowRoll() {
-        servo1.setPower(0.1);
-        servo2.setPower(0.1);
+        servo1.setPower(0.4);
+        servo2.setPower(0.4);
     }
 }
