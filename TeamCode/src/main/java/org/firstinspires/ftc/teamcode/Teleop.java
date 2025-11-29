@@ -118,7 +118,7 @@ public class Teleop extends LinearOpMode {
             }
 
             if (gamepad1.right_trigger >= 0.75) {
-                launcher.stop_motors();
+                launcher.slow_motors();
             }
 
             if(gamepad1.rightBumperWasPressed() && gamepad1.rightBumperWasReleased()) {

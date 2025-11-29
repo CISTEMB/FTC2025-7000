@@ -64,9 +64,7 @@ public class LauncherSubsystem extends SubsystemBase {
     }
 
     public void prepare_shoot () {
-        if (motorVelocity < 1300) {
             motorVelocity += 100;
-        }
 
         //temp for testing
         leftMotor.setVelocity(motorVelocity);
@@ -113,6 +111,17 @@ public class LauncherSubsystem extends SubsystemBase {
         motorVelocity = 0.0;
         belt.setPower(0.0);
         prepped = false;
+    }
+
+    public void slow_motors () {
+        if (motorVelocity > 0) {
+            motorVelocity -= 100;
+            leftMotor.setVelocity(motorVelocity);
+            rightMotor.setVelocity(motorVelocity);
+        }
+        if (motorVelocity < 0){
+            motorVelocity = 0;
+        }
     }
 
     public boolean isPrepped () {
