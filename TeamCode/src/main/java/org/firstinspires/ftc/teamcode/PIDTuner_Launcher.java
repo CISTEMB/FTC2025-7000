@@ -78,7 +78,7 @@ New File: PIDTuner_Launcher.java
  *    - If velocity is consistently high: Decrease F
  * 5. Goal: Error should be < 5% consistently
  */
-@TeleOp(name = "PID Tuner: Launcher", group = "Tuning")
+@TeleOp(name = "PID Tuner: Launcher", group = "000-Main")
 public class PIDTuner_Launcher extends OpMode {
     private LauncherMotors launcher;
     private double targetVelocity = 800.0;
@@ -118,10 +118,12 @@ public class PIDTuner_Launcher extends OpMode {
         // Gamepad 1: Control launcher velocity
         if (gamepad1.dpad_up && !lastDpadUp1) {
             targetVelocity += velocityStep;
+            launcher.prepare(targetVelocity);
         }
         if (gamepad1.dpad_down && !lastDpadDown1) {
             targetVelocity -= velocityStep;
             if (targetVelocity < 0) targetVelocity = 0;
+            launcher.prepare(targetVelocity);
         }
 
         lastDpadUp1 = gamepad1.dpad_up;
@@ -187,16 +189,16 @@ public class PIDTuner_Launcher extends OpMode {
         lastB = gamepad2.b;
 
         // Display tuning status
-        telemetry.addData("=== CONTROLS ===", "");
-        telemetry.addData("GP1 D-Pad ↑↓", "Adjust target velocity");
-        telemetry.addData("GP1 RT", "Start launcher");
-        telemetry.addData("GP1 LT", "Stop launcher");
-        telemetry.addData("", "");
-        telemetry.addData("GP2 D-Pad ↑↓", "Tune P");
-        telemetry.addData("GP2 D-Pad ←→", "Tune I");
-        telemetry.addData("GP2 Y/A", "Tune F");
-        telemetry.addData("GP2 X/B", "Tune D");
-        telemetry.addData("", "");
+//        telemetry.addData("=== CONTROLS ===", "");
+//        telemetry.addData("GP1 D-Pad ↑↓", "Adjust target velocity");
+//        telemetry.addData("GP1 RT", "Start launcher");
+//        telemetry.addData("GP1 LT", "Stop launcher");
+//        telemetry.addData("", "");
+//        telemetry.addData("GP2 D-Pad ↑↓", "Tune P");
+//        telemetry.addData("GP2 D-Pad ←→", "Tune I");
+//        telemetry.addData("GP2 Y/A", "Tune F");
+//        telemetry.addData("GP2 X/B", "Tune D");
+//        telemetry.addData("", "");
 
         // Call periodic to display launcher status
         launcher.periodic();
