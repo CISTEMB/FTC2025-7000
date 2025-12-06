@@ -24,7 +24,6 @@ import org.firstinspires.ftc.teamcode.commands.ReverseBeltwayCommand;
 import org.firstinspires.ftc.teamcode.commands.ReverseIntakeCommand;
 import org.firstinspires.ftc.teamcode.commands.StopBeltwayCommand;
 import org.firstinspires.ftc.teamcode.commands.StopLauncherMotorsCommand;
-import org.firstinspires.ftc.teamcode.subsystems.BatteryMonitor;
 import org.firstinspires.ftc.teamcode.subsystems.Beltway;
 import org.firstinspires.ftc.teamcode.subsystems.Drive;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
@@ -43,8 +42,6 @@ public class CommandTeleopV2 extends CommandOpMode {
     private LimelightSubsystem limelight;
     private GamepadEx driverGamepad;
 
-    private BatteryMonitor batteryMonitor;
-
     private final ElapsedTime runtime = new ElapsedTime();
     private boolean isRed = true;
     private boolean hasStarted = false;
@@ -58,7 +55,6 @@ public class CommandTeleopV2 extends CommandOpMode {
         intake = new Intake(hardwareMap, telemetry);
         lifter = new Lifter(hardwareMap, telemetry);
         limelight = new LimelightSubsystem(hardwareMap, telemetry, new LEDSubsystem(hardwareMap, telemetry));
-        batteryMonitor = new BatteryMonitor(hardwareMap, telemetry);
 
         //default PID adjustments
         launcherMotors.adjustP(100);
@@ -105,9 +101,6 @@ public class CommandTeleopV2 extends CommandOpMode {
 
         // Update limelight
         limelight.read();
-
-        // Call periodic to update and display battery info
-        batteryMonitor.periodic();
 
         // Update telemetry
         updateTelemetry();
@@ -182,7 +175,7 @@ public class CommandTeleopV2 extends CommandOpMode {
 
         // X button: Auto-align to target
         driverGamepad.getGamepadButton(GamepadKeys.Button.X)
-            .whenPressed(new AutoAlignCommand(drive, limelight));
+            .whenPressed(new AutoAlignCommand(drive, limelight, telemetry, isRed));
 
         // A button: Pickup (hold to run, release to stop)
         driverGamepad.getGamepadButton(GamepadKeys.Button.A)
