@@ -115,6 +115,6 @@ public class Auto_RedGoalStart extends CommandOpMode {
 
     @Override
     public void run() {
-
+        super.run();
     }
 }

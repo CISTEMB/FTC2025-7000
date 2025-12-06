@@ -25,9 +25,9 @@ public class AutoAlignCommand extends CommandBase {
         this.isRed = isRed;
 
         if (this.isRed) {
-            alignmentRange = new Range<>(-2.0, 0.0);
+            alignmentRange = new Range<>(-1.5, -0.5);
         } else {
-            alignmentRange = new Range<>(0.0, 2.0);
+            alignmentRange = new Range<>(0.5, 1.5);
         }
 
         addRequirements(drive);
