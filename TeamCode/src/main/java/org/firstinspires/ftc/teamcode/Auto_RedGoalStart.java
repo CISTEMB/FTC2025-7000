@@ -37,6 +37,9 @@ public class Auto_RedGoalStart extends CommandOpMode {
     private LauncherMotors launcherMotors;
     private Lifter lifter;
 
+    private MecanumVelocityConstraint minVolConstraint = new MecanumVelocityConstraint(12, 18);
+    private ProfileAccelerationConstraint minProfAccelConstraint = new ProfileAccelerationConstraint(12);
+
 
     @Override
     public void initialize() {
@@ -44,6 +47,7 @@ public class Auto_RedGoalStart extends CommandOpMode {
         telemetry.addData("intialized", "true");
 
         drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hardwareMap), true);
+
         beltway = new Beltway(hardwareMap, telemetry);
         intake = new Intake(hardwareMap, telemetry);
         launcherMotors = new LauncherMotors(hardwareMap, telemetry);
@@ -51,9 +55,11 @@ public class Auto_RedGoalStart extends CommandOpMode {
 
 
         TrajectorySequence sequence1 = drive.trajectorySequenceBuilder(new Pose2d(-49.5, 49.5, Math.toRadians(126))) //starting position
-                .back(16)
+                .back(16, minVolConstraint, minProfAccelConstraint)
                 .turn(Math.toRadians(5))
                 .build();
+
+        drive.setPoseEstimate(sequence1.start());
 
 //        launcherMotors.leftMotor.setVelocity(750);
 //        launcherMotors.rightMotor.setVelocity(750);
@@ -93,21 +99,23 @@ public class Auto_RedGoalStart extends CommandOpMode {
         schedule(
                 new SequentialCommandGroup(
                         new TrajectoryFollowerCommand(drive, sequence1),
-                        new SetLifterPosition(0.8, lifter),
-                        new PrepareShootCommandV2(launcherMotors, lifter),
-                        new ShootCommand(beltway, intake),
-                        new StopLauncherMotorsCommand(launcherMotors, beltway),
+                        new WaitCommand(1000),
+                        //new SetLifterPosition(0.8, lifter),
+                        //new PrepareShootCommandV2(launcherMotors, lifter),
+                        //new ShootCommand(beltway, intake),
+                        //new StopLauncherMotorsCommand(launcherMotors, beltway),
                         new WaitCommand(1000),
                         new TrajectoryFollowerCommand(drive, sequence2),
                         new ParallelCommandGroup(
-                                new TrajectoryFollowerCommand(drive, sequence3),
-                                new PickupCommand(intake)
+                                new TrajectoryFollowerCommand(drive, sequence3)
+                                //new PickupCommand(intake)
                         ),
                         new TrajectoryFollowerCommand(drive, sequence4),
-                        new SetLifterPosition(0.7, lifter),
-                        new PrepareShootCommandV2(launcherMotors, lifter),
-                        new ShootCommand(beltway, intake),
-                        new StopLauncherMotorsCommand(launcherMotors, beltway),
+                        new TrajectoryFollowerCommand(drive, sequence3),
+                        //new SetLifterPosition(0.7, lifter),
+                        //new PrepareShootCommandV2(launcherMotors, lifter),
+                        //new ShootCommand(beltway, intake),
+                        //new StopLauncherMotorsCommand(launcherMotors, beltway),
                         new TrajectoryFollowerCommand(drive, sequence5)
                 )
         );
