@@ -11,7 +11,7 @@ public class AutoAlignCommand extends CommandBase {
 
     private Drive drive;
     private LimelightSubsystem limelight;
-    private final Range<Double> alignmentRange = new Range<>(-5.0, 5.0);
+    private final Range<Double> alignmentRange = new Range<>(-0.5, 0.5);
     private boolean hasTarget;
 
     public AutoAlignCommand(Drive drive, LimelightSubsystem limelight) {
@@ -30,14 +30,11 @@ public class AutoAlignCommand extends CommandBase {
         limelight.read();
         if (limelight.result != null) {
             double x = limelight.result.getTx();
+            double turnSpeed = x * 0.05; // <-- turn the robot proportional to tx to have better accuracy
 
-            if (!alignmentRange.contains(x)) {
-                if (x < 0.0) {
-                    drive.arcadeDrive(0.0, -0.3, 0.0, false);
-                } else {
-                    drive.arcadeDrive(0.0, 0.3, 0.0, false);
-                }
-            }
+            turnSpeed = Math.max(-0.4, Math.min(0.4, turnSpeed));
+
+            drive.arcadeDrive(0.0, turnSpeed, 0.0, false);
         }
     }
 
