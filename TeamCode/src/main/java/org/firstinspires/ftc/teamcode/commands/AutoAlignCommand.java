@@ -27,8 +27,8 @@ public class AutoAlignCommand extends CommandBase {
 
     @Override
     public void execute() {
+        limelight.read();
         if (limelight.result != null) {
-            limelight.read();
             double x = limelight.result.getTx();
 
             if (!alignmentRange.contains(x)) {

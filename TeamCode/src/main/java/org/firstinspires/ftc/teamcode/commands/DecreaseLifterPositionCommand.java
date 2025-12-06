@@ -7,6 +7,6 @@ import org.firstinspires.ftc.teamcode.subsystems.Lifter;
 public class DecreaseLifterPositionCommand extends InstantCommand {
 
     public DecreaseLifterPositionCommand(Lifter lifter) {
-        super(() -> lifter.decreasePosition(), lifter);
+        super(lifter::decreasePosition, lifter);
     }
 }
