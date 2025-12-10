@@ -25,9 +25,9 @@ public class AutoAlignCommand extends CommandBase {
         this.isRed = isRed;
 
         if (this.isRed) {
-            alignmentRange = new Range<>(-1.5, -0.5);
+            alignmentRange = new Range<>(-1.0, 0.0);
         } else {
-            alignmentRange = new Range<>(0.5, 1.5);
+            alignmentRange = new Range<>(-0.0, 1.0);
         }
 
         addRequirements(drive);
@@ -48,7 +48,7 @@ public class AutoAlignCommand extends CommandBase {
             turnSpeed = x * Math.abs(x) * 0.0067 + 0.1 * Math.signum(x);   // <-- turn the robot proportional to tx to have better accuracy
             // Note: x^2 * 0.067 + 0.04 while maintaining whether x is positive or negative
 
-            //turnSpeed = Math.max(-0.4, Math.min(0.4, turnSpeed));
+            turnSpeed = Math.max(-0.4, Math.min(0.4, turnSpeed));
 
             if (Double.isNaN(turnSpeed)) turnSpeed = 0;
             drive.arcadeDrive(0.0, turnSpeed, 0.0, false);

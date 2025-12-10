@@ -13,10 +13,8 @@ import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.commands.IncreaseLifterPositionCommand;
-import org.firstinspires.ftc.teamcode.commands.PickupCommand;
 import org.firstinspires.ftc.teamcode.commands.PrepareShootCommandV2;
-import org.firstinspires.ftc.teamcode.commands.SetLifterPosition;
+import org.firstinspires.ftc.teamcode.commands.SetLifterPositionCommand;
 import org.firstinspires.ftc.teamcode.commands.ShootCommand;
 import org.firstinspires.ftc.teamcode.commands.StopLauncherMotorsCommand;
 import org.firstinspires.ftc.teamcode.commands.roadrunner.TrajectoryFollowerCommand;
@@ -37,17 +35,17 @@ public class Auto_RedGoalStart extends CommandOpMode {
     private LauncherMotors launcherMotors;
     private Lifter lifter;
 
-    private MecanumVelocityConstraint minVolConstraint = new MecanumVelocityConstraint(12, 18);
-    private ProfileAccelerationConstraint minProfAccelConstraint = new ProfileAccelerationConstraint(12);
+    private MecanumVelocityConstraint minVolConstraint = new MecanumVelocityConstraint(25, 25);
+    private ProfileAccelerationConstraint minProfAccelConstraint = new ProfileAccelerationConstraint(25);
 
 
     @Override
     public void initialize() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry.addData("intialized", "true");
+        telemetry.update();
 
         drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hardwareMap), true);
-
         beltway = new Beltway(hardwareMap, telemetry);
         intake = new Intake(hardwareMap, telemetry);
         launcherMotors = new LauncherMotors(hardwareMap, telemetry);
@@ -55,7 +53,7 @@ public class Auto_RedGoalStart extends CommandOpMode {
 
 
         TrajectorySequence sequence1 = drive.trajectorySequenceBuilder(new Pose2d(-49.5, 49.5, Math.toRadians(126))) //starting position
-                .back(16, minVolConstraint, minProfAccelConstraint)
+                .forward(32, minVolConstraint, minProfAccelConstraint)
                 .turn(Math.toRadians(5))
                 .build();
 
@@ -74,7 +72,7 @@ public class Auto_RedGoalStart extends CommandOpMode {
         // activate intake while driving forward, make sure to activate top belt slightly (0.25s) about half way through to move up top ball
 
         TrajectorySequence sequence3 = drive.trajectorySequenceBuilder(sequence2.end())
-                .back(21, new MecanumVelocityConstraint(12, 18), new ProfileAccelerationConstraint(12))
+                .forward(21, new MecanumVelocityConstraint(12, 18), new ProfileAccelerationConstraint(12))
                 .build();
 
         TrajectorySequence sequence4 = drive.trajectorySequenceBuilder(sequence3.end())
@@ -88,22 +86,24 @@ public class Auto_RedGoalStart extends CommandOpMode {
 //                .waitSeconds(3)
 //
 //                        .turn(Math.toRadians(90))
-//                        .forward(30)
+//                        .back(30)
 //                        .turn(Math.toRadians(90))
-//                        .forward(30)
+//                        .back(30)
 //                        .turn(Math.toRadians(90))
-//                        .forward(30)
+//                        .back(30)
 //                        .turn(Math.toRadians(90))
                 .build();
 
         schedule(
                 new SequentialCommandGroup(
                         new TrajectoryFollowerCommand(drive, sequence1),
-                        new WaitCommand(1000),
-                        //new SetLifterPosition(0.8, lifter),
-                        //new PrepareShootCommandV2(launcherMotors, lifter),
-                        //new ShootCommand(beltway, intake),
-                        //new StopLauncherMotorsCommand(launcherMotors, beltway),
+                        new ParallelCommandGroup(
+                            new WaitCommand(1000),
+                            new SetLifterPositionCommand(3, lifter),
+                            new PrepareShootCommandV2(launcherMotors, lifter)
+                        ),
+                        new ShootCommand(beltway, intake),
+                        new StopLauncherMotorsCommand(launcherMotors, beltway),
                         new WaitCommand(1000),
                         new TrajectoryFollowerCommand(drive, sequence2),
                         new ParallelCommandGroup(
@@ -124,5 +124,6 @@ public class Auto_RedGoalStart extends CommandOpMode {
     @Override
     public void run() {
         super.run();
+        telemetry.update();
     }
 }

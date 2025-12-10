@@ -53,7 +53,7 @@ public class MecanumDriveSubsystem extends SubsystemBase {
     public void drive(double leftY, double leftX, double rightX) {
         Pose2d poseEstimate = getPoseEstimate();
 
-        Vector2d input = new Vector2d(-leftY, -leftX).rotated(
+        Vector2d input = new Vector2d(leftY, -leftX).rotated(
                 fieldCentric ? -poseEstimate.getHeading() : 0
         );
 

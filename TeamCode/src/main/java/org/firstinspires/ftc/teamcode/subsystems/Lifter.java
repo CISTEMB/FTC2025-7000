@@ -60,6 +60,7 @@ public class Lifter extends SubsystemBase {
     @Override
     public void periodic() {
         super.periodic();
-        tm.addData("lifter position", lifterPosList.get(currentPosition));
+        tm.addData("lifter target position", lifterPosList.get(currentPosition));
+        tm.addData("lifter actual position", servo.getPosition());
     }
 }

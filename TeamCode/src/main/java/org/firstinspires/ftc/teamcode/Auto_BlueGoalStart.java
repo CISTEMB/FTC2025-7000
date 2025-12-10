@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.commands.PickupCommand;
 import org.firstinspires.ftc.teamcode.commands.PrepareShootCommandV2;
-import org.firstinspires.ftc.teamcode.commands.SetLifterPosition;
+import org.firstinspires.ftc.teamcode.commands.SetLifterPositionCommand;
 import org.firstinspires.ftc.teamcode.commands.ShootCommand;
 import org.firstinspires.ftc.teamcode.commands.StopLauncherMotorsCommand;
 import org.firstinspires.ftc.teamcode.commands.roadrunner.TrajectoryFollowerCommand;
@@ -42,7 +42,7 @@ public class Auto_BlueGoalStart extends CommandOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry.addData("intialized", "true");
 
-        drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hardwareMap), true);
+        drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hardwareMap), false);
         beltway = new Beltway(hardwareMap, telemetry);
         intake = new Intake(hardwareMap, telemetry);
         launcherMotors = new LauncherMotors(hardwareMap, telemetry);
@@ -92,7 +92,7 @@ public class Auto_BlueGoalStart extends CommandOpMode {
         schedule(
                 new SequentialCommandGroup(
                         new TrajectoryFollowerCommand(drive, sequence1),
-                        new SetLifterPosition(0.8, lifter),
+                        new SetLifterPositionCommand(3, lifter),
                         new PrepareShootCommandV2(launcherMotors, lifter),
                         new ShootCommand(beltway, intake),
                         new StopLauncherMotorsCommand(launcherMotors, beltway),
@@ -103,7 +103,7 @@ public class Auto_BlueGoalStart extends CommandOpMode {
                                 new PickupCommand(intake)
                         ),
                         new TrajectoryFollowerCommand(drive, sequence4),
-                        new SetLifterPosition(0.7, lifter),
+                        new SetLifterPositionCommand(3, lifter),
                         new PrepareShootCommandV2(launcherMotors, lifter),
                         new ShootCommand(beltway, intake),
                         new StopLauncherMotorsCommand(launcherMotors, beltway),

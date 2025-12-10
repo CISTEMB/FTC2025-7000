@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 public class LauncherMotors extends SubsystemBase {
@@ -16,6 +18,9 @@ public class LauncherMotors extends SubsystemBase {
     public DcMotorEx leftMotor;
     public DcMotorEx rightMotor;
     private Telemetry tm;
+
+    private ArrayList<Double> readings;
+
 
     private double motorVelocity = 0.0;
     private boolean prepped = false;
@@ -36,6 +41,7 @@ public class LauncherMotors extends SubsystemBase {
             List.of(700.0, 975.0, 750.0, 750.0, 700.0); // all angles required for normal gameplay
 
     public LauncherMotors(HardwareMap hardwareMap, Telemetry telemetry) {
+        readings = new ArrayList<>();
         tm = telemetry;
 
         leftMotor = hardwareMap.get(DcMotorEx.class, "leftLauncherMotor");
@@ -71,6 +77,10 @@ public class LauncherMotors extends SubsystemBase {
         double actualVelocity = leftMotor.getVelocity();
         double velocityError = motorVelocity - actualVelocity;
         double errorPercent = motorVelocity > 0 ? (velocityError / motorVelocity) * 100 : 0;
+        readings.add(velocityError);
+        if (readings.size() > 200) {
+            readings.remove(0);
+        }
 
         tm.addData("--- LAUNCHER STATUS ---", "");
         tm.addData("Target Velocity", "%.0f ticks/sec", motorVelocity);
@@ -78,6 +88,7 @@ public class LauncherMotors extends SubsystemBase {
         tm.addData("Actual Velocity (R)", "%.0f ticks/sec", rightMotor.getVelocity());
         tm.addData("Velocity Error", "%.0f ticks/sec (%.1f%%)", velocityError, errorPercent);
         tm.addData("Prepped", prepped);
+        tm.addData("Average Error", getAverage(readings));
         tm.addData("--- PID COEFFICIENTS ---", "");
         tm.addData("P", "%.2f", kP);
         tm.addData("I", "%.2f", kI);
@@ -90,6 +101,16 @@ public class LauncherMotors extends SubsystemBase {
         leftMotor.setVelocity(motorVelocity);
         rightMotor.setVelocity(motorVelocity);
         prepped = true;
+    }
+
+    private double getAverage(ArrayList<Double> values) {
+        if (values.isEmpty()) return 0.0;
+
+        double sum = 0.0;
+        for (double value : values) {
+            sum += value;
+        }
+        return sum / values.size();
     }
 
     public void setSpeedBasedOnLifterPosition(int lifterPosition) {
