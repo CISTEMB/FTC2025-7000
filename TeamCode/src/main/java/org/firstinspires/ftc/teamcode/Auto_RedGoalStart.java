@@ -50,6 +50,7 @@ public class Auto_RedGoalStart extends CommandOpMode {
         intake = new Intake(hardwareMap, telemetry);
         launcherMotors = new LauncherMotors(hardwareMap, telemetry);
         lifter = new Lifter(hardwareMap, telemetry);
+        lifter.setServoPosition(0.0); //level out the servo
 
 
         TrajectorySequence sequence1 = drive.trajectorySequenceBuilder(new Pose2d(-49.5, 49.5, Math.toRadians(126))) //starting position
@@ -125,5 +126,14 @@ public class Auto_RedGoalStart extends CommandOpMode {
     public void run() {
         super.run();
         telemetry.update();
+    }
+
+    @Override
+    public void reset() {
+        //stop everything
+        lifter.setServoPosition(0.0);
+        launcherMotors.stop();
+        beltway.stop();
+        intake.stop();
     }
 }

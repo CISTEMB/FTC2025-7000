@@ -22,10 +22,22 @@ public class Lifter extends SubsystemBase {
     private final List<Double> lifterPosList =
             List.of(0.0, 0.3, 0.6, 0.8, 1.0); // all angles required for normal gameplay
 
+    public void increasePosition() {
+        if (currentPosition < maxPosition) {
+            currentPosition += increment;
+            servo.setPosition(lifterPosList.get(currentPosition));
+        }
+    }
+
+
     public Lifter(HardwareMap hardwareMap, Telemetry telemetry) {
         tm = telemetry;
         servo = hardwareMap.get(Servo.class, "lifterServo");
-        // angleInput = hardwareMap.get(AnalogInput.class, "lifterAngle");
+    }
+
+    public void setServoPosition(double position) {
+        servo.setPosition(position);
+        tm.addData("setServoPosition", position);
     }
 
     public void setPosition(int position) {
@@ -37,12 +49,7 @@ public class Lifter extends SubsystemBase {
         return currentPosition;
     }
 
-    public void increasePosition() {
-        if (currentPosition < maxPosition) {
-            currentPosition += increment;
-            servo.setPosition(lifterPosList.get(currentPosition));
-        }
-    }
+
 
     public void decreasePosition() {
         if (currentPosition > minPosition) {
