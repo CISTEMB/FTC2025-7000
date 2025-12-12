@@ -13,7 +13,6 @@ import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.commands.PickupCommand;
 import org.firstinspires.ftc.teamcode.commands.PrepareShootCommandV2;
 import org.firstinspires.ftc.teamcode.commands.SetLifterPositionCommand;
 import org.firstinspires.ftc.teamcode.commands.ShootCommand;
@@ -36,23 +35,30 @@ public class Auto_BlueGoalStart extends CommandOpMode {
     private LauncherMotors launcherMotors;
     private Lifter lifter;
 
+    private MecanumVelocityConstraint minVolConstraint = new MecanumVelocityConstraint(25, 25);
+    private ProfileAccelerationConstraint minProfAccelConstraint = new ProfileAccelerationConstraint(25);
+
 
     @Override
     public void initialize() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry.addData("intialized", "true");
+        telemetry.update();
 
-        drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hardwareMap), false);
+        drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hardwareMap), true);
         beltway = new Beltway(hardwareMap, telemetry);
         intake = new Intake(hardwareMap, telemetry);
         launcherMotors = new LauncherMotors(hardwareMap, telemetry);
         lifter = new Lifter(hardwareMap, telemetry);
+        lifter.setServoPosition(0.0); //level out the servo
 
 
-        TrajectorySequence sequence1 = drive.trajectorySequenceBuilder(new Pose2d(-49.5, -49.5, Math.toRadians(-126))) //starting position
-                .back(16)
+        TrajectorySequence sequence1 = drive.trajectorySequenceBuilder(new Pose2d(-49.5, 49.5, Math.toRadians(126))) //starting position
+                .forward(36, minVolConstraint, minProfAccelConstraint)
                 .turn(Math.toRadians(-5))
                 .build();
+
+        drive.setPoseEstimate(sequence1.start());
 
 //        launcherMotors.leftMotor.setVelocity(750);
 //        launcherMotors.rightMotor.setVelocity(750);
@@ -60,60 +66,75 @@ public class Auto_BlueGoalStart extends CommandOpMode {
 
         TrajectorySequence sequence2 = drive.trajectorySequenceBuilder(sequence1.end())
                 .setReversed(true)
-                .splineTo(new Vector2d(-12, -28), Math.toRadians(-90))
+                .splineTo(new Vector2d(-12, 28), Math.toRadians(90))
                 .setReversed(false)
                 .build();
 
         // activate intake while driving forward, make sure to activate top belt slightly (0.25s) about half way through to move up top ball
 
-        TrajectorySequence sequence3 = drive.trajectorySequenceBuilder(sequence2.end())
-                .back(21, new MecanumVelocityConstraint(12, 18), new ProfileAccelerationConstraint(12))
-                .build();
-
-        TrajectorySequence sequence4 = drive.trajectorySequenceBuilder(sequence3.end())
-                .splineToLinearHeading(new Pose2d(-40.5, -36.5, Math.toRadians(-126)), Math.toRadians(-135))
-                .build();
+//        TrajectorySequence sequence3 = drive.trajectorySequenceBuilder(sequence2.end())
+//                .forward(21, new MecanumVelocityConstraint(12, 18), new ProfileAccelerationConstraint(12))
+//                .build();
+//
+//        TrajectorySequence sequence4 = drive.trajectorySequenceBuilder(sequence3.end())
+//                .splineToLinearHeading(new Pose2d(-40.5, 36.5, Math.toRadians(126)), Math.toRadians(135))
+//                .build();
 
         // shoot again, angle around 0.7 this time
 
-        TrajectorySequence sequence5 = drive.trajectorySequenceBuilder(sequence4.end())
-                .strafeRight(12)
+        TrajectorySequence sequence5 = drive.trajectorySequenceBuilder(sequence1.end())
+                .strafeLeft(20)
 //                .waitSeconds(3)
 //
 //                        .turn(Math.toRadians(90))
-//                        .forward(30)
+//                        .back(30)
 //                        .turn(Math.toRadians(90))
-//                        .forward(30)
+//                        .back(30)
 //                        .turn(Math.toRadians(90))
-//                        .forward(30)
+//                        .back(30)
 //                        .turn(Math.toRadians(90))
                 .build();
 
         schedule(
                 new SequentialCommandGroup(
                         new TrajectoryFollowerCommand(drive, sequence1),
-                        new SetLifterPositionCommand(3, lifter),
-                        new PrepareShootCommandV2(launcherMotors, lifter),
-                        new ShootCommand(beltway, intake, 1500),
+                        new ParallelCommandGroup(
+                                new WaitCommand(1600),
+                                new SetLifterPositionCommand(5, lifter),
+                                new PrepareShootCommandV2(launcherMotors, lifter)
+                        ),
+                        new ShootCommand(beltway, intake, 2750),
                         new StopLauncherMotorsCommand(launcherMotors, beltway),
                         new WaitCommand(1000),
-                        new TrajectoryFollowerCommand(drive, sequence2),
-                        new ParallelCommandGroup(
-                                new TrajectoryFollowerCommand(drive, sequence3),
-                                new PickupCommand(intake)
-                        ),
-                        new TrajectoryFollowerCommand(drive, sequence4),
-                        new SetLifterPositionCommand(3, lifter),
-                        new PrepareShootCommandV2(launcherMotors, lifter),
-                        new ShootCommand(beltway, intake, 1500),
-                        new StopLauncherMotorsCommand(launcherMotors, beltway),
                         new TrajectoryFollowerCommand(drive, sequence5)
+//                        new TrajectoryFollowerCommand(drive, sequence2),
+//                        new ParallelCommandGroup(
+//                                new TrajectoryFollowerCommand(drive, sequence3)
+//                                //new PickupCommand(intake)
+//                        ),
+//                        new TrajectoryFollowerCommand(drive, sequence4),
+//                        new TrajectoryFollowerCommand(drive, sequence3),
+//                        //new SetLifterPosition(0.7, lifter),
+//                        //new PrepareShootCommandV2(launcherMotors, lifter),
+//                        //new ShootCommand(beltway, intake),
+//                        //new StopLauncherMotorsCommand(launcherMotors, beltway),
+//                        new TrajectoryFollowerCommand(drive, sequence5)
                 )
         );
     }
 
     @Override
     public void run() {
+        super.run();
+        telemetry.update();
+    }
 
+    @Override
+    public void reset() {
+        //stop everything
+        lifter.setServoPosition(0.0);
+        launcherMotors.stop();
+        beltway.stop();
+        intake.stop();
     }
 }

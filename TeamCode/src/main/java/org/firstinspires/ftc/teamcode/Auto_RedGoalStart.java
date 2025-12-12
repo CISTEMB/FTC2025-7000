@@ -83,7 +83,7 @@ public class Auto_RedGoalStart extends CommandOpMode {
         // shoot again, angle around 0.7 this time
 
         TrajectorySequence sequence5 = drive.trajectorySequenceBuilder(sequence1.end())
-                .strafeLeft(15)
+                .strafeRight(20)
 //                .waitSeconds(3)
 //
 //                        .turn(Math.toRadians(90))
