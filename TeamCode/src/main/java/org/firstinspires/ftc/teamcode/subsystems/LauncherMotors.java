@@ -38,7 +38,7 @@ public class LauncherMotors extends SubsystemBase {
 
     //825
     private final List<Double> motorVelocities =
-            List.of(700.0, 975.0, 750.0, 750.0, 700.0, 490.0, 2000.0); // all angles required for normal gameplay
+            List.of(700.0, 975.0, 750.0, 750.0, 700.0, 540.0); // all angles required for normal gameplay
 
     public LauncherMotors(HardwareMap hardwareMap, Telemetry telemetry) {
         readings = new ArrayList<>();

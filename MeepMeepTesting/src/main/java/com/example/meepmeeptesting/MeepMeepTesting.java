@@ -30,23 +30,24 @@ public class MeepMeepTesting {
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 18)
                 .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(new Pose2d(-49.5, 49.5, Math.toRadians(126))) //starting position
-                        .back(16)
+                        .back(32)
                         .turn(Math.toRadians(5))
                         // In actual autonomous, add these commands here:
                         // launcher.leftMotor.setVelocity(750);
                         // launcher.rightMotor.setVelocity(750);
-                        // lifter.setPosition(3);  // Position 3 = 0.8
-                        .waitSeconds(1)
+                        // lifter.setPosition(3);  // Position 3 = 0.
                         .setReversed(true)
                         .splineTo(new Vector2d(-12, 28), Math.toRadians(90))
                         .setReversed(false)
+
+
                         .waitSeconds(1)
-                        .back(21, new MecanumVelocityConstraint(12, 18), new ProfileAccelerationConstraint(12))
+                        //.back(21, new MecanumVelocityConstraint(12, 18), new ProfileAccelerationConstraint(12))
                         // activate intake while driving forward, make sure to activate top belt slightly (0.25s) about half way through to move up top ball
 
-                        .splineToLinearHeading(new Pose2d(-40.5, 36.5, Math.toRadians(126)), Math.toRadians(135))
+                        //.splineToLinearHeading(new Pose2d(-40.5, 36.5, Math.toRadians(126)), Math.toRadians(135))
                         // shoot again, angle around 0.7 this time
-                        .strafeLeft(12)
+                        //.strafeLeft(12)
                         .waitSeconds(3)
 //
 //                        .turn(Math.toRadians(90))

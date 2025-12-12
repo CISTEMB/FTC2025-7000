@@ -199,7 +199,7 @@ public class CommandTeleopV2 extends CommandOpMode {
                     new PrepareShootCommandV2(launcherMotors, lifter)
                 ));
 
-        // Back button: Set lifter to position 6
+        // Back button: Set lifter to pzosition 6
         driverGamepad.getGamepadButton(GamepadKeys.Button.BACK)
             .whenPressed(new SetLifterPositionCommand(6, lifter));
     }

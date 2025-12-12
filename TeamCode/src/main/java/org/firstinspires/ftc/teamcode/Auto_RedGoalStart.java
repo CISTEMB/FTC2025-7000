@@ -54,7 +54,7 @@ public class Auto_RedGoalStart extends CommandOpMode {
 
 
         TrajectorySequence sequence1 = drive.trajectorySequenceBuilder(new Pose2d(-49.5, 49.5, Math.toRadians(126))) //starting position
-                .forward(40, minVolConstraint, minProfAccelConstraint)
+                .forward(36, minVolConstraint, minProfAccelConstraint)
                 .turn(Math.toRadians(5))
                 .build();
 
@@ -72,18 +72,18 @@ public class Auto_RedGoalStart extends CommandOpMode {
 
         // activate intake while driving forward, make sure to activate top belt slightly (0.25s) about half way through to move up top ball
 
-        TrajectorySequence sequence3 = drive.trajectorySequenceBuilder(sequence2.end())
-                .forward(21, new MecanumVelocityConstraint(12, 18), new ProfileAccelerationConstraint(12))
-                .build();
-
-        TrajectorySequence sequence4 = drive.trajectorySequenceBuilder(sequence3.end())
-                .splineToLinearHeading(new Pose2d(-40.5, 36.5, Math.toRadians(126)), Math.toRadians(135))
-                .build();
+//        TrajectorySequence sequence3 = drive.trajectorySequenceBuilder(sequence2.end())
+//                .forward(21, new MecanumVelocityConstraint(12, 18), new ProfileAccelerationConstraint(12))
+//                .build();
+//
+//        TrajectorySequence sequence4 = drive.trajectorySequenceBuilder(sequence3.end())
+//                .splineToLinearHeading(new Pose2d(-40.5, 36.5, Math.toRadians(126)), Math.toRadians(135))
+//                .build();
 
         // shoot again, angle around 0.7 this time
 
-        TrajectorySequence sequence5 = drive.trajectorySequenceBuilder(sequence4.end())
-                .strafeLeft(12)
+        TrajectorySequence sequence5 = drive.trajectorySequenceBuilder(sequence1.end())
+                .strafeLeft(15)
 //                .waitSeconds(3)
 //
 //                        .turn(Math.toRadians(90))
@@ -100,24 +100,25 @@ public class Auto_RedGoalStart extends CommandOpMode {
                         new TrajectoryFollowerCommand(drive, sequence1),
                         new ParallelCommandGroup(
                             new WaitCommand(1600),
-                            new SetLifterPositionCommand(6, lifter),
+                            new SetLifterPositionCommand(5, lifter),
                             new PrepareShootCommandV2(launcherMotors, lifter)
                         ),
                         new ShootCommand(beltway, intake, 2750),
                         new StopLauncherMotorsCommand(launcherMotors, beltway),
                         new WaitCommand(1000),
-                        new TrajectoryFollowerCommand(drive, sequence2),
-                        new ParallelCommandGroup(
-                                new TrajectoryFollowerCommand(drive, sequence3)
-                                //new PickupCommand(intake)
-                        ),
-                        new TrajectoryFollowerCommand(drive, sequence4),
-                        new TrajectoryFollowerCommand(drive, sequence3),
-                        //new SetLifterPosition(0.7, lifter),
-                        //new PrepareShootCommandV2(launcherMotors, lifter),
-                        //new ShootCommand(beltway, intake),
-                        //new StopLauncherMotorsCommand(launcherMotors, beltway),
                         new TrajectoryFollowerCommand(drive, sequence5)
+//                        new TrajectoryFollowerCommand(drive, sequence2),
+//                        new ParallelCommandGroup(
+//                                new TrajectoryFollowerCommand(drive, sequence3)
+//                                //new PickupCommand(intake)
+//                        ),
+//                        new TrajectoryFollowerCommand(drive, sequence4),
+//                        new TrajectoryFollowerCommand(drive, sequence3),
+//                        //new SetLifterPosition(0.7, lifter),
+//                        //new PrepareShootCommandV2(launcherMotors, lifter),
+//                        //new ShootCommand(beltway, intake),
+//                        //new StopLauncherMotorsCommand(launcherMotors, beltway),
+//                        new TrajectoryFollowerCommand(drive, sequence5)
                 )
         );
     }
