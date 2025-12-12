@@ -22,6 +22,7 @@ import org.firstinspires.ftc.teamcode.commands.PrepareShootCommand;
 import org.firstinspires.ftc.teamcode.commands.PrepareShootCommandV2;
 import org.firstinspires.ftc.teamcode.commands.ReverseBeltwayCommand;
 import org.firstinspires.ftc.teamcode.commands.ReverseIntakeCommand;
+import org.firstinspires.ftc.teamcode.commands.SetLifterPositionCommand;
 import org.firstinspires.ftc.teamcode.commands.StopBeltwayCommand;
 import org.firstinspires.ftc.teamcode.commands.StopLauncherMotorsCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Beltway;
@@ -197,6 +198,10 @@ public class CommandTeleopV2 extends CommandOpMode {
                     new DecreaseLifterPositionCommand(lifter),
                     new PrepareShootCommandV2(launcherMotors, lifter)
                 ));
+
+        // Back button: Set lifter to position 6
+        driverGamepad.getGamepadButton(GamepadKeys.Button.BACK)
+            .whenPressed(new SetLifterPositionCommand(6, lifter));
     }
 
     private void updateTelemetry() {

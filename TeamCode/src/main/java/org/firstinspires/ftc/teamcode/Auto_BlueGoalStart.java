@@ -94,7 +94,7 @@ public class Auto_BlueGoalStart extends CommandOpMode {
                         new TrajectoryFollowerCommand(drive, sequence1),
                         new SetLifterPositionCommand(3, lifter),
                         new PrepareShootCommandV2(launcherMotors, lifter),
-                        new ShootCommand(beltway, intake),
+                        new ShootCommand(beltway, intake, 1500),
                         new StopLauncherMotorsCommand(launcherMotors, beltway),
                         new WaitCommand(1000),
                         new TrajectoryFollowerCommand(drive, sequence2),
@@ -105,7 +105,7 @@ public class Auto_BlueGoalStart extends CommandOpMode {
                         new TrajectoryFollowerCommand(drive, sequence4),
                         new SetLifterPositionCommand(3, lifter),
                         new PrepareShootCommandV2(launcherMotors, lifter),
-                        new ShootCommand(beltway, intake),
+                        new ShootCommand(beltway, intake, 1500),
                         new StopLauncherMotorsCommand(launcherMotors, beltway),
                         new TrajectoryFollowerCommand(drive, sequence5)
                 )

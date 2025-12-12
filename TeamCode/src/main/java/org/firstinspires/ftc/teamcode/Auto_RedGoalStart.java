@@ -54,7 +54,7 @@ public class Auto_RedGoalStart extends CommandOpMode {
 
 
         TrajectorySequence sequence1 = drive.trajectorySequenceBuilder(new Pose2d(-49.5, 49.5, Math.toRadians(126))) //starting position
-                .forward(32, minVolConstraint, minProfAccelConstraint)
+                .forward(40, minVolConstraint, minProfAccelConstraint)
                 .turn(Math.toRadians(5))
                 .build();
 
@@ -99,11 +99,11 @@ public class Auto_RedGoalStart extends CommandOpMode {
                 new SequentialCommandGroup(
                         new TrajectoryFollowerCommand(drive, sequence1),
                         new ParallelCommandGroup(
-                            new WaitCommand(1000),
-                            new SetLifterPositionCommand(3, lifter),
+                            new WaitCommand(1600),
+                            new SetLifterPositionCommand(6, lifter),
                             new PrepareShootCommandV2(launcherMotors, lifter)
                         ),
-                        new ShootCommand(beltway, intake),
+                        new ShootCommand(beltway, intake, 2750),
                         new StopLauncherMotorsCommand(launcherMotors, beltway),
                         new WaitCommand(1000),
                         new TrajectoryFollowerCommand(drive, sequence2),
