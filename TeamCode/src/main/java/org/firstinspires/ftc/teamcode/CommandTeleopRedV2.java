@@ -77,19 +77,8 @@ public class CommandTeleopRedV2 extends CommandOpMode {
         //telemetry.addData("Instructions", "Press B for Red, X for Blue");
         limelight.limelight.pipelineSwitch(0);
         // Manual button checking during init phase
-        if (gamepad1.b) {
-            limelight.limelight.pipelineSwitch(0);
-            isRed = true;
-        } else if (gamepad1.x) {
-            limelight.limelight.pipelineSwitch(1);
-            isRed = false;
-        }
-        
-        if (isRed) {
-            telemetry.addData("Team", "Red");
-        } else {
-            telemetry.addData("Team", "Blue");
-        }
+
+        telemetry.addData("Team", "Red");
         telemetry.update();
     }
 

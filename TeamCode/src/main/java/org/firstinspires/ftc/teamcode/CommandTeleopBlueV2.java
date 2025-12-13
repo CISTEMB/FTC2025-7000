@@ -42,7 +42,7 @@ public class CommandTeleopBlueV2 extends CommandOpMode {
     private GamepadEx driverGamepad;
 
     private final ElapsedTime runtime = new ElapsedTime();
-    private boolean isRed = true;
+    private boolean isRed = false;
     private boolean hasStarted = false;
 
     @Override
@@ -76,20 +76,8 @@ public class CommandTeleopBlueV2 extends CommandOpMode {
         telemetry.addData("Lifter Position", lifter.getPosition());
         //telemetry.addData("Instructions", "Press B for Red, X for Blue");
         limelight.limelight.pipelineSwitch(1);
-        // Manual button checking during init phase
-        if (gamepad1.b) {
 
-            isRed = true;
-        } else if (gamepad1.x) {
-            limelight.limelight.pipelineSwitch(1);
-            isRed = false;
-        }
-
-        if (isRed) {
-            telemetry.addData("Team", "Red");
-        } else {
-            telemetry.addData("Team", "Blue");
-        }
+        telemetry.addData("Team", "Blue");
         telemetry.update();
     }
 
