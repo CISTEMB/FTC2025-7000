@@ -57,6 +57,7 @@ public class Auto_RedWallStart extends CommandOpMode {
         lifter.setServoPosition(0.0); //level out the servo
 
         limelight = new LimelightSubsystem(hardwareMap, telemetry);
+        limelight.limelight.pipelineSwitch(0);
 
         Drive autoAlignDrive = new Drive(hardwareMap, telemetry);
 
@@ -69,7 +70,7 @@ public class Auto_RedWallStart extends CommandOpMode {
 
 
         TrajectorySequence sequence2 = drive.trajectorySequenceBuilder(sequence1.end())
-                .strafeLeft(20, minVolConstraint, minProfAccelConstraint)
+                .back(20, minVolConstraint, minProfAccelConstraint)
                 .build();
 
         schedule(
@@ -78,9 +79,9 @@ public class Auto_RedWallStart extends CommandOpMode {
                         new SetLifterPositionCommand(1, lifter),
                         new ParallelCommandGroup(
                                 new WaitCommand(1600),
-                                new PrepareShootCommandV2(launcherMotors, lifter),
-                                new AutoAlignCommand(autoAlignDrive, limelight, telemetry, true)
+                                new PrepareShootCommandV2(launcherMotors, lifter)
                         ),
+                        new AutoAlignCommand(autoAlignDrive, limelight, telemetry, true),
                         new ShootCommand(beltway, intake, 3250),
                         new StopLauncherMotorsCommand(launcherMotors, beltway),
                         new WaitCommand(1000),

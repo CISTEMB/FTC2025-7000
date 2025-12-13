@@ -55,7 +55,7 @@ public class Auto_BlueGoalStart extends CommandOpMode {
 
         TrajectorySequence sequence1 = drive.trajectorySequenceBuilder(new Pose2d(-49.5, -49.5, Math.toRadians(234))) //starting position
                 .forward(36, minVolConstraint, minProfAccelConstraint)
-                .turn(Math.toRadians(355))
+                .turn(Math.toRadians(-5))
                 .build();
 
         drive.setPoseEstimate(sequence1.start());

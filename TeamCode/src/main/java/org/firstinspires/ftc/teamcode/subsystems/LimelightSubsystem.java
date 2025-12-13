@@ -51,8 +51,6 @@ public class LimelightSubsystem extends SubsystemBase {
         //LimelightHelpers.SetRobotOrientation("limelight-gurtcam", robotYaw, robotPitch, robotRoll, 0, 0, 0);
 
         limelight.setPollRateHz(90);
-
-        limelight.pipelineSwitch(0);
     }
 
     public void start() {

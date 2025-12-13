@@ -18,7 +18,6 @@ import org.firstinspires.ftc.teamcode.commands.IncreaseLifterPositionCommand;
 import org.firstinspires.ftc.teamcode.commands.IntakeSlowRollCommand;
 import org.firstinspires.ftc.teamcode.commands.IntakeStopCommand;
 import org.firstinspires.ftc.teamcode.commands.PickupCommand;
-import org.firstinspires.ftc.teamcode.commands.PrepareShootCommand;
 import org.firstinspires.ftc.teamcode.commands.PrepareShootCommandV2;
 import org.firstinspires.ftc.teamcode.commands.ReverseBeltwayCommand;
 import org.firstinspires.ftc.teamcode.commands.ReverseIntakeCommand;
@@ -28,13 +27,12 @@ import org.firstinspires.ftc.teamcode.commands.StopLauncherMotorsCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Beltway;
 import org.firstinspires.ftc.teamcode.subsystems.Drive;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
-import org.firstinspires.ftc.teamcode.subsystems.LEDSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LauncherMotors;
 import org.firstinspires.ftc.teamcode.subsystems.Lifter;
 import org.firstinspires.ftc.teamcode.subsystems.LimelightSubsystem;
 
-@TeleOp(name = "CommandTeleopV2", group = "000-Main")
-public class CommandTeleopV2 extends CommandOpMode {
+@TeleOp(name = "CommandTeleopV2 Red", group = "000-Main")
+public class CommandTeleopRedV2 extends CommandOpMode {
     private Drive drive;
     private LauncherMotors launcherMotors;
     private Beltway beltway;
@@ -76,18 +74,27 @@ public class CommandTeleopV2 extends CommandOpMode {
 
         telemetry.addData("Status", "Initialized");
         telemetry.addData("Lifter Position", lifter.getPosition());
-        telemetry.addData("Instructions", "Press B for Red, X for Blue");
+        //telemetry.addData("Instructions", "Press B for Red, X for Blue");
+        limelight.limelight.pipelineSwitch(0);
+        // Manual button checking during init phase
+        if (gamepad1.b) {
+            limelight.limelight.pipelineSwitch(0);
+            isRed = true;
+        } else if (gamepad1.x) {
+            limelight.limelight.pipelineSwitch(1);
+            isRed = false;
+        }
+        
+        if (isRed) {
+            telemetry.addData("Team", "Red");
+        } else {
+            telemetry.addData("Team", "Blue");
+        }
         telemetry.update();
     }
 
     @Override
     public void run() {
-        // Handle team selection during init phase
-        if (!hasStarted && !opModeIsActive()) {
-            handleTeamSelection();
-            return;
-        }
-
         // Mark that we've started teleop and configure button bindings
         if (!hasStarted && opModeIsActive()) {
             hasStarted = true;
@@ -105,24 +112,6 @@ public class CommandTeleopV2 extends CommandOpMode {
 
         // Update telemetry
         updateTelemetry();
-    }
-
-    private void handleTeamSelection() {
-        // Manual button checking during init phase
-        if (gamepad1.b) {
-            limelight.limelight.pipelineSwitch(0);
-            isRed = true;
-        } else if (gamepad1.x) {
-            limelight.limelight.pipelineSwitch(1);
-            isRed = false;
-        }
-
-        if (isRed) {
-            telemetry.addData("Team", "Red");
-        } else {
-            telemetry.addData("Team", "Blue");
-        }
-        telemetry.update();
     }
 
     private void configureButtonBindings() {
