@@ -13,8 +13,10 @@ public class AutoAlignCommand extends CommandBase {
     private Drive drive;
     private LimelightSubsystem limelight;
     private Telemetry telemetry;
-    private Range<Double> alignmentRange;
+    private final Range<Double> alignmentRange = new Range<>(-0.5, 0.5);
     private boolean isRed;
+
+    private double angleOffset;
     private double turnSpeed = 0.0;
     private boolean hasTarget;
 
@@ -25,9 +27,9 @@ public class AutoAlignCommand extends CommandBase {
         this.isRed = isRed;
 
         if (this.isRed) {
-            alignmentRange = new Range<>(-1.0, 0.0);
+            angleOffset = 0.5;
         } else {
-            alignmentRange = new Range<>(-0.0, 1.0);
+            angleOffset = -0.5;
         }
 
         addRequirements(drive);
@@ -44,7 +46,7 @@ public class AutoAlignCommand extends CommandBase {
 
         limelight.read();
         if (limelight.result != null) {
-            double x = limelight.result.getTx();
+            double x = limelight.result.getTx() + angleOffset;
             turnSpeed = x * Math.abs(x) * 0.0067 + 0.1 * Math.signum(x);   // <-- turn the robot proportional to tx to have better accuracy
             // Note: x^2 * 0.067 + 0.04 while maintaining whether x is positive or negative
 
@@ -62,7 +64,7 @@ public class AutoAlignCommand extends CommandBase {
             return true;
         }
 
-        double x = limelight.result.getTx();
+        double x = limelight.result.getTx() + angleOffset;
         telemetry.addData("angle distance", x);
 
         return alignmentRange.contains(x);

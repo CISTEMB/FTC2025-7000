@@ -13,6 +13,7 @@ import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.commands.AutoAlignCommand;
 import org.firstinspires.ftc.teamcode.commands.PrepareShootCommandV2;
 import org.firstinspires.ftc.teamcode.commands.SetLifterPositionCommand;
 import org.firstinspires.ftc.teamcode.commands.ShootCommand;
@@ -20,20 +21,23 @@ import org.firstinspires.ftc.teamcode.commands.StopLauncherMotorsCommand;
 import org.firstinspires.ftc.teamcode.commands.roadrunner.TrajectoryFollowerCommand;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Beltway;
+import org.firstinspires.ftc.teamcode.subsystems.Drive;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.LauncherMotors;
 import org.firstinspires.ftc.teamcode.subsystems.Lifter;
+import org.firstinspires.ftc.teamcode.subsystems.LimelightSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
-@Autonomous(name = "Auto: Blue Goal Start", group = "Auto")
-public class Auto_BlueGoalStart extends CommandOpMode {
+@Autonomous(name = "Auto: Blue Wall Start", group = "Auto")
+public class Auto_BlueWallStart extends CommandOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
     private Beltway beltway;
     private MecanumDriveSubsystem drive;
     private Intake intake;
     private LauncherMotors launcherMotors;
     private Lifter lifter;
+    private LimelightSubsystem limelight;
 
     private MecanumVelocityConstraint minVolConstraint = new MecanumVelocityConstraint(25, 25);
     private ProfileAccelerationConstraint minProfAccelConstraint = new ProfileAccelerationConstraint(25);
@@ -42,7 +46,7 @@ public class Auto_BlueGoalStart extends CommandOpMode {
     @Override
     public void initialize() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        telemetry.addData("intialized", "true");
+        telemetry.addData("Initialized", "true");
         telemetry.update();
 
         drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hardwareMap), true);
@@ -52,10 +56,13 @@ public class Auto_BlueGoalStart extends CommandOpMode {
         lifter = new Lifter(hardwareMap, telemetry);
         lifter.setServoPosition(0.0); //level out the servo
 
+        limelight = new LimelightSubsystem(hardwareMap, telemetry);
 
-        TrajectorySequence sequence1 = drive.trajectorySequenceBuilder(new Pose2d(-49.5, -49.5, Math.toRadians(234))) //starting position
-                .forward(36, minVolConstraint, minProfAccelConstraint)
-                .turn(Math.toRadians(355))
+        Drive autoAlignDrive = new Drive(hardwareMap, telemetry);
+
+        TrajectorySequence sequence1 = drive.trajectorySequenceBuilder(new Pose2d(60, -20, Math.toRadians(180))) //starting position
+                .back(10, minVolConstraint, minProfAccelConstraint)
+                .turn(Math.toRadians(30))
                 .build();
 
         drive.setPoseEstimate(sequence1.start());
@@ -65,60 +72,22 @@ public class Auto_BlueGoalStart extends CommandOpMode {
 //         lifter.setPosition(3);  // Position 3 = 0.8
 
         TrajectorySequence sequence2 = drive.trajectorySequenceBuilder(sequence1.end())
-                .setReversed(true)
-                .splineTo(new Vector2d(-12, 28), Math.toRadians(270))
-                .setReversed(false)
-                .build();
-
-        // activate intake while driving forward, make sure to activate top belt slightly (0.25s) about half way through to move up top ball
-
-//        TrajectorySequence sequence3 = drive.trajectorySequenceBuilder(sequence2.end())
-//                .forward(21, new MecanumVelocityConstraint(12, 18), new ProfileAccelerationConstraint(12))
-//                .build();
-//
-//        TrajectorySequence sequence4 = drive.trajectorySequenceBuilder(sequence3.end())
-//                .splineToLinearHeading(new Pose2d(-40.5, 36.5, Math.toRadians(126)), Math.toRadians(135))
-//                .build();
-
-        // shoot again, angle around 0.7 this time
-
-        TrajectorySequence sequence5 = drive.trajectorySequenceBuilder(sequence1.end())
-                .strafeLeft(20)
-//                .waitSeconds(3)
-//
-//                        .turn(Math.toRadians(90))
-//                        .back(30)
-//                        .turn(Math.toRadians(90))
-//                        .back(30)
-//                        .turn(Math.toRadians(90))
-//                        .back(30)
-//                        .turn(Math.toRadians(90))
+                .strafeLeft(20, minVolConstraint, minProfAccelConstraint)
                 .build();
 
         schedule(
                 new SequentialCommandGroup(
                         new TrajectoryFollowerCommand(drive, sequence1),
-                        new SetLifterPositionCommand(5, lifter),
+                        new SetLifterPositionCommand(1, lifter),
                         new ParallelCommandGroup(
                                 new WaitCommand(1600),
-                                new PrepareShootCommandV2(launcherMotors, lifter)
+                                new PrepareShootCommandV2(launcherMotors, lifter),
+                                new AutoAlignCommand(autoAlignDrive, limelight, telemetry, false)
                         ),
                         new ShootCommand(beltway, intake, 3250),
                         new StopLauncherMotorsCommand(launcherMotors, beltway),
                         new WaitCommand(1000),
-                        new TrajectoryFollowerCommand(drive, sequence5)
-//                        new TrajectoryFollowerCommand(drive, sequence2),
-//                        new ParallelCommandGroup(
-//                                new TrajectoryFollowerCommand(drive, sequence3)
-//                                //new PickupCommand(intake)
-//                        ),
-//                        new TrajectoryFollowerCommand(drive, sequence4),
-//                        new TrajectoryFollowerCommand(drive, sequence3),
-//                        //new SetLifterPosition(0.7, lifter),
-//                        //new PrepareShootCommandV2(launcherMotors, lifter),
-//                        //new ShootCommand(beltway, intake),
-//                        //new StopLauncherMotorsCommand(launcherMotors, beltway),
-//                        new TrajectoryFollowerCommand(drive, sequence5)
+                        new TrajectoryFollowerCommand(drive, sequence2)
                 )
         );
     }

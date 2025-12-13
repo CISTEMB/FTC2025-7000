@@ -98,12 +98,12 @@ public class Auto_RedGoalStart extends CommandOpMode {
         schedule(
                 new SequentialCommandGroup(
                         new TrajectoryFollowerCommand(drive, sequence1),
+                        new SetLifterPositionCommand(5, lifter),
                         new ParallelCommandGroup(
                             new WaitCommand(1600),
-                            new SetLifterPositionCommand(5, lifter),
                             new PrepareShootCommandV2(launcherMotors, lifter)
                         ),
-                        new ShootCommand(beltway, intake, 2750),
+                        new ShootCommand(beltway, intake, 3250),
                         new StopLauncherMotorsCommand(launcherMotors, beltway),
                         new WaitCommand(1000),
                         new TrajectoryFollowerCommand(drive, sequence5)

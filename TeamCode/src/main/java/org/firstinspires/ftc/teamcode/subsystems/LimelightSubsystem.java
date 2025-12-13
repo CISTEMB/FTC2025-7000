@@ -23,11 +23,9 @@ public class LimelightSubsystem extends SubsystemBase {
     private final Telemetry t;
     public Pose3D botpose_mt2;
     public LLResult result;
-    public final LEDSubsystem ledSubsystem;
 
-    public LimelightSubsystem(HardwareMap hardwareMap, Telemetry t, LEDSubsystem ledSubsystem) {
+    public LimelightSubsystem(HardwareMap hardwareMap, Telemetry t) {
         this.t = t;
-        this.ledSubsystem = ledSubsystem;
 
         this.limelight = hardwareMap.get(Limelight3A.class, "limelight-gurtcam");
 
@@ -76,16 +74,7 @@ public class LimelightSubsystem extends SubsystemBase {
                 this.result = result;
                 this.botpose_mt2 = result.getBotpose_MT2();
                 t.addData("botpose", botpose_mt2.toString());
-                if ((new Range<>(-5.0, 5.0)).contains(result.getTx())) {
-                    ledSubsystem.displayColor(LEDSubsystem.Color.GREEN);
-                } else {
-                    ledSubsystem.displayColor(LEDSubsystem.Color.YELLOW);
-                }
-            } else {
-                ledSubsystem.displayColor(LEDSubsystem.Color.OFF);
             }
-        } else {
-            ledSubsystem.displayColor(LEDSubsystem.Color.OFF);
         }
     }
 

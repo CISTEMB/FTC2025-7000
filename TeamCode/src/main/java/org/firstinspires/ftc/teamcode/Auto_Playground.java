@@ -20,8 +20,7 @@ public class Auto_Playground extends LinearOpMode {
     @Override
     public void runOpMode() {
         Drive drive = new Drive(hardwareMap, telemetry);
-        LEDSubsystem ledSubsystem = new LEDSubsystem(hardwareMap, telemetry);
-        LimelightSubsystem limelight = new LimelightSubsystem(hardwareMap, telemetry, ledSubsystem);
+        LimelightSubsystem limelight = new LimelightSubsystem(hardwareMap, telemetry);
 //        LauncherSubsystem launcher = new LauncherSubsystem(hardwareMap, telemetry);
 
         // Start the Limelight
@@ -62,15 +61,12 @@ public class Auto_Playground extends LinearOpMode {
                     telemetry.addData("Robot X", "%.2f", robotPose.getPosition().x);
                     telemetry.addData("Robot Y", "%.2f", robotPose.getPosition().y);
                     telemetry.addData("Robot Z", "%.2f", robotPose.getPosition().z);
-                    ledSubsystem.displayColor(LEDSubsystem.Color.GREEN);
                 } else {
                     telemetry.addData("Status", "Searching for AprilTag...");
-                    ledSubsystem.displayColor(LEDSubsystem.Color.YELLOW);
                 }
             } else {
                 telemetry.addData("Status", "Searching for AprilTag...");
                 telemetry.addData("Detection Time", "%.1f sec", detectionTimer.seconds());
-                ledSubsystem.displayColor(LEDSubsystem.Color.YELLOW);
             }
 
             telemetry.update();

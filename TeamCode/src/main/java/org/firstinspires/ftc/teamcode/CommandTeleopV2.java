@@ -55,7 +55,7 @@ public class CommandTeleopV2 extends CommandOpMode {
         beltway = new Beltway(hardwareMap, telemetry);
         intake = new Intake(hardwareMap, telemetry);
         lifter = new Lifter(hardwareMap, telemetry);
-        limelight = new LimelightSubsystem(hardwareMap, telemetry, new LEDSubsystem(hardwareMap, telemetry));
+        limelight = new LimelightSubsystem(hardwareMap, telemetry);
 
         //default PID adjustments
         launcherMotors.adjustP(100);

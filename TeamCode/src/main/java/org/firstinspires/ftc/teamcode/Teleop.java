@@ -8,6 +8,7 @@ import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.LLStatus;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -28,7 +29,8 @@ import org.firstinspires.ftc.teamcode.subsystems.LimelightSubsystem;
 import java.util.ArrayList;
 import java.util.List;
 
-@TeleOp(name = "Teleop", group = "000-Main")
+@TeleOp(name = "OLD Teleop", group = "000-Main")
+@Disabled
 public class Teleop extends LinearOpMode {
     private Limelight3A limelight;
     private IMU imu;
@@ -44,8 +46,7 @@ public class Teleop extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         Drive drive = new Drive(hardwareMap, telemetry);
         LauncherSubsystem launcher = new LauncherSubsystem(hardwareMap, telemetry);
-        LEDSubsystem led = new LEDSubsystem(hardwareMap, telemetry);
-        LimelightSubsystem limelight = new LimelightSubsystem(hardwareMap, telemetry, led);
+        LimelightSubsystem limelight = new LimelightSubsystem(hardwareMap, telemetry);
         StandardTrackingWheelLocalizer localizer = new StandardTrackingWheelLocalizer(hardwareMap, new ArrayList<>(), new ArrayList<>());
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -141,7 +142,6 @@ public class Teleop extends LinearOpMode {
             }
 
             if (saved_pose != null) {
-                led.displayColor2(LEDSubsystem.Color.VIOLET);
                 telemetry.addData("Saved pose", saved_pose);
                 Pose2d pose = localizer.getPoseEstimate();
                 telemetry.addData("Current pose", pose);

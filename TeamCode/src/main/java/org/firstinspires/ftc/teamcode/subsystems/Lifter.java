@@ -20,7 +20,7 @@ public class Lifter extends SubsystemBase {
     private int currentPosition = 0;
 
     private final List<Double> lifterPosList =
-            List.of(0.0, 0.3, 0.6, 0.8, 1.0, 0.8); // all angles required for normal gameplay
+            List.of(0.0, 0.7, 0.75, 0.8, 1.0, 0.8); // all angles required for normal gameplay
 
     public void increasePosition() {
         if (currentPosition < maxPosition) {
