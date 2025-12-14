@@ -68,21 +68,21 @@ public class Auto_RedWallStart extends CommandOpMode {
 
         drive.setPoseEstimate(sequence1.start());
 
-
         TrajectorySequence sequence2 = drive.trajectorySequenceBuilder(sequence1.end())
-                .back(20, minVolConstraint, minProfAccelConstraint)
+                .back(5, minVolConstraint, minProfAccelConstraint)
+                .strafeLeft(25.0)
                 .build();
 
         schedule(
                 new SequentialCommandGroup(
                         new TrajectoryFollowerCommand(drive, sequence1),
-                        new SetLifterPositionCommand(1, lifter),
+                        new SetLifterPositionCommand(6, lifter),
                         new ParallelCommandGroup(
                                 new WaitCommand(1600),
                                 new PrepareShootCommandV2(launcherMotors, lifter)
                         ),
                         new AutoAlignCommand(autoAlignDrive, limelight, telemetry, true),
-                        new ShootCommand(beltway, intake, 3250),
+                        new ShootCommand(beltway, intake, 8250),
                         new StopLauncherMotorsCommand(launcherMotors, beltway),
                         new WaitCommand(1000),
                         new TrajectoryFollowerCommand(drive, sequence2)
