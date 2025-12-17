@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 import com.arcrobotics.ftclib.command.CommandOpMode;
@@ -14,7 +13,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.commands.AutoAlignCommand;
-import org.firstinspires.ftc.teamcode.commands.PrepareShootCommandV2;
 import org.firstinspires.ftc.teamcode.commands.SetLifterPositionCommand;
 import org.firstinspires.ftc.teamcode.commands.ShootCommand;
 import org.firstinspires.ftc.teamcode.commands.StopLauncherMotorsCommand;
@@ -27,6 +25,7 @@ import org.firstinspires.ftc.teamcode.subsystems.LauncherMotors;
 import org.firstinspires.ftc.teamcode.subsystems.Lifter;
 import org.firstinspires.ftc.teamcode.subsystems.LimelightSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.Navigation;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 @Autonomous(name = "Auto: Red Wall Start", group = "Auto")
@@ -38,6 +37,7 @@ public class Auto_RedWallStart extends CommandOpMode {
     private LauncherMotors launcherMotors;
     private Lifter lifter;
     private LimelightSubsystem limelight;
+    private Navigation navigation;
 
     private MecanumVelocityConstraint minVolConstraint = new MecanumVelocityConstraint(25, 25);
     private ProfileAccelerationConstraint minProfAccelConstraint = new ProfileAccelerationConstraint(25);
@@ -52,8 +52,9 @@ public class Auto_RedWallStart extends CommandOpMode {
         drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hardwareMap), true);
         beltway = new Beltway(hardwareMap, telemetry);
         intake = new Intake(hardwareMap, telemetry);
-        launcherMotors = new LauncherMotors(hardwareMap, telemetry);
-        lifter = new Lifter(hardwareMap, telemetry);
+        navigation = new Navigation(limelight, hardwareMap, telemetry);
+        launcherMotors = new LauncherMotors(hardwareMap, telemetry, navigation);
+        lifter = new Lifter(hardwareMap, telemetry, navigation);
         lifter.setServoPosition(0.0); //level out the servo
 
         limelight = new LimelightSubsystem(hardwareMap, telemetry);
@@ -78,8 +79,8 @@ public class Auto_RedWallStart extends CommandOpMode {
                         new TrajectoryFollowerCommand(drive, sequence1),
                         new SetLifterPositionCommand(6, lifter),
                         new ParallelCommandGroup(
-                                new WaitCommand(1600),
-                                new PrepareShootCommandV2(launcherMotors, lifter)
+                                new WaitCommand(1600)
+//                                new PrepareShootCommandV2(launcherMotors, lifter)
                         ),
                         new AutoAlignCommand(autoAlignDrive, limelight, telemetry, true),
                         new ShootCommand(beltway, intake, 8250),

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.arcrobotics.ftclib.util.InterpLUT;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -13,14 +14,14 @@ public class Lifter extends SubsystemBase {
 
     public Servo servo;
     private AnalogInput angleInput;
+    private Navigation navigation;
     private Telemetry tm;
     private final int increment = 1;
     private final int minPosition = 0;
     private final int maxPosition = 4;
-    private int currentPosition = 0;
+    private double currentPosition = 0;
 
-    private final List<Double> lifterPosList =
-            List.of(0.0, 0.7, 0.75, 0.8, 1.0, 0.8, 0.7); // all angles required for normal gameplay
+    private final InterpLUT lifterPosList = new InterpLUT();
 
     public void increasePosition() {
         if (currentPosition < maxPosition) {
@@ -30,9 +31,20 @@ public class Lifter extends SubsystemBase {
     }
 
 
-    public Lifter(HardwareMap hardwareMap, Telemetry telemetry) {
+    public Lifter(HardwareMap hardwareMap, Telemetry telemetry, Navigation navigation) {
         tm = telemetry;
         servo = hardwareMap.get(Servo.class, "lifterServo");
+        this.navigation = navigation;
+
+        lifterPosList.add(-0.001, 1.0);
+        lifterPosList.add(0.0, 1.0);
+        lifterPosList.add(1.0, 0.94);
+        lifterPosList.add(2.0, 0.88);
+        lifterPosList.add(3.0, 0.82);
+        lifterPosList.add(4.0, 0.76);
+        lifterPosList.add(4.001, 0.7);
+
+        lifterPosList.createLUT();
     }
 
     public void setServoPosition(double position) {
@@ -40,14 +52,12 @@ public class Lifter extends SubsystemBase {
         tm.addData("setServoPosition", position);
     }
 
-    public void setPosition(int position) {
-        if (position <= lifterPosList.size()) {
-            this.currentPosition = position;
-            servo.setPosition(lifterPosList.get(currentPosition));
-        }
+    public void setPosition(double position) {
+        this.currentPosition = position;
+        servo.setPosition(lifterPosList.get(currentPosition));
     }
 
-    public int getPosition() {
+    public double getPosition() {
         return currentPosition;
     }
 
@@ -71,5 +81,11 @@ public class Lifter extends SubsystemBase {
         super.periodic();
         tm.addData("lifter target position", lifterPosList.get(currentPosition));
         tm.addData("lifter actual position", servo.getPosition());
+
+        Double pos = navigation.getPosition();
+        if (pos == null) {
+            return;
+        }
+        setPosition(pos);
     }
 }

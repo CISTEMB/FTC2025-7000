@@ -18,7 +18,6 @@ import org.firstinspires.ftc.teamcode.commands.IncreaseLifterPositionCommand;
 import org.firstinspires.ftc.teamcode.commands.IntakeSlowRollCommand;
 import org.firstinspires.ftc.teamcode.commands.IntakeStopCommand;
 import org.firstinspires.ftc.teamcode.commands.PickupCommand;
-import org.firstinspires.ftc.teamcode.commands.PrepareShootCommandV2;
 import org.firstinspires.ftc.teamcode.commands.ReverseBeltwayCommand;
 import org.firstinspires.ftc.teamcode.commands.ReverseIntakeCommand;
 import org.firstinspires.ftc.teamcode.commands.SetLifterPositionCommand;
@@ -30,6 +29,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.LauncherMotors;
 import org.firstinspires.ftc.teamcode.subsystems.Lifter;
 import org.firstinspires.ftc.teamcode.subsystems.LimelightSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.Navigation;
 
 @TeleOp(name = "CommandTeleopV2 Blue", group = "000-Main")
 public class CommandTeleopBlueV2 extends CommandOpMode {
@@ -40,6 +40,7 @@ public class CommandTeleopBlueV2 extends CommandOpMode {
     private Lifter lifter;
     private LimelightSubsystem limelight;
     private GamepadEx driverGamepad;
+    private Navigation navigation;
 
     private final ElapsedTime runtime = new ElapsedTime();
     private boolean isRed = false;
@@ -49,11 +50,12 @@ public class CommandTeleopBlueV2 extends CommandOpMode {
     public void initialize() {
         // Initialize subsystems
         drive = new Drive(hardwareMap, telemetry);
-        launcherMotors = new LauncherMotors(hardwareMap, telemetry);
+        limelight = new LimelightSubsystem(hardwareMap, telemetry);
+        navigation = new Navigation(limelight, hardwareMap, telemetry);
+        launcherMotors = new LauncherMotors(hardwareMap, telemetry, navigation);
         beltway = new Beltway(hardwareMap, telemetry);
         intake = new Intake(hardwareMap, telemetry);
-        lifter = new Lifter(hardwareMap, telemetry);
-        limelight = new LimelightSubsystem(hardwareMap, telemetry);
+        lifter = new Lifter(hardwareMap, telemetry, navigation);
 
         //default PID adjustments
         launcherMotors.adjustP(100);
@@ -119,8 +121,8 @@ public class CommandTeleopBlueV2 extends CommandOpMode {
             .whenActive(new StopLauncherMotorsCommand(launcherMotors, beltway));
 
         // Right bumper: Prepare to shoot
-        driverGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-            .whenPressed(new PrepareShootCommandV2(launcherMotors, lifter));
+//        driverGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+//            .whenPressed(new PrepareShootCommandV2(launcherMotors, lifter));
 
         // Y button: Shoot (hold to shoot, release to stop)
         driverGamepad.getGamepadButton(GamepadKeys.Button.B)
@@ -164,16 +166,16 @@ public class CommandTeleopBlueV2 extends CommandOpMode {
         driverGamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP)
             .whenPressed(
                 new SequentialCommandGroup(
-                    new IncreaseLifterPositionCommand(lifter),
-                    new PrepareShootCommandV2(launcherMotors, lifter)
+                    new IncreaseLifterPositionCommand(lifter)
+//                    new PrepareShootCommandV2(launcherMotors, lifter)
                 ));
 
         // D-pad down: Decrease lifter position
         driverGamepad.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
             .whenPressed(
                 new SequentialCommandGroup(
-                    new DecreaseLifterPositionCommand(lifter),
-                    new PrepareShootCommandV2(launcherMotors, lifter)
+                    new DecreaseLifterPositionCommand(lifter)
+//                    new PrepareShootCommandV2(launcherMotors, lifter)
                 ));
 
         // Back button: Set lifter to pzosition 6
@@ -182,7 +184,6 @@ public class CommandTeleopBlueV2 extends CommandOpMode {
     }
 
     private void updateTelemetry() {
-        telemetry.addData("IsPrepped", launcherMotors.isPrepped());
         telemetry.addData("CanShoot", limelight.can_shoot());
 
         LLResult result = limelight.result;
@@ -196,12 +197,6 @@ public class CommandTeleopBlueV2 extends CommandOpMode {
             telemetry.addData("Target Area", ta);
         } else {
             telemetry.addData("Limelight", "No Targets");
-        }
-
-        if (launcherMotors.isPrepped()) {
-            telemetry.addData("Motors", "On");
-        } else {
-            telemetry.addData("Motors", "Off");
         }
 
         if (limelight.can_shoot()) {

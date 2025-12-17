@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.arcrobotics.ftclib.util.InterpLUT;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -23,7 +24,6 @@ public class LauncherMotors extends SubsystemBase {
 
 
     private double motorVelocity = 0.0;
-    private boolean prepped = false;
 
     // PIDF Coefficients for velocity control
     // Start with these values and tune based on your motor performance
@@ -37,10 +37,11 @@ public class LauncherMotors extends SubsystemBase {
     private double kF = 12.0;   // Adjust based on motor specs (typically 12-15)
 
     //825
-    private final List<Double> motorVelocities =
-            List.of(700.0, 885.0, 750.0, 750.0, 700.0, 700.0, 835.0); // all angles required for normal gameplay
+    private final InterpLUT motorVelocities = new InterpLUT();
 
-    public LauncherMotors(HardwareMap hardwareMap, Telemetry telemetry) {
+    private Navigation navigation;
+
+    public LauncherMotors(HardwareMap hardwareMap, Telemetry telemetry, Navigation navigation) {
         readings = new ArrayList<>();
         tm = telemetry;
 
@@ -56,10 +57,23 @@ public class LauncherMotors extends SubsystemBase {
         leftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         rightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        motorVelocities.add(-0.001, 700.0);
+        motorVelocities.add(0.0, 700.0);
+        motorVelocities.add(1.0, 746.0);
+        motorVelocities.add(2.0, 792.0);
+        motorVelocities.add(3.0, 838.0);
+        motorVelocities.add(4.0, 885.0);
+        motorVelocities.add(4.001, 885.0);
 
+        motorVelocities.createLUT();
 
         // Apply initial PIDF coefficients
         setPIDFCoefficients(kP, kI, kD, kF);
+
+        leftMotor.setVelocity(750.0);
+        rightMotor.setVelocity(750.0);
+
+        this.navigation = navigation;
     }
 
     public double leftError() {
@@ -87,20 +101,18 @@ public class LauncherMotors extends SubsystemBase {
         tm.addData("Actual Velocity (L)", "%.0f ticks/sec", actualVelocity);
         tm.addData("Actual Velocity (R)", "%.0f ticks/sec", rightMotor.getVelocity());
         tm.addData("Velocity Error", "%.0f ticks/sec (%.1f%%)", velocityError, errorPercent);
-        tm.addData("Prepped", prepped);
         tm.addData("Average Error", getAverage(readings));
         tm.addData("--- PID COEFFICIENTS ---", "");
         tm.addData("P", "%.2f", kP);
         tm.addData("I", "%.2f", kI);
         tm.addData("D", "%.2f", kD);
         tm.addData("F", "%.2f", kF);
-    }
 
-    public void prepare(double velocity) {
-        motorVelocity = velocity;
-        leftMotor.setVelocity(motorVelocity);
-        rightMotor.setVelocity(motorVelocity);
-        prepped = true;
+        Double pos = navigation.getPosition();
+        if (pos == null) {
+            return;
+        }
+        motorVelocity = motorVelocities.get(pos);
     }
 
     private double getAverage(ArrayList<Double> values) {
@@ -113,20 +125,11 @@ public class LauncherMotors extends SubsystemBase {
         return sum / values.size();
     }
 
-    public void setSpeedBasedOnLifterPosition(int lifterPosition) {
+    public void setSpeedBasedOnLifterPosition(double lifterPosition) {
         double targetVelocity = motorVelocities.get(lifterPosition);
         motorVelocity = targetVelocity;
         leftMotor.setVelocity(targetVelocity);
         rightMotor.setVelocity(targetVelocity);
-    }
-
-    public void prepareShoot() {
-        if (motorVelocity < 1300) {
-            motorVelocity += 25;
-        }
-        leftMotor.setVelocity(motorVelocity);
-        rightMotor.setVelocity(motorVelocity);
-        prepped = true;
     }
 
 //    public void stop() {
@@ -145,10 +148,6 @@ public class LauncherMotors extends SubsystemBase {
         if (motorVelocity < 0){
             motorVelocity = 0;
         }
-    }
-
-    public boolean isPrepped() {
-        return prepped;
     }
 
     public double getVelocity() {

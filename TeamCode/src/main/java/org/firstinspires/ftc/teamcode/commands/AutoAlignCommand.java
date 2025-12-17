@@ -7,11 +7,12 @@ import com.arcrobotics.ftclib.command.CommandBase;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.Drive;
 import org.firstinspires.ftc.teamcode.subsystems.LimelightSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.Navigation;
 
 public class AutoAlignCommand extends CommandBase {
 
     private Drive drive;
-    private LimelightSubsystem limelight;
+    private Navigation navigation;
     private Telemetry telemetry;
     private final Range<Double> alignmentRange = new Range<>(-0.5, 0.5);
     private boolean isRed;
@@ -20,9 +21,9 @@ public class AutoAlignCommand extends CommandBase {
     private double turnSpeed = 0.0;
     private boolean hasTarget;
 
-    public AutoAlignCommand(Drive drive, LimelightSubsystem limelight, Telemetry telemetry, Boolean isRed) {
+    public AutoAlignCommand(Drive drive, Navigation navigation, Telemetry telemetry, Boolean isRed) {
         this.drive = drive;
-        this.limelight = limelight;
+        this.navigation = navigation;
         this.telemetry = telemetry;
         this.isRed = isRed;
 
@@ -37,16 +38,16 @@ public class AutoAlignCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        hasTarget = limelight.result != null;
+        hasTarget = navigation.hasTarget();
     }
 
     @Override
     public void execute() {
         telemetry.addData("turn speed", turnSpeed);
 
-        limelight.read();
-        if (limelight.result != null) {
-            double x = limelight.result.getTx() + angleOffset;
+
+        if (navigation.hasTarget() && navigation.getAngleOffset() != null) {
+            double x = navigation.getAngleOffset() + angleOffset;
             turnSpeed = x * Math.abs(x) * 0.0067 + 0.1 * Math.signum(x);   // <-- turn the robot proportional to tx to have better accuracy
             // Note: x^2 * 0.067 + 0.04 while maintaining whether x is positive or negative
 
@@ -60,14 +61,17 @@ public class AutoAlignCommand extends CommandBase {
     @Override
     public boolean isFinished() {
 
-        if (limelight.result == null) {
+        if (!navigation.hasTarget()) {
             return true;
         }
 
-        double x = limelight.result.getTx() + angleOffset;
-        telemetry.addData("angle distance", x);
+        if (navigation.getAngleOffset() != null) {
+            double x = navigation.getAngleOffset() + angleOffset;
+            telemetry.addData("angle distance", x);
+            return alignmentRange.contains(x);
+        }
 
-        return alignmentRange.contains(x);
+        return false;
     }
 
 

@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.subsystems.LauncherMotors;
+import org.firstinspires.ftc.teamcode.subsystems.LimelightSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.Navigation;
 /*
 New File: PIDTuner_Launcher.java
 
@@ -105,7 +107,7 @@ public class PIDTuner_Launcher extends OpMode {
 
     @Override
     public void init() {
-        launcher = new LauncherMotors(hardwareMap, telemetry);
+        launcher = new LauncherMotors(hardwareMap, telemetry, new Navigation(new LimelightSubsystem(hardwareMap, telemetry), hardwareMap, telemetry));
 
         telemetry.addData("Status", "Initialized");
         telemetry.addData("Target Velocity", targetVelocity);
@@ -118,21 +120,21 @@ public class PIDTuner_Launcher extends OpMode {
         // Gamepad 1: Control launcher velocity
         if (gamepad1.dpad_up && !lastDpadUp1) {
             targetVelocity += velocityStep;
-            launcher.prepare(targetVelocity);
+//            launcher.prepare(targetVelocity);
         }
         if (gamepad1.dpad_down && !lastDpadDown1) {
             targetVelocity -= velocityStep;
             if (targetVelocity < 0) targetVelocity = 0;
-            launcher.prepare(targetVelocity);
+//            launcher.prepare(targetVelocity);
         }
 
         lastDpadUp1 = gamepad1.dpad_up;
         lastDpadDown1 = gamepad1.dpad_down;
 
         // Activate/Stop launcher
-        if (gamepad1.right_trigger > 0.5) {
-            launcher.prepare(targetVelocity);
-        }
+//        if (gamepad1.right_trigger > 0.5) {
+//            launcher.prepare(targetVelocity);
+//        }
         if (gamepad1.left_trigger > 0.5) {
             launcher.stop();
         }
