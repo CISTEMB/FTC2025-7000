@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.subsystems.Drive;
+import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 
 @Autonomous(name = "Auto: Basic Drive", group = "Auto", preselectTeleOp = "Teleop")
 public class Auto_Basic extends LinearOpMode {
@@ -12,7 +12,7 @@ public class Auto_Basic extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        Drive drive = new Drive(hardwareMap, telemetry);
+        DriveSubsystem drive = new DriveSubsystem(hardwareMap, telemetry);
 //        LauncherSubsystem launcher = new LauncherSubsystem(hardwareMap, telemetry);
 
         telemetry.addData("Status", "Initialized");

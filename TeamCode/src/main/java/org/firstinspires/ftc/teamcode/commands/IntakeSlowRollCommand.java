@@ -2,13 +2,13 @@ package org.firstinspires.ftc.teamcode.commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 
-import org.firstinspires.ftc.teamcode.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 
 public class IntakeSlowRollCommand extends CommandBase {
 
-    private Intake intake;
+    private IntakeSubsystem intake;
 
-    public IntakeSlowRollCommand(Intake i) {
+    public IntakeSlowRollCommand(IntakeSubsystem i) {
         this.intake = i;
         addRequirements(i);
     }

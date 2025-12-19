@@ -23,24 +23,24 @@ import org.firstinspires.ftc.teamcode.commands.ReverseIntakeCommand;
 import org.firstinspires.ftc.teamcode.commands.SetLifterPositionCommand;
 import org.firstinspires.ftc.teamcode.commands.StopBeltwayCommand;
 import org.firstinspires.ftc.teamcode.commands.StopLauncherMotorsCommand;
-import org.firstinspires.ftc.teamcode.subsystems.Beltway;
-import org.firstinspires.ftc.teamcode.subsystems.Drive;
-import org.firstinspires.ftc.teamcode.subsystems.Intake;
-import org.firstinspires.ftc.teamcode.subsystems.LauncherMotors;
-import org.firstinspires.ftc.teamcode.subsystems.Lifter;
+import org.firstinspires.ftc.teamcode.subsystems.BeltwaySubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.LauncherMotorsSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.LifterSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LimelightSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.Navigation;
+import org.firstinspires.ftc.teamcode.subsystems.NavigationSubsystem;
 
 @TeleOp(name = "CommandTeleopV2 Red", group = "000-Main")
 public class CommandTeleopRedV2 extends CommandOpMode {
-    private Drive drive;
-    private LauncherMotors launcherMotors;
-    private Beltway beltway;
-    private Intake intake;
-    private Lifter lifter;
+    private DriveSubsystem drive;
+    private LauncherMotorsSubsystem launcherMotors;
+    private BeltwaySubsystem beltway;
+    private IntakeSubsystem intake;
+    private LifterSubsystem lifter;
     private LimelightSubsystem limelight;
     private GamepadEx driverGamepad;
-    private Navigation navigation;
+    private NavigationSubsystem navigation;
 
     private final ElapsedTime runtime = new ElapsedTime();
     private boolean isRed = true;
@@ -49,13 +49,13 @@ public class CommandTeleopRedV2 extends CommandOpMode {
     @Override
     public void initialize() {
         // Initialize subsystems
-        drive = new Drive(hardwareMap, telemetry);
+        drive = new DriveSubsystem(hardwareMap, telemetry);
         limelight = new LimelightSubsystem(hardwareMap, telemetry);
-        navigation = new Navigation(limelight, hardwareMap, telemetry);
-        launcherMotors = new LauncherMotors(hardwareMap, telemetry, navigation);
-        beltway = new Beltway(hardwareMap, telemetry);
-        intake = new Intake(hardwareMap, telemetry);
-        lifter = new Lifter(hardwareMap, telemetry, navigation);
+        navigation = new NavigationSubsystem(limelight, hardwareMap, telemetry);
+        launcherMotors = new LauncherMotorsSubsystem(hardwareMap, telemetry, navigation);
+        beltway = new BeltwaySubsystem(hardwareMap, telemetry);
+        intake = new IntakeSubsystem(hardwareMap, telemetry);
+        lifter = new LifterSubsystem(hardwareMap, telemetry, navigation);
 
         //default PID adjustments
         launcherMotors.adjustP(100);
@@ -156,7 +156,7 @@ public class CommandTeleopRedV2 extends CommandOpMode {
 
         // X button: Auto-align to target
         driverGamepad.getGamepadButton(GamepadKeys.Button.X)
-            .whenPressed(new AutoAlignCommand(drive, limelight, telemetry, isRed));
+            .whenPressed(new AutoAlignCommand(drive, navigation, telemetry, isRed));
 
         // A button: Pickup (hold to run, release to stop)
         driverGamepad.getGamepadButton(GamepadKeys.Button.A)

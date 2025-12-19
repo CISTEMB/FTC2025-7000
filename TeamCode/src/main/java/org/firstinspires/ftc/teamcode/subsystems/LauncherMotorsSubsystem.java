@@ -14,7 +14,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LauncherMotors extends SubsystemBase {
+public class LauncherMotorsSubsystem extends SubsystemBase {
 
     public DcMotorEx leftMotor;
     public DcMotorEx rightMotor;
@@ -39,9 +39,9 @@ public class LauncherMotors extends SubsystemBase {
     //825
     private final InterpLUT motorVelocities = new InterpLUT();
 
-    private Navigation navigation;
+    private NavigationSubsystem navigation;
 
-    public LauncherMotors(HardwareMap hardwareMap, Telemetry telemetry, Navigation navigation) {
+    public LauncherMotorsSubsystem(HardwareMap hardwareMap, Telemetry telemetry, NavigationSubsystem navigation) {
         readings = new ArrayList<>();
         tm = telemetry;
 
@@ -69,10 +69,6 @@ public class LauncherMotors extends SubsystemBase {
 
         // Apply initial PIDF coefficients
         setPIDFCoefficients(kP, kI, kD, kF);
-
-        leftMotor.setVelocity(750.0);
-        rightMotor.setVelocity(750.0);
-
         this.navigation = navigation;
     }
 

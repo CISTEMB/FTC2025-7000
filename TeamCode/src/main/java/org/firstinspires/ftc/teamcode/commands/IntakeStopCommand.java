@@ -2,13 +2,13 @@ package org.firstinspires.ftc.teamcode.commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 
-import org.firstinspires.ftc.teamcode.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 
 public class IntakeStopCommand extends CommandBase {
 
-    private Intake intake;
+    private IntakeSubsystem intake;
 
-    public IntakeStopCommand(Intake i) {
+    public IntakeStopCommand(IntakeSubsystem i) {
         this.intake = i;
         addRequirements(i);
     }

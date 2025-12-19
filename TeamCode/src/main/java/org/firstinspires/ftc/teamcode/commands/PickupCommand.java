@@ -2,13 +2,13 @@ package org.firstinspires.ftc.teamcode.commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 
-import org.firstinspires.ftc.teamcode.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 
 public class PickupCommand extends CommandBase {
 
-    private Intake intake;
+    private IntakeSubsystem intake;
 
-    public PickupCommand(Intake intake) {
+    public PickupCommand(IntakeSubsystem intake) {
         this.intake = intake;
         addRequirements(intake);
     }

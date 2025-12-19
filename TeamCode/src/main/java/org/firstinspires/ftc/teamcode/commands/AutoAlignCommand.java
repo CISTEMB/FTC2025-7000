@@ -5,14 +5,14 @@ import android.util.Range;
 import com.arcrobotics.ftclib.command.CommandBase;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.subsystems.Drive;
+import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LimelightSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.Navigation;
+import org.firstinspires.ftc.teamcode.subsystems.NavigationSubsystem;
 
 public class AutoAlignCommand extends CommandBase {
 
-    private Drive drive;
-    private Navigation navigation;
+    private DriveSubsystem drive;
+    private NavigationSubsystem navigation;
     private Telemetry telemetry;
     private final Range<Double> alignmentRange = new Range<>(-0.5, 0.5);
     private boolean isRed;
@@ -21,7 +21,7 @@ public class AutoAlignCommand extends CommandBase {
     private double turnSpeed = 0.0;
     private boolean hasTarget;
 
-    public AutoAlignCommand(Drive drive, Navigation navigation, Telemetry telemetry, Boolean isRed) {
+    public AutoAlignCommand(DriveSubsystem drive, NavigationSubsystem navigation, Telemetry telemetry, Boolean isRed) {
         this.drive = drive;
         this.navigation = navigation;
         this.telemetry = telemetry;

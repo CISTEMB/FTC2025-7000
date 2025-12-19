@@ -10,11 +10,11 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.List;
 
-public class Lifter extends SubsystemBase {
+public class LifterSubsystem extends SubsystemBase {
 
     public Servo servo;
     private AnalogInput angleInput;
-    private Navigation navigation;
+    private NavigationSubsystem navigation;
     private Telemetry tm;
     private final int increment = 1;
     private final int minPosition = 0;
@@ -31,7 +31,7 @@ public class Lifter extends SubsystemBase {
     }
 
 
-    public Lifter(HardwareMap hardwareMap, Telemetry telemetry, Navigation navigation) {
+    public LifterSubsystem(HardwareMap hardwareMap, Telemetry telemetry, NavigationSubsystem navigation) {
         tm = telemetry;
         servo = hardwareMap.get(Servo.class, "lifterServo");
         this.navigation = navigation;

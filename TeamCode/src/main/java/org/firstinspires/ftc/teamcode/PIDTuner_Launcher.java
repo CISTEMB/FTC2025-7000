@@ -3,9 +3,9 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.subsystems.LauncherMotors;
+import org.firstinspires.ftc.teamcode.subsystems.LauncherMotorsSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LimelightSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.Navigation;
+import org.firstinspires.ftc.teamcode.subsystems.NavigationSubsystem;
 /*
 New File: PIDTuner_Launcher.java
 
@@ -82,7 +82,7 @@ New File: PIDTuner_Launcher.java
  */
 @TeleOp(name = "PID Tuner: Launcher", group = "000-Main")
 public class PIDTuner_Launcher extends OpMode {
-    private LauncherMotors launcher;
+    private LauncherMotorsSubsystem launcher;
     private double targetVelocity = 800.0;
     private final double velocityStep = 50.0;
 
@@ -107,7 +107,7 @@ public class PIDTuner_Launcher extends OpMode {
 
     @Override
     public void init() {
-        launcher = new LauncherMotors(hardwareMap, telemetry, new Navigation(new LimelightSubsystem(hardwareMap, telemetry), hardwareMap, telemetry));
+        launcher = new LauncherMotorsSubsystem(hardwareMap, telemetry, new NavigationSubsystem(new LimelightSubsystem(hardwareMap, telemetry), hardwareMap, telemetry));
 
         telemetry.addData("Status", "Initialized");
         telemetry.addData("Target Velocity", targetVelocity);

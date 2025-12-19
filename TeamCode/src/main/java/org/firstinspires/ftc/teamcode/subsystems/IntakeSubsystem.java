@@ -11,13 +11,13 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.apache.commons.math3.analysis.function.Max;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class Intake extends SubsystemBase {
+public class IntakeSubsystem extends SubsystemBase {
 
     public CRServo servo1;
     public CRServo servo2;
     private Telemetry tm;
 
-    public Intake(HardwareMap hardwareMap, Telemetry telemetry){
+    public IntakeSubsystem(HardwareMap hardwareMap, Telemetry telemetry){
         tm = telemetry;
         servo1 = hardwareMap.get(CRServo.class, "intakeServo1");
         servo2 = hardwareMap.get(CRServo.class, "intakeServo2");

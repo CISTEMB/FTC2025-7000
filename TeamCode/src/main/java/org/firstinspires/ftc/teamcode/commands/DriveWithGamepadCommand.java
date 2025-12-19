@@ -3,14 +3,14 @@ package org.firstinspires.ftc.teamcode.commands;
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-import org.firstinspires.ftc.teamcode.subsystems.Drive;
+import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 
 public class DriveWithGamepadCommand extends CommandBase {
 
     private Gamepad gamepad;
-    private Drive drive;
+    private DriveSubsystem drive;
 
-    public DriveWithGamepadCommand(Gamepad gamepad, Drive drive) {
+    public DriveWithGamepadCommand(Gamepad gamepad, DriveSubsystem drive) {
         this.gamepad = gamepad;
         this.drive = drive;
         //addRequirements(drive);

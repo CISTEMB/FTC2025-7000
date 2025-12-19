@@ -8,13 +8,13 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class Beltway extends SubsystemBase {
+public class BeltwaySubsystem extends SubsystemBase {
 
     public CRServo servo;
 
     private Telemetry tm;
 
-    public Beltway(HardwareMap hardwareMap, Telemetry telemetry){
+    public BeltwaySubsystem(HardwareMap hardwareMap, Telemetry telemetry){
         servo = hardwareMap.get(CRServo.class, "beltServo");
         tm = telemetry;
     }

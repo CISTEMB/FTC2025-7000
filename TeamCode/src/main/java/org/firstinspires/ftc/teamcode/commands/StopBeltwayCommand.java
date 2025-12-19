@@ -2,13 +2,13 @@ package org.firstinspires.ftc.teamcode.commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 
-import org.firstinspires.ftc.teamcode.subsystems.Beltway;
+import org.firstinspires.ftc.teamcode.subsystems.BeltwaySubsystem;
 
 public class StopBeltwayCommand extends CommandBase {
 
-    private Beltway beltway;
+    private BeltwaySubsystem beltway;
 
-    public StopBeltwayCommand(Beltway b) {
+    public StopBeltwayCommand(BeltwaySubsystem b) {
         this.beltway = b;
         addRequirements(b);
     }

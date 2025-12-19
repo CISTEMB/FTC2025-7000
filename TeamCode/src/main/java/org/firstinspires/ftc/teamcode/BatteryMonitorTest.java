@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.subsystems.BatteryMonitor;
+import org.firstinspires.ftc.teamcode.subsystems.BatteryMonitorSubsystem;
 
 /**
  * Test OpMode for Battery Monitor
@@ -17,13 +17,13 @@ import org.firstinspires.ftc.teamcode.subsystems.BatteryMonitor;
  */
 @TeleOp(name = "Battery Monitor Test", group = "Testing")
 public class BatteryMonitorTest extends OpMode {
-    private BatteryMonitor batteryMonitor;
+    private BatteryMonitorSubsystem batteryMonitor;
     private boolean lastA = false;
     private boolean lastX = false;
 
     @Override
     public void init() {
-        batteryMonitor = new BatteryMonitor(hardwareMap, telemetry);
+        batteryMonitor = new BatteryMonitorSubsystem(hardwareMap, telemetry);
 
         telemetry.addData("Status", "Initialized");
         telemetry.addData("", "Battery monitor ready");

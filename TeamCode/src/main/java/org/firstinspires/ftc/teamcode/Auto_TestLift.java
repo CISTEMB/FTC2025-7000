@@ -12,23 +12,23 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.subsystems.Beltway;
-import org.firstinspires.ftc.teamcode.subsystems.Intake;
-import org.firstinspires.ftc.teamcode.subsystems.LauncherMotors;
-import org.firstinspires.ftc.teamcode.subsystems.Lifter;
+import org.firstinspires.ftc.teamcode.subsystems.BeltwaySubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.LauncherMotorsSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.LifterSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LimelightSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.Navigation;
+import org.firstinspires.ftc.teamcode.subsystems.NavigationSubsystem;
 
 @Autonomous(name = "Auto: Lifter Test", group = "Auto")
 public class Auto_TestLift extends CommandOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
-    private Beltway beltway;
+    private BeltwaySubsystem beltway;
     private MecanumDriveSubsystem drive;
-    private Intake intake;
-    private LauncherMotors launcherMotors;
-    private Lifter lifter;
-    private Navigation navigation;
+    private IntakeSubsystem intake;
+    private LauncherMotorsSubsystem launcherMotors;
+    private LifterSubsystem lifter;
+    private NavigationSubsystem navigation;
 
     private MecanumVelocityConstraint minVolConstraint = new MecanumVelocityConstraint(25, 25);
     private ProfileAccelerationConstraint minProfAccelConstraint = new ProfileAccelerationConstraint(25);
@@ -41,11 +41,12 @@ public class Auto_TestLift extends CommandOpMode {
         telemetry.update();
 
         drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hardwareMap), true);
-        beltway = new Beltway(hardwareMap, telemetry);
-        intake = new Intake(hardwareMap, telemetry);
-        navigation = new Navigation(new LimelightSubsystem(hardwareMap, telemetry), hardwareMap, telemetry);
-        launcherMotors = new LauncherMotors(hardwareMap, telemetry, navigation);
-        lifter = new Lifter(hardwareMap, telemetry, navigation);
+        beltway = new BeltwaySubsystem(hardwareMap, telemetry);
+        intake = new IntakeSubsystem(hardwareMap, telemetry);
+        LimelightSubsystem limelight = new LimelightSubsystem(hardwareMap, telemetry);
+        navigation = new NavigationSubsystem(limelight, hardwareMap, telemetry);
+        launcherMotors = new LauncherMotorsSubsystem(hardwareMap, telemetry, navigation);
+        lifter = new LifterSubsystem(hardwareMap, telemetry, navigation);
         lifter.setServoPosition(0.0);
 
         schedule(

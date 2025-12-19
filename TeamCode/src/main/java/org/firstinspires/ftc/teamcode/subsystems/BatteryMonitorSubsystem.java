@@ -10,7 +10,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  * Battery Monitoring Subsystem
  * Tracks battery voltage and provides warnings for low battery conditions
  */
-public class BatteryMonitor extends SubsystemBase {
+public class BatteryMonitorSubsystem extends SubsystemBase {
     private final VoltageSensor voltageSensor;
     private final Telemetry telemetry;
 
@@ -30,7 +30,7 @@ public class BatteryMonitor extends SubsystemBase {
     // Display options
     private boolean showDetailed = true;
 
-    public BatteryMonitor(HardwareMap hardwareMap, Telemetry telemetry) {
+    public BatteryMonitorSubsystem(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
 
         // Get the voltage sensor (usually from the control hub)

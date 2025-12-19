@@ -14,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-public class Drive extends SubsystemBase {
+public class DriveSubsystem extends SubsystemBase {
     private DcMotor leftFrontMotor;
     private DcMotor leftBackMotor;
     private DcMotor rightFrontMotor;
@@ -25,7 +25,7 @@ public class Drive extends SubsystemBase {
     public boolean fastMode = false;
 
 
-    public Drive(HardwareMap hardwareMap, Telemetry t) {
+    public DriveSubsystem(HardwareMap hardwareMap, Telemetry t) {
         this.t = t;
 
 

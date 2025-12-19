@@ -10,19 +10,20 @@ import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
 
 import java.util.ArrayList;
-import java.util.Optional;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
 
-public class Navigation extends SubsystemBase {
+public class NavigationSubsystem extends SubsystemBase {
     private final StandardTrackingWheelLocalizer localizer;
     private final Telemetry telemetry;
     private final LimelightSubsystem limelight;
+
     @Nullable
     @CheckForNull
     public Pose2d saved_pose;
-    public Navigation(LimelightSubsystem limelightSubsystem, HardwareMap hardwareMap, Telemetry telemetry) {
+
+    public NavigationSubsystem(LimelightSubsystem limelightSubsystem, HardwareMap hardwareMap, Telemetry telemetry) {
         localizer = new StandardTrackingWheelLocalizer(hardwareMap, new ArrayList<>(), new ArrayList<>());
         this.telemetry = telemetry;
         this.limelight = limelightSubsystem;
@@ -33,10 +34,17 @@ public class Navigation extends SubsystemBase {
         localizer.update();
         telemetry.addData("Current pose", getPose());
 
-        if (limelight.result != null && limelight.result.isValid()) {
+        if (limelight.result != null && limelight.result.isValid() && limelight.botpose_mt2 != null) {
             Position pos = limelight.botpose_mt2.getPosition().toUnit(DistanceUnit.INCH);
-            saved_pose = getPose();
-            saved_pose = new Pose2d(saved_pose.getX() + pos.x, saved_pose.getY() + pos.y);
+
+            // Create pose from limelight data
+            Pose2d limelightPose = new Pose2d(pos.x, pos.y, limelight.botpose_mt2.getOrientation().getYaw());
+
+            // Update the drive's pose estimate with limelight position
+            localizer.setPoseEstimate(limelightPose);
+
+            // Save pose for navigation calculations
+            saved_pose = limelightPose;
         }
     }
 
@@ -47,13 +55,28 @@ public class Navigation extends SubsystemBase {
     @Nullable
     @CheckForNull
     public Double getAngleOffset() {
-        if (saved_pose != null) {
-            if (limelight.result != null) {
-                return limelight.result.getTx();
-            }
+        if (limelight.result != null) {
+            return limelight.result.getTx();
+        } else if (saved_pose == null) {
+            return null;
         }
 
-        return null;
+        Pose2d currentPose = getPose();
+
+        // Calculate the angle from current position to saved_pose
+        double deltaX = saved_pose.getX() - currentPose.getX();
+        double deltaY = saved_pose.getY() - currentPose.getY();
+        double angleToTarget = Math.atan2(deltaY, deltaX);
+
+        // Calculate the difference between current heading and angle to target
+        double angleOffset = angleToTarget - currentPose.getHeading();
+
+        // Normalize to [-PI, PI]
+        while (angleOffset > Math.PI) angleOffset -= 2 * Math.PI;
+        while (angleOffset < -Math.PI) angleOffset += 2 * Math.PI;
+
+        // Convert to degrees to match limelight's getTx() format
+        return Math.toDegrees(angleOffset);
     }
 
     public boolean hasTarget() {
