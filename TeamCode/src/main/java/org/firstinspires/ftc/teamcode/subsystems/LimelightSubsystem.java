@@ -71,7 +71,7 @@ public class LimelightSubsystem extends SubsystemBase {
             if (result.isValid()) {
                 this.result = result;
                 this.botpose_mt2 = result.getBotpose_MT2();
-                t.addData("botpose", botpose_mt2.toString());
+                //t.addData("botpose", botpose_mt2.toString());
             }
         }
     }

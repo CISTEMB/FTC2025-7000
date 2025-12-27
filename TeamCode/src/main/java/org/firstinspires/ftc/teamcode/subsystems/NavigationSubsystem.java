@@ -32,7 +32,7 @@ public class NavigationSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         localizer.update();
-        telemetry.addData("Current pose", getPose());
+        //telemetry.addData("Current pose", getPose());
 
         if (limelight.result != null && limelight.result.isValid() && limelight.botpose_mt2 != null) {
             Position pos = limelight.botpose_mt2.getPosition().toUnit(DistanceUnit.INCH);
@@ -89,8 +89,12 @@ public class NavigationSubsystem extends SubsystemBase {
         if (saved_pose == null) {
             return null;
         }
+
+
         Pose2d pose = getPose();
-        return Math.sqrt(Math.pow(pose.getX() - saved_pose.getX(), 2) + Math.pow(pose.getY() - saved_pose.getY(), 2));
+        Double distance = Math.sqrt(Math.pow(pose.getX() - saved_pose.getX(), 2) + Math.pow(pose.getY() - saved_pose.getY(), 2));
+        telemetry.addData("distance", distance);
+        return distance;
     }
 
     //              closer   --- further
