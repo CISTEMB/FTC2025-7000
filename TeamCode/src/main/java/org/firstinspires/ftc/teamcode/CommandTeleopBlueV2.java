@@ -51,7 +51,7 @@ public class CommandTeleopBlueV2 extends CommandOpMode {
         // Initialize subsystems
         drive = new DriveSubsystem(hardwareMap, telemetry);
         limelight = new LimelightSubsystem(hardwareMap, telemetry);
-        navigation = new NavigationSubsystem(limelight, hardwareMap, telemetry);
+        navigation = new NavigationSubsystem(limelight, hardwareMap, AllianceColor.Blue, telemetry);
         launcherMotors = new LauncherMotorsSubsystem(hardwareMap, telemetry, navigation);
         beltway = new BeltwaySubsystem(hardwareMap, telemetry);
         intake = new IntakeSubsystem(hardwareMap, telemetry);

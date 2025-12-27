@@ -52,7 +52,7 @@ public class Auto_RedWallStart extends CommandOpMode {
         drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hardwareMap), true);
         beltway = new BeltwaySubsystem(hardwareMap, telemetry);
         intake = new IntakeSubsystem(hardwareMap, telemetry);
-        navigation = new NavigationSubsystem(limelight, hardwareMap, telemetry);
+        navigation = new NavigationSubsystem(limelight, hardwareMap, AllianceColor.Red, telemetry);
         launcherMotors = new LauncherMotorsSubsystem(hardwareMap, telemetry, navigation);
         lifter = new LifterSubsystem(hardwareMap, telemetry, navigation);
         lifter.setServoPosition(0.0); //level out the servo

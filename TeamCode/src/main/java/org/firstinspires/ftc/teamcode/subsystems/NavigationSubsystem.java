@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.teamcode.AllianceColor;
 import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
 
 import java.util.ArrayList;
@@ -26,11 +27,16 @@ public class NavigationSubsystem extends SubsystemBase {
     @CheckForNull
     public Pose2d saved_pose;
     public Pose2d apriltag_pose;
+    private final Pose2d blue_apriltag = new Pose2d(-58.34, -55.62 );
+    private final Pose2d red_apriltag = new Pose2d(-58.34, 55.62 );
+    private AllianceColor color;
 
-    public NavigationSubsystem(LimelightSubsystem limelightSubsystem, HardwareMap hardwareMap, Telemetry telemetry) {
+
+    public NavigationSubsystem(LimelightSubsystem limelightSubsystem, HardwareMap hardwareMap, AllianceColor color, Telemetry telemetry) {
         localizer = new StandardTrackingWheelLocalizer(hardwareMap, new ArrayList<>(), new ArrayList<>());
         this.telemetry = telemetry;
         this.limelight = limelightSubsystem;
+        this.color = color;
     }
 
     @Override
@@ -40,6 +46,8 @@ public class NavigationSubsystem extends SubsystemBase {
 
         if (limelight.result != null && limelight.result.isValid() && limelight.botpose_mt2 != null) {
             Position pos = limelight.botpose_mt2.getPosition().toUnit(DistanceUnit.INCH);
+            telemetry.addData("pos X", pos.x);
+            telemetry.addData("pos y", pos.y);
 
             apriltag_pose = new Pose2d(limelight.result.getTx(), limelight.result.getTy());
             // Create pose from limelight data
@@ -66,6 +74,14 @@ public class NavigationSubsystem extends SubsystemBase {
         return localizer.getPoseEstimate();
     }
 
+    public Pose2d currentTarget() {
+        if (this.color == AllianceColor.Blue) {
+            return blue_apriltag;
+        } else {
+            return red_apriltag;
+        }
+    }
+
     @Nullable
     @CheckForNull
     public Double getAngleOffset() {
@@ -78,8 +94,8 @@ public class NavigationSubsystem extends SubsystemBase {
         Pose2d currentPose = getPose();
 
         // Calculate the angle from current position to saved_pose
-        double deltaX = saved_pose.getX() - currentPose.getX();
-        double deltaY = saved_pose.getY() - currentPose.getY();
+        double deltaX = this.currentTarget().getX() - currentPose.getX();
+        double deltaY = this.currentTarget().getY() - currentPose.getY();
         double angleToTarget = Math.atan2(deltaY, deltaX);
 
         // Calculate the difference between current heading and angle to target
@@ -104,7 +120,7 @@ public class NavigationSubsystem extends SubsystemBase {
             return last_distance;
         }
 
-        Translation2d target = new Translation2d(apriltag_pose.getX(), apriltag_pose.getY());
+        Translation2d target = new Translation2d(this.currentTarget().getX(), this.currentTarget().getY());
         Translation2d robit = new Translation2d(getPose().getX(), getPose().getY());
 
         double distance = robit.getDistance(target);

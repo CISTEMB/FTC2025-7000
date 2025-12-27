@@ -51,7 +51,7 @@ public class Auto_BlueGoalStart extends CommandOpMode {
         beltway = new BeltwaySubsystem(hardwareMap, telemetry);
         intake = new IntakeSubsystem(hardwareMap, telemetry);
         LimelightSubsystem limelight = new LimelightSubsystem(hardwareMap, telemetry);
-        navigation = new NavigationSubsystem(limelight, hardwareMap, telemetry);
+        navigation = new NavigationSubsystem(limelight, hardwareMap, AllianceColor.Blue, telemetry);
         launcherMotors = new LauncherMotorsSubsystem(hardwareMap, telemetry, navigation);
         lifter = new LifterSubsystem(hardwareMap, telemetry, navigation);
         lifter.setServoPosition(0.0); //level out the servo

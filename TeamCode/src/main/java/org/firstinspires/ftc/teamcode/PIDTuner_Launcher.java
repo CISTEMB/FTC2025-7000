@@ -107,7 +107,7 @@ public class PIDTuner_Launcher extends OpMode {
 
     @Override
     public void init() {
-        launcher = new LauncherMotorsSubsystem(hardwareMap, telemetry, new NavigationSubsystem(new LimelightSubsystem(hardwareMap, telemetry), hardwareMap, telemetry));
+        launcher = new LauncherMotorsSubsystem(hardwareMap, telemetry, new NavigationSubsystem(new LimelightSubsystem(hardwareMap, telemetry), hardwareMap, AllianceColor.Blue, telemetry));
 
         telemetry.addData("Status", "Initialized");
         telemetry.addData("Target Velocity", targetVelocity);
