@@ -107,7 +107,10 @@ public class LauncherMotorsSubsystem extends SubsystemBase {
         if (pos == null) {
             return;
         }
-        motorVelocity = motorVelocities.get(pos);
+
+        if (navigation.hasSeenTag() && pos > 0.0) {
+            setSpeedBasedOnLifterPosition(pos);
+        }
     }
 
     private double getAverage(ArrayList<Double> values) {

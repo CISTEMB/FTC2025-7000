@@ -29,7 +29,7 @@ public class NavigationSubsystem extends SubsystemBase {
     public Pose2d apriltag_pose;
     private final Pose2d blue_apriltag = new Pose2d(-58.34, -55.62 );
     private final Pose2d red_apriltag = new Pose2d(-58.34, 55.62 );
-    private AllianceColor color;
+    private final AllianceColor color;
 
 
     public NavigationSubsystem(LimelightSubsystem limelightSubsystem, HardwareMap hardwareMap, AllianceColor color, Telemetry telemetry) {
@@ -39,6 +39,11 @@ public class NavigationSubsystem extends SubsystemBase {
         this.color = color;
     }
 
+    public boolean hasSeenTag()
+    {
+        return saved_pose != null;
+    }
+
     @Override
     public void periodic() {
         localizer.update();
@@ -46,8 +51,6 @@ public class NavigationSubsystem extends SubsystemBase {
 
         if (limelight.result != null && limelight.result.isValid() && limelight.botpose_mt2 != null) {
             Position pos = limelight.botpose_mt2.getPosition().toUnit(DistanceUnit.INCH);
-            telemetry.addData("pos X", pos.x);
-            telemetry.addData("pos y", pos.y);
 
             apriltag_pose = new Pose2d(limelight.result.getTx(), limelight.result.getTy());
             // Create pose from limelight data
@@ -58,15 +61,6 @@ public class NavigationSubsystem extends SubsystemBase {
 
             // Save pose for navigation calculations
             saved_pose = limelightPose;
-            telemetry.addData("saved a pose", "true");
-        }
-
-        if (saved_pose != null) {
-            telemetry.addData("saved pose x/y", saved_pose.getX() + " " + saved_pose.getY());
-        }
-
-        if (apriltag_pose != null) {
-            telemetry.addData("apriltag pose x/y", apriltag_pose.getX() + " " + apriltag_pose.getY());
         }
     }
 
@@ -125,7 +119,6 @@ public class NavigationSubsystem extends SubsystemBase {
 
         double distance = robit.getDistance(target);
         last_distance = distance;
-        telemetry.addData("distance", distance);
         return distance;
     }
 
