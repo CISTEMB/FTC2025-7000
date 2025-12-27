@@ -91,18 +91,17 @@ public class LauncherMotorsSubsystem extends SubsystemBase {
         if (readings.size() > 200) {
             readings.remove(0);
         }
-
-        tm.addData("--- LAUNCHER STATUS ---", "");
-        tm.addData("Target Velocity", "%.0f ticks/sec", motorVelocity);
-        tm.addData("Actual Velocity (L)", "%.0f ticks/sec", actualVelocity);
-        tm.addData("Actual Velocity (R)", "%.0f ticks/sec", rightMotor.getVelocity());
-        tm.addData("Velocity Error", "%.0f ticks/sec (%.1f%%)", velocityError, errorPercent);
-        tm.addData("Average Error", getAverage(readings));
-        tm.addData("--- PID COEFFICIENTS ---", "");
-        tm.addData("P", "%.2f", kP);
-        tm.addData("I", "%.2f", kI);
-        tm.addData("D", "%.2f", kD);
-        tm.addData("F", "%.2f", kF);
+//        tm.addData("--- LAUNCHER STATUS ---", "");
+//        tm.addData("Target Velocity", "%.0f ticks/sec", motorVelocity);
+//        tm.addData("Actual Velocity (L)", "%.0f ticks/sec", actualVelocity);
+//        tm.addData("Actual Velocity (R)", "%.0f ticks/sec", rightMotor.getVelocity());
+//        tm.addData("Velocity Error", "%.0f ticks/sec (%.1f%%)", velocityError, errorPercent);
+//        tm.addData("Average Error", getAverage(readings));
+//        tm.addData("--- PID COEFFICIENTS ---", "");
+//        tm.addData("P", "%.2f", kP);
+//        tm.addData("I", "%.2f", kI);
+//        tm.addData("D", "%.2f", kD);
+//        tm.addData("F", "%.2f", kF);
 
         Double pos = navigation.getPosition();
         if (pos == null) {

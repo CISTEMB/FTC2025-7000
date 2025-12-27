@@ -79,8 +79,8 @@ public class LifterSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         super.periodic();
-        tm.addData("lifter target position", lifterPosList.get(currentPosition));
-        tm.addData("lifter actual position", servo.getPosition());
+        //tm.addData("lifter target position", lifterPosList.get(currentPosition));
+        //tm.addData("lifter actual position", servo.getPosition());
 
         Double pos = navigation.getPosition();
         if (pos == null) {

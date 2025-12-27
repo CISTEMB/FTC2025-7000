@@ -34,6 +34,6 @@ public class BeltwaySubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         super.periodic();
-        tm.addData("belt power", servo.getPower());
+        //tm.addData("belt power", servo.getPower());
     }
 }

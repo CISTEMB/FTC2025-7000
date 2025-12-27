@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.arcrobotics.ftclib.geometry.Translation2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -19,9 +20,12 @@ public class NavigationSubsystem extends SubsystemBase {
     private final Telemetry telemetry;
     private final LimelightSubsystem limelight;
 
+    private double last_distance;
+
     @Nullable
     @CheckForNull
     public Pose2d saved_pose;
+    public Pose2d apriltag_pose;
 
     public NavigationSubsystem(LimelightSubsystem limelightSubsystem, HardwareMap hardwareMap, Telemetry telemetry) {
         localizer = new StandardTrackingWheelLocalizer(hardwareMap, new ArrayList<>(), new ArrayList<>());
@@ -37,6 +41,7 @@ public class NavigationSubsystem extends SubsystemBase {
         if (limelight.result != null && limelight.result.isValid() && limelight.botpose_mt2 != null) {
             Position pos = limelight.botpose_mt2.getPosition().toUnit(DistanceUnit.INCH);
 
+            apriltag_pose = new Pose2d(limelight.result.getTx(), limelight.result.getTy());
             // Create pose from limelight data
             Pose2d limelightPose = new Pose2d(pos.x, pos.y, limelight.botpose_mt2.getOrientation().getYaw());
 
@@ -45,6 +50,15 @@ public class NavigationSubsystem extends SubsystemBase {
 
             // Save pose for navigation calculations
             saved_pose = limelightPose;
+            telemetry.addData("saved a pose", "true");
+        }
+
+        if (saved_pose != null) {
+            telemetry.addData("saved pose x/y", saved_pose.getX() + " " + saved_pose.getY());
+        }
+
+        if (apriltag_pose != null) {
+            telemetry.addData("apriltag pose x/y", apriltag_pose.getX() + " " + apriltag_pose.getY());
         }
     }
 
@@ -86,13 +100,15 @@ public class NavigationSubsystem extends SubsystemBase {
     @Nullable
     @CheckForNull
     public Double getDistance() {
-        if (saved_pose == null) {
-            return null;
+        if (saved_pose == null || apriltag_pose == null) {
+            return last_distance;
         }
 
+        Translation2d target = new Translation2d(apriltag_pose.getX(), apriltag_pose.getY());
+        Translation2d robit = new Translation2d(getPose().getX(), getPose().getY());
 
-        Pose2d pose = getPose();
-        Double distance = Math.sqrt(Math.pow(pose.getX() - saved_pose.getX(), 2) + Math.pow(pose.getY() - saved_pose.getY(), 2));
+        double distance = robit.getDistance(target);
+        last_distance = distance;
         telemetry.addData("distance", distance);
         return distance;
     }

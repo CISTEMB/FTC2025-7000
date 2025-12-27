@@ -192,18 +192,18 @@ public class CommandTeleopBlueV2 extends CommandOpMode {
             double ty = result.getTy(); // How far up or down the target is (degrees)
             double ta = result.getTa(); // How big the target looks (0%-100% of the image)
 
-            telemetry.addData("Target X", tx);
-            telemetry.addData("Target Y", ty);
-            telemetry.addData("Target Area", ta);
+           // telemetry.addData("Target X", tx);
+            //telemetry.addData("Target Y", ty);
+            //telemetry.addData("Target Area", ta);
         } else {
             telemetry.addData("Limelight", "No Targets");
         }
 
-        if (limelight.can_shoot()) {
-            telemetry.addData("Can shoot", "Yes");
-        } else {
-            telemetry.addData("Can shoot", "No");
-        }
+//        if (limelight.can_shoot()) {
+//            telemetry.addData("Can shoot", "Yes");
+//        } else {
+//            telemetry.addData("Can shoot", "No");
+//        }
 
         // Periodic updates for all subsystems
         launcherMotors.periodic();
