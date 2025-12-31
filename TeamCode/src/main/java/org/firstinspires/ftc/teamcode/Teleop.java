@@ -202,6 +202,7 @@ public class Teleop extends LinearOpMode {
                 launcher.pickup();
             } else if (!gamepad1.b && !gamepad1.y) {
                 launcher.stop_pickup();
+
             }
 
             if (gamepad1.dpadDownWasPressed() && gamepad1.dpadDownWasReleased()) {

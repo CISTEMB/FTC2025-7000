@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
+@Deprecated
 public class LauncherSubsystem extends SubsystemBase {
 
     private DcMotorEx leftMotor;
