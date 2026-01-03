@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.RunCommand;
@@ -23,17 +26,20 @@ import org.firstinspires.ftc.teamcode.commands.ReverseIntakeCommand;
 import org.firstinspires.ftc.teamcode.commands.SetLifterPositionCommand;
 import org.firstinspires.ftc.teamcode.commands.StopBeltwayCommand;
 import org.firstinspires.ftc.teamcode.commands.StopLauncherMotorsCommand;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.BeltwaySubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LauncherMotorsSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LifterSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LimelightSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.NavigationSubsystem;
 
-@TeleOp(name = "CommandTeleopV2 Red", group = "000-Main")
+@Config
+@TeleOp(name = "CommandTeleopV2 Red", group = "drive")
 public class CommandTeleopRedV2 extends CommandOpMode {
-    private DriveSubsystem drive;
+    private MecanumDriveSubsystem drive;
     private LauncherMotorsSubsystem launcherMotors;
     private BeltwaySubsystem beltway;
     private IntakeSubsystem intake;
@@ -49,7 +55,8 @@ public class CommandTeleopRedV2 extends CommandOpMode {
     @Override
     public void initialize() {
         // Initialize subsystems
-        drive = new DriveSubsystem(hardwareMap, telemetry);
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hardwareMap), true);
         limelight = new LimelightSubsystem(hardwareMap, telemetry);
         navigation = new NavigationSubsystem(limelight, hardwareMap, AllianceColor.Red, telemetry);
         launcherMotors = new LauncherMotorsSubsystem(hardwareMap, telemetry, navigation);

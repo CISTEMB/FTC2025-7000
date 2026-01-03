@@ -79,6 +79,8 @@ public class SampleMecanumDrive extends MecanumDrive {
     private List<Integer> lastEncPositions = new ArrayList<>();
     private List<Integer> lastEncVels = new ArrayList<>();
 
+    public boolean fastMode = false;
+
     public SampleMecanumDrive(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
@@ -328,5 +330,45 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public void breakFollowing() {
         trajectorySequenceRunner.breakFollowing();
+    }
+
+    public void arcadeDrive(double forward, double turn, double strafe, boolean curve) {
+        if (curve) {
+            forward = inputCurve(forward);
+            turn = inputCurve(turn);
+            strafe = inputCurve(strafe);
+        }
+
+        turn *= 0.75;
+
+        //Calculate speed for each motor
+        double frontLeft = forward + turn + strafe;
+        double frontRight = forward - turn - strafe;
+        double backLeft = forward + turn - strafe;
+        double backRight = forward - turn + strafe;
+
+        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        double multiple = fastMode ? 2.0 : 1.0;
+
+        //set motor
+        leftFront.setPower(frontLeft * multiple);
+        leftRear.setPower(backLeft * multiple);
+        rightFront.setPower(frontRight * multiple);
+        rightRear.setPower(backRight * multiple);
+    }
+
+    public double inputCurve(double input) {
+        if (0 <= input) {
+            // input is positive
+            return input * input;
+        } else {
+            // input is negative
+            return -(input * input);
+        }
+
     }
 }

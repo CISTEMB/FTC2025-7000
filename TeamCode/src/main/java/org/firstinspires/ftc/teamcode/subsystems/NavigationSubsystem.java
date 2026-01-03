@@ -48,19 +48,23 @@ public class NavigationSubsystem extends SubsystemBase {
     public void periodic() {
         localizer.update();
         //telemetry.addData("Current pose", getPose());
+        telemetry.addData("field x", localizer.getPoseEstimate().getX()); //these values will print out wrong until we scan the april tag
+        telemetry.addData("field y", localizer.getPoseEstimate().getY()); //these values will print out wrong until we scan the april tag
+        telemetry.addData("distance from tag", this.getDistance()); //these values will print out wrong until we scan the april tag
+        telemetry.addData("angle from tag", this.getAngleOffset()); //these values will print out wrong until we scan the april tag
 
         if (limelight.result != null && limelight.result.isValid() && limelight.botpose_mt2 != null) {
             Position pos = limelight.botpose_mt2.getPosition().toUnit(DistanceUnit.INCH);
 
             apriltag_pose = new Pose2d(limelight.result.getTx(), limelight.result.getTy());
             // Create pose from limelight data
-            Pose2d limelightPose = new Pose2d(pos.x, pos.y, limelight.botpose_mt2.getOrientation().getYaw());
+            Pose2d limelightVerifiedRobotPose = new Pose2d(pos.x, pos.y, limelight.botpose_mt2.getOrientation().getYaw());
 
             // Update the drive's pose estimate with limelight position
-            localizer.setPoseEstimate(limelightPose);
+            localizer.setPoseEstimate(limelightVerifiedRobotPose);
 
             // Save pose for navigation calculations
-            saved_pose = limelightPose;
+            saved_pose = limelightVerifiedRobotPose;
         }
     }
 

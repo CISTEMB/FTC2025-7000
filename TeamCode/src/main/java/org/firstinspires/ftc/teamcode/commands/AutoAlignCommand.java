@@ -7,21 +7,20 @@ import com.arcrobotics.ftclib.command.CommandBase;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LimelightSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.NavigationSubsystem;
 
 public class AutoAlignCommand extends CommandBase {
 
-    private DriveSubsystem drive;
+    private MecanumDriveSubsystem drive;
     private NavigationSubsystem navigation;
     private Telemetry telemetry;
     private final Range<Double> alignmentRange = new Range<>(-0.5, 0.5);
     private boolean isRed;
-
     private double angleOffset;
     private double turnSpeed = 0.0;
-    private boolean hasTarget;
 
-    public AutoAlignCommand(DriveSubsystem drive, NavigationSubsystem navigation, Telemetry telemetry, Boolean isRed) {
+    public AutoAlignCommand(MecanumDriveSubsystem drive, NavigationSubsystem navigation, Telemetry telemetry, Boolean isRed) {
         this.drive = drive;
         this.navigation = navigation;
         this.telemetry = telemetry;
@@ -36,17 +35,10 @@ public class AutoAlignCommand extends CommandBase {
         addRequirements(drive, navigation);
     }
 
-    @Override
-    public void initialize() {
-        hasTarget = navigation.hasTarget();
-    }
 
     @Override
     public void execute() {
-        telemetry.addData("turn speed", turnSpeed);
-
-
-        if (navigation.hasTarget() && navigation.getAngleOffset() != null) {
+        if (navigation.hasSeenTag() && navigation.getAngleOffset() != null) {
             double x = navigation.getAngleOffset() + angleOffset;
             turnSpeed = x * Math.abs(x) * 0.0067 + 0.1 * Math.signum(x);   // <-- turn the robot proportional to tx to have better accuracy
             // Note: x^2 * 0.067 + 0.04 while maintaining whether x is positive or negative
@@ -67,7 +59,6 @@ public class AutoAlignCommand extends CommandBase {
 
         if (navigation.getAngleOffset() != null) {
             double x = navigation.getAngleOffset() + angleOffset;
-            telemetry.addData("angle distance", x);
             return alignmentRange.contains(x);
         }
 

@@ -25,15 +25,21 @@ public class MecanumDriveSubsystem extends SubsystemBase {
     private final SampleMecanumDrive drive;
     private final boolean fieldCentric;
 
+
     public MecanumDriveSubsystem(SampleMecanumDrive drive, boolean isFieldCentric) {
         this.drive = drive;
+        this.fastMode = drive.fastMode;
         fieldCentric = isFieldCentric;
     }
 
+    public boolean fastMode;
     public void setMode(DcMotor.RunMode mode) {
         drive.setMode(mode);
     }
 
+    public void arcadeDrive(double forward, double turn, double strafe, boolean curve) {
+        this.drive.arcadeDrive(forward, turn, strafe, curve);
+    }
     public void setPIDFCoefficients(DcMotor.RunMode mode, PIDFCoefficients coefficients) {
         drive.setPIDFCoefficients(mode, coefficients);
     }
@@ -65,6 +71,8 @@ public class MecanumDriveSubsystem extends SubsystemBase {
                 )
         );
     }
+
+
 
     public void setDrivePower(Pose2d drivePower) {
         drive.setDrivePower(drivePower);

@@ -14,6 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
+@Deprecated
 public class DriveSubsystem extends SubsystemBase {
     private DcMotor leftFrontMotor;
     private DcMotor leftBackMotor;

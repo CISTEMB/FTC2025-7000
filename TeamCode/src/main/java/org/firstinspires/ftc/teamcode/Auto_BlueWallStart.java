@@ -59,7 +59,8 @@ public class Auto_BlueWallStart extends CommandOpMode {
         limelight = new LimelightSubsystem(hardwareMap, telemetry);
         limelight.limelight.pipelineSwitch(1);
 
-        DriveSubsystem autoAlignDrive = new DriveSubsystem(hardwareMap, telemetry);
+        MecanumDriveSubsystem autoAlignDrive = new MecanumDriveSubsystem(new SampleMecanumDrive(hardwareMap), true);
+
 
         TrajectorySequence sequence1 = drive.trajectorySequenceBuilder(new Pose2d(60, -20, Math.toRadians(180))) //starting position
                 .back(10, minVolConstraint, minProfAccelConstraint)
