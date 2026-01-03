@@ -55,7 +55,6 @@ public class Auto_BlueWallStart extends CommandOpMode {
         navigation = new NavigationSubsystem(limelight, hardwareMap, AllianceColor.Blue, telemetry);
         launcherMotors = new LauncherMotorsSubsystem(hardwareMap, telemetry, navigation);
         lifter = new LifterSubsystem(hardwareMap, telemetry, navigation);
-        lifter.setServoPosition(0.0); //level out the servo
 
         limelight = new LimelightSubsystem(hardwareMap, telemetry);
         limelight.limelight.pipelineSwitch(1);
@@ -104,7 +103,6 @@ public class Auto_BlueWallStart extends CommandOpMode {
     @Override
     public void reset() {
         //stop everything
-        lifter.setServoPosition(0.0);
         launcherMotors.stop();
         beltway.stop();
         intake.stop();

@@ -3,19 +3,19 @@ package org.firstinspires.ftc.teamcode.commands;
 import com.arcrobotics.ftclib.command.CommandBase;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.subsystems.Beltway;
-import org.firstinspires.ftc.teamcode.subsystems.Drive;
-import org.firstinspires.ftc.teamcode.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.subsystems.BeltwaySubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LAZER;
 
 public class AutoPickupCommand extends CommandBase {
-    private final Drive drive;
+    private final DriveSubsystem drive;
     private final LAZER lazer;
     private final Telemetry tm;
-    private final Intake intake;
-    private final Beltway beltway;
+    private final IntakeSubsystem intake;
+    private final BeltwaySubsystem beltway;
 
-    public AutoPickupCommand(Drive drive, Intake intake, Beltway beltway, LAZER lazer, Telemetry telemetry) {
+    public AutoPickupCommand(DriveSubsystem drive, IntakeSubsystem intake, BeltwaySubsystem beltway, LAZER lazer, Telemetry telemetry) {
         this.drive = drive;
         this.lazer = lazer;
         this.tm = telemetry;

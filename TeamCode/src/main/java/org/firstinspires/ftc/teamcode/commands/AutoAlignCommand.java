@@ -33,7 +33,7 @@ public class AutoAlignCommand extends CommandBase {
             angleOffset = -0.5;
         }
 
-        addRequirements(drive, limelight);
+        addRequirements(drive, navigation);
     }
 
     @Override

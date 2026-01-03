@@ -43,6 +43,9 @@ captures/
 *.iml
 .idea/
 
+# Claude Code
+.claude/
+
 # For Mac users
 .DS_Store
 

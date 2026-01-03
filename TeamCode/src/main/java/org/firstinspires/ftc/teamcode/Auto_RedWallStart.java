@@ -55,7 +55,6 @@ public class Auto_RedWallStart extends CommandOpMode {
         navigation = new NavigationSubsystem(limelight, hardwareMap, AllianceColor.Red, telemetry);
         launcherMotors = new LauncherMotorsSubsystem(hardwareMap, telemetry, navigation);
         lifter = new LifterSubsystem(hardwareMap, telemetry, navigation);
-        lifter.setServoPosition(0.0); //level out the servo
 
         limelight = new LimelightSubsystem(hardwareMap, telemetry);
         limelight.limelight.pipelineSwitch(0);

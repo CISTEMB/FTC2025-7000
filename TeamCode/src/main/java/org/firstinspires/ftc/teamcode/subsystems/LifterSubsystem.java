@@ -45,6 +45,7 @@ public class LifterSubsystem extends SubsystemBase {
         lifterPosList.add(4.001, 0.7);
 
         lifterPosList.createLUT();
+        this.setServoPosition(0.0); //level out the servo
     }
 
     public void setServoPosition(double position) {
@@ -53,6 +54,17 @@ public class LifterSubsystem extends SubsystemBase {
     }
 
     public void setPosition(double position) {
+        if (position < minPosition ) {
+            tm.addData("position under minimum requested: ", position);
+            tm.update();
+            return;
+        }
+
+        if (position > maxPosition) {
+            tm.addData("position over maximum requested: ", position);
+            tm.update();
+            return;
+        }
         this.currentPosition = position;
         servo.setPosition(lifterPosList.get(currentPosition));
     }

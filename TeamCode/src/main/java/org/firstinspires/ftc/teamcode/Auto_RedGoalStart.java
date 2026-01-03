@@ -54,7 +54,6 @@ public class Auto_RedGoalStart extends CommandOpMode {
         navigation = new NavigationSubsystem(limelight, hardwareMap, AllianceColor.Red, telemetry);
         launcherMotors = new LauncherMotorsSubsystem(hardwareMap, telemetry, navigation);
         lifter = new LifterSubsystem(hardwareMap, telemetry, navigation);
-        lifter.setServoPosition(0.0); //level out the servo
 
 
         TrajectorySequence sequence1 = drive.trajectorySequenceBuilder(new Pose2d(-49.5, 49.5, Math.toRadians(126))) //starting position
