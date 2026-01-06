@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.RunCommand;
@@ -35,6 +38,9 @@ import org.firstinspires.ftc.teamcode.subsystems.LifterSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LimelightSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.NavigationSubsystem;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.util.DashboardUtil;
+//import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 
 @Config
 @TeleOp(name = "CommandTeleopV2 Blue", group = "drive")
@@ -51,12 +57,21 @@ public class CommandTeleopBlueV2 extends CommandOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
     private boolean isRed = false;
     private boolean hasStarted = false;
+    private Canvas fieldOverlay;
+    private TelemetryPacket packet;
 
     @Override
     public void initialize() {
         // Initialize subsystems
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hardwareMap), true);
+
+        packet = new TelemetryPacket();
+        fieldOverlay = packet.fieldOverlay();
+        fieldOverlay.setStroke("#3F51B5");
+
+        drive.setPoseEstimate(new Pose2d(0, 0, Math.toRadians(234)));
+
         limelight = new LimelightSubsystem(hardwareMap, telemetry);
         navigation = new NavigationSubsystem(limelight, hardwareMap, AllianceColor.Blue, telemetry);
         launcherMotors = new LauncherMotorsSubsystem(hardwareMap, telemetry, navigation);
@@ -92,6 +107,10 @@ public class CommandTeleopBlueV2 extends CommandOpMode {
 
     @Override
     public void run() {
+        Pose2d poseEstimate = drive.getPoseEstimate();
+        DashboardUtil.drawRobot(fieldOverlay, poseEstimate);
+        FtcDashboard.getInstance().sendTelemetryPacket(packet);
+
         // Mark that we've started teleop and configure button bindings
         if (!hasStarted && opModeIsActive()) {
             hasStarted = true;
