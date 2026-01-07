@@ -87,18 +87,4 @@ public class LifterSubsystem extends SubsystemBase {
         // return angleInput.getVoltage() / angleInput.getMaxVoltage();
         return 0.0;
     }
-
-    @Override
-    public void periodic() {
-        super.periodic();
-
-        Double pos = navigation.getPosition();
-        if (pos == null) {
-            return;
-        }
-        
-        if (navigation.hasSeenTag() && pos > 0.0) {
-            setPosition(pos);
-        }
-    }
 }

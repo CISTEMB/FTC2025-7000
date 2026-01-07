@@ -17,6 +17,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.commands.AutoAlignCommand;
 import org.firstinspires.ftc.teamcode.commands.DecreaseLifterPositionCommand;
 import org.firstinspires.ftc.teamcode.commands.ForwardBeltwayCommand;
+import org.firstinspires.ftc.teamcode.commands.HandleLifterCommand;
 import org.firstinspires.ftc.teamcode.commands.IncreaseLifterPositionCommand;
 import org.firstinspires.ftc.teamcode.commands.IntakeSlowRollCommand;
 import org.firstinspires.ftc.teamcode.commands.IntakeStopCommand;
@@ -148,11 +149,10 @@ public class CommandTeleopRedV2 extends CommandOpMode {
                     )
             );
 
-        //hold Y to pickup ball
+        //hold Y to move ball to the thrower
         driverGamepad.getGamepadButton(GamepadKeys.Button.Y)
                 .whenHeld(
                         new ParallelCommandGroup(
-                                new SetLifterForPickupCommand(lifter),
                                 new ForwardBeltwayCommand(beltway),
                                 new IntakeSlowRollCommand(intake)
                         )
@@ -170,8 +170,16 @@ public class CommandTeleopRedV2 extends CommandOpMode {
 
         // A button: Pickup (hold to run, release to stop)
         driverGamepad.getGamepadButton(GamepadKeys.Button.A)
-            .whenPressed(new PickupCommand(intake))
-            .whenReleased(new IntakeStopCommand(intake));
+            .whenPressed(
+                new ParallelCommandGroup(
+                    new SetLifterForPickupCommand(lifter),
+                    new PickupCommand(intake)))
+            .whenReleased(
+                new ParallelCommandGroup(
+                    new IntakeStopCommand(intake),
+                    new HandleLifterCommand(lifter, navigation)
+                )
+        );
 
         // D-pad up: Increase lifter position
         driverGamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP)

@@ -7,6 +7,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
@@ -20,6 +21,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.commands.AutoAlignCommand;
 import org.firstinspires.ftc.teamcode.commands.DecreaseLifterPositionCommand;
 import org.firstinspires.ftc.teamcode.commands.ForwardBeltwayCommand;
+import org.firstinspires.ftc.teamcode.commands.HandleLifterCommand;
 import org.firstinspires.ftc.teamcode.commands.IncreaseLifterPositionCommand;
 import org.firstinspires.ftc.teamcode.commands.IntakeSlowRollCommand;
 import org.firstinspires.ftc.teamcode.commands.IntakeStopCommand;
@@ -33,6 +35,7 @@ import org.firstinspires.ftc.teamcode.commands.StopLauncherMotorsCommand;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.BeltwaySubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.ElevatorMotorsSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LauncherMotorsSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LifterSubsystem;
@@ -54,6 +57,7 @@ public class CommandTeleopBlueV2 extends CommandOpMode {
     private LimelightSubsystem limelight;
     private GamepadEx driverGamepad;
     private NavigationSubsystem navigation;
+    private ElevatorMotorsSubsystem elevator; //moving on up in the world like elevators
 
     private final ElapsedTime runtime = new ElapsedTime();
     private boolean isRed = false;
@@ -79,6 +83,7 @@ public class CommandTeleopBlueV2 extends CommandOpMode {
         beltway = new BeltwaySubsystem(hardwareMap, telemetry);
         intake = new IntakeSubsystem(hardwareMap, telemetry);
         lifter = new LifterSubsystem(hardwareMap, telemetry, navigation);
+        elevator = new ElevatorMotorsSubsystem(hardwareMap, telemetry);
 
         //default PID adjustments
         launcherMotors.adjustP(100);
@@ -151,6 +156,16 @@ public class CommandTeleopBlueV2 extends CommandOpMode {
 //        driverGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
 //            .whenPressed(new PrepareShootCommandV2(launcherMotors, lifter));
 
+
+        //right bumper up
+        driverGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+                        .whenHeld(new InstantCommand(() -> elevator.goUp()));
+
+
+        //left bumper down
+        driverGamepad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+                .whenHeld(new InstantCommand(() -> elevator.stop()));
+
         // Y button: Shoot (hold to shoot, release to stop)
         driverGamepad.getGamepadButton(GamepadKeys.Button.B)
             .whenHeld(
@@ -166,11 +181,10 @@ public class CommandTeleopBlueV2 extends CommandOpMode {
                     )
             );
 
-        //hold Y to pickup ball
+        //hold Y to move ball to the thrower
         driverGamepad.getGamepadButton(GamepadKeys.Button.Y)
                 .whenHeld(
                         new ParallelCommandGroup(
-                                new SetLifterForPickupCommand(lifter),
                                 new ForwardBeltwayCommand(beltway),
                                 new IntakeSlowRollCommand(intake)
                         )
@@ -188,8 +202,16 @@ public class CommandTeleopBlueV2 extends CommandOpMode {
 
         // A button: Pickup (hold to run, release to stop)
         driverGamepad.getGamepadButton(GamepadKeys.Button.A)
-            .whenPressed(new PickupCommand(intake))
-            .whenReleased(new IntakeStopCommand(intake));
+            .whenPressed(
+                new ParallelCommandGroup(
+                    new SetLifterForPickupCommand(lifter),
+                    new PickupCommand(intake)))
+            .whenReleased(
+                new ParallelCommandGroup(
+                    new IntakeStopCommand(intake),
+                    new HandleLifterCommand(lifter, navigation)
+                )
+            );
 
         // D-pad up: Increase lifter position
         driverGamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP)
