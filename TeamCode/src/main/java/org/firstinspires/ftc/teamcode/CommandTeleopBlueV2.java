@@ -26,6 +26,7 @@ import org.firstinspires.ftc.teamcode.commands.IntakeStopCommand;
 import org.firstinspires.ftc.teamcode.commands.PickupCommand;
 import org.firstinspires.ftc.teamcode.commands.ReverseBeltwayCommand;
 import org.firstinspires.ftc.teamcode.commands.ReverseIntakeCommand;
+import org.firstinspires.ftc.teamcode.commands.SetLifterForPickupCommand;
 import org.firstinspires.ftc.teamcode.commands.SetLifterPositionCommand;
 import org.firstinspires.ftc.teamcode.commands.StopBeltwayCommand;
 import org.firstinspires.ftc.teamcode.commands.StopLauncherMotorsCommand;
@@ -165,9 +166,11 @@ public class CommandTeleopBlueV2 extends CommandOpMode {
                     )
             );
 
+        //hold Y to pickup ball
         driverGamepad.getGamepadButton(GamepadKeys.Button.Y)
                 .whenHeld(
                         new ParallelCommandGroup(
+                                new SetLifterForPickupCommand(lifter),
                                 new ForwardBeltwayCommand(beltway),
                                 new IntakeSlowRollCommand(intake)
                         )
