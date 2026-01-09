@@ -60,10 +60,10 @@ public class LauncherMotorsSubsystem extends SubsystemBase {
         motorVelocities.add(-0.001, 700.0);
         motorVelocities.add(0.0, 700.0);
         motorVelocities.add(1.0, 746.0);
-        motorVelocities.add(2.0, 792.0);
-        motorVelocities.add(3.0, 838.0);
-        motorVelocities.add(4.0, 885.0);
-        motorVelocities.add(4.001, 885.0);
+        motorVelocities.add(2.0, 832.0);
+        motorVelocities.add(3.0, 878.0);
+        motorVelocities.add(4.0, 925.0);
+        motorVelocities.add(4.001, 925.0);
 
         motorVelocities.createLUT();
 

@@ -21,6 +21,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.commands.AutoAlignCommand;
 import org.firstinspires.ftc.teamcode.commands.DecreaseLifterPositionCommand;
 import org.firstinspires.ftc.teamcode.commands.ForwardBeltwayCommand;
+import org.firstinspires.ftc.teamcode.commands.HandleLauncherMotorsCommand;
 import org.firstinspires.ftc.teamcode.commands.HandleLifterCommand;
 import org.firstinspires.ftc.teamcode.commands.IncreaseLifterPositionCommand;
 import org.firstinspires.ftc.teamcode.commands.IntakeSlowRollCommand;
@@ -126,8 +127,12 @@ public class CommandTeleopBlueV2 extends CommandOpMode {
             telemetry.addData("Motors", "Off");
         }
 
+        launcherMotors.setDefaultCommand(new HandleLauncherMotorsCommand(launcherMotors, navigation));
+        lifter.setDefaultCommand(new HandleLifterCommand(lifter, navigation));
+
         // Run the command scheduler
         super.run();
+
 
         // Update limelight
         limelight.read();
@@ -206,12 +211,7 @@ public class CommandTeleopBlueV2 extends CommandOpMode {
                 new ParallelCommandGroup(
                     new SetLifterForPickupCommand(lifter),
                     new PickupCommand(intake)))
-            .whenReleased(
-                new ParallelCommandGroup(
-                    new IntakeStopCommand(intake),
-                    new HandleLifterCommand(lifter, navigation)
-                )
-            );
+            .whenReleased(new IntakeStopCommand(intake));
 
         // D-pad up: Increase lifter position
         driverGamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP)

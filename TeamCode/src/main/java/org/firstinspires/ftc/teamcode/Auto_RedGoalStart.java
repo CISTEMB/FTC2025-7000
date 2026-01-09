@@ -13,6 +13,8 @@ import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.commands.HandleLauncherMotorsCommand;
+import org.firstinspires.ftc.teamcode.commands.HandleLifterCommand;
 import org.firstinspires.ftc.teamcode.commands.SetLifterPositionCommand;
 import org.firstinspires.ftc.teamcode.commands.ShootCommand;
 import org.firstinspires.ftc.teamcode.commands.StopLauncherMotorsCommand;
@@ -99,17 +101,20 @@ public class Auto_RedGoalStart extends CommandOpMode {
                 .build();
 
         schedule(
+            new ParallelCommandGroup(
+                new HandleLauncherMotorsCommand(launcherMotors, navigation),
+                new HandleLifterCommand(lifter, navigation),
                 new SequentialCommandGroup(
-                        new TrajectoryFollowerCommand(drive, sequence1),
-                        new SetLifterPositionCommand(5, lifter),
-                        new ParallelCommandGroup(
-                            new WaitCommand(1600)
+                    new TrajectoryFollowerCommand(drive, sequence1),
+                    new SetLifterPositionCommand(5, lifter),
+                    new ParallelCommandGroup(
+                        new WaitCommand(1600)
 //                            new PrepareShootCommandV2(launcherMotors, lifter)
-                        ),
-                        new ShootCommand(beltway, intake, 3250),
-                        new StopLauncherMotorsCommand(launcherMotors, beltway),
-                        new WaitCommand(1000),
-                        new TrajectoryFollowerCommand(drive, sequence5)
+                    ),
+                    new ShootCommand(beltway, intake, 3250),
+                    new StopLauncherMotorsCommand(launcherMotors, beltway),
+                    new WaitCommand(1000),
+                    new TrajectoryFollowerCommand(drive, sequence5)
 //                        new TrajectoryFollowerCommand(drive, sequence2),
 //                        new ParallelCommandGroup(
 //                                new TrajectoryFollowerCommand(drive, sequence3)
@@ -123,6 +128,7 @@ public class Auto_RedGoalStart extends CommandOpMode {
 //                        //new StopLauncherMotorsCommand(launcherMotors, beltway),
 //                        new TrajectoryFollowerCommand(drive, sequence5)
                 )
+            )
         );
     }
 

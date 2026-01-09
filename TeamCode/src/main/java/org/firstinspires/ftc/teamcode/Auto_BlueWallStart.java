@@ -13,13 +13,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.commands.AutoAlignCommand;
-import org.firstinspires.ftc.teamcode.commands.SetLifterPositionCommand;
+import org.firstinspires.ftc.teamcode.commands.HandleLauncherMotorsCommand;
+import org.firstinspires.ftc.teamcode.commands.HandleLifterCommand;
 import org.firstinspires.ftc.teamcode.commands.ShootCommand;
 import org.firstinspires.ftc.teamcode.commands.StopLauncherMotorsCommand;
 import org.firstinspires.ftc.teamcode.commands.roadrunner.TrajectoryFollowerCommand;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.BeltwaySubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LauncherMotorsSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LifterSubsystem;
@@ -79,18 +79,17 @@ public class Auto_BlueWallStart extends CommandOpMode {
                 .build();
 
         schedule(
-                new SequentialCommandGroup(
-                        new TrajectoryFollowerCommand(drive, sequence1),
-                        new SetLifterPositionCommand(6, lifter),
-                        new ParallelCommandGroup(
-                                new WaitCommand(1600)
-//                                new PrepareShootCommandV2(launcherMotors, lifter)
-                        ),
-                        new AutoAlignCommand(autoAlignDrive, navigation, telemetry, false),
-                        new ShootCommand(beltway, intake, 8250),
-                        new StopLauncherMotorsCommand(launcherMotors, beltway),
-                        new WaitCommand(1000),
-                        new TrajectoryFollowerCommand(drive, sequence2)
+                new ParallelCommandGroup(
+                    new HandleLauncherMotorsCommand(launcherMotors, navigation),
+                    new HandleLifterCommand(lifter, navigation),
+                    new SequentialCommandGroup(
+                            new TrajectoryFollowerCommand(drive, sequence1),
+                            new AutoAlignCommand(autoAlignDrive, navigation, telemetry, false),
+                            new ShootCommand(beltway, intake, 8250),
+                            new StopLauncherMotorsCommand(launcherMotors, beltway),
+                            new WaitCommand(1000),
+                            new TrajectoryFollowerCommand(drive, sequence2)
+                    )
                 )
         );
     }
