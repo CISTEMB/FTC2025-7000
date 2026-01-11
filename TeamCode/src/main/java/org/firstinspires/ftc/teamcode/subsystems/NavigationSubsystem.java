@@ -4,6 +4,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.geometry.Translation2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -50,10 +51,18 @@ public class NavigationSubsystem extends SubsystemBase {
 
         //telemetry.addData("Current pose", getPose());
         telemetry.addData("has target", this.hasTarget());
-        telemetry.addData("field x", drive.getPoseEstimate().getX()); //these values will print out wrong until we scan the april tag
-        telemetry.addData("field y", drive.getPoseEstimate().getY()); //these values will print out wrong until we scan the april tag
+        if (this.hasTarget()) {
+            telemetry.addData("ll x", this.limelight.botpose_mt2.getPosition().x);
+            telemetry.addData("ll y", this.limelight.botpose_mt2.getPosition().y);
+        }
+
+        telemetry.addData("x", drive.getPoseEstimate().getX()); //these values will print out wrong until we scan the april tag
+        telemetry.addData("y", drive.getPoseEstimate().getY()); //these values will print out wrong until we scan the april tag
+        telemetry.addData("heading", drive.getPoseEstimate().getHeading());
+
         telemetry.addData("distance from tag", this.getDistance()); //these values will print out wrong until we scan the april tag
         telemetry.addData("angle from tag", this.getAngleOffset()); //these values will print out wrong until we scan the april tag
+        telemetry.update();
 
         if (limelight.result != null && limelight.result.isValid() && limelight.botpose_mt2 != null) {
             Position pos = limelight.botpose_mt2.getPosition().toUnit(DistanceUnit.INCH);

@@ -115,10 +115,6 @@ public class CommandTeleopBlueV2 extends CommandOpMode {
 
     @Override
     public void run() {
-        Pose2d poseEstimate = drive.getPoseEstimate();
-        DashboardUtil.drawRobot(fieldOverlay, poseEstimate);
-        FtcDashboard.getInstance().sendTelemetryPacket(packet);
-
         // Mark that we've started teleop and configure button bindings
         if (!hasStarted && opModeIsActive()) {
             hasStarted = true;
