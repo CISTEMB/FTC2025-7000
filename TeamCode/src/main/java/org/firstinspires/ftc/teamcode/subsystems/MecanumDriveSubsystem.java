@@ -78,6 +78,10 @@ public class MecanumDriveSubsystem extends SubsystemBase {
         drive.setDrivePower(drivePower);
     }
 
+    public void setWeightedDrivePower(Pose2d drivePower) {
+        drive.setWeightedDrivePower(drivePower);
+    }
+
     public Pose2d getPoseEstimate() {
         return drive.getPoseEstimate();
     }

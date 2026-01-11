@@ -9,6 +9,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.teamcode.AllianceColor;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
 
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
 
 public class NavigationSubsystem extends SubsystemBase {
-    private final StandardTrackingWheelLocalizer localizer;
+    private final MecanumDriveSubsystem drive;
     private final Telemetry telemetry;
     private final LimelightSubsystem limelight;
 
@@ -33,7 +34,7 @@ public class NavigationSubsystem extends SubsystemBase {
 
 
     public NavigationSubsystem(LimelightSubsystem limelightSubsystem, HardwareMap hardwareMap, AllianceColor color, Telemetry telemetry) {
-        localizer = new StandardTrackingWheelLocalizer(hardwareMap, new ArrayList<>(), new ArrayList<>());
+        drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hardwareMap), true);
         this.telemetry = telemetry;
         this.limelight = limelightSubsystem;
         this.color = color;
@@ -46,10 +47,11 @@ public class NavigationSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        localizer.update();
+
         //telemetry.addData("Current pose", getPose());
-        telemetry.addData("field x", localizer.getPoseEstimate().getX()); //these values will print out wrong until we scan the april tag
-        telemetry.addData("field y", localizer.getPoseEstimate().getY()); //these values will print out wrong until we scan the april tag
+        telemetry.addData("has target", this.hasTarget());
+        telemetry.addData("field x", drive.getPoseEstimate().getX()); //these values will print out wrong until we scan the april tag
+        telemetry.addData("field y", drive.getPoseEstimate().getY()); //these values will print out wrong until we scan the april tag
         telemetry.addData("distance from tag", this.getDistance()); //these values will print out wrong until we scan the april tag
         telemetry.addData("angle from tag", this.getAngleOffset()); //these values will print out wrong until we scan the april tag
 
@@ -61,7 +63,8 @@ public class NavigationSubsystem extends SubsystemBase {
             Pose2d limelightVerifiedRobotPose = new Pose2d(pos.x, pos.y, limelight.botpose_mt2.getOrientation().getYaw());
 
             // Update the drive's pose estimate with limelight position
-            localizer.setPoseEstimate(limelightVerifiedRobotPose);
+            drive.setPoseEstimate(limelightVerifiedRobotPose);
+            drive.update();
 
             // Save pose for navigation calculations
             saved_pose = limelightVerifiedRobotPose;
@@ -69,7 +72,7 @@ public class NavigationSubsystem extends SubsystemBase {
     }
 
     public Pose2d getPose() {
-        return localizer.getPoseEstimate();
+        return drive.getPoseEstimate();
     }
 
     public Pose2d currentTarget() {
@@ -108,7 +111,10 @@ public class NavigationSubsystem extends SubsystemBase {
     }
 
     public boolean hasTarget() {
-        return limelight.result != null;
+        if (limelight != null) {
+            return limelight.result != null;
+        }
+        return false;
     }
 
     @Nullable

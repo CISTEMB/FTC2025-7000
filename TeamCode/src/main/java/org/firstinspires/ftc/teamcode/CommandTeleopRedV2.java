@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
@@ -16,6 +17,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.commands.AutoAlignCommand;
 import org.firstinspires.ftc.teamcode.commands.DecreaseLifterPositionCommand;
+import org.firstinspires.ftc.teamcode.commands.ElevatorStopCommand;
 import org.firstinspires.ftc.teamcode.commands.ForwardBeltwayCommand;
 import org.firstinspires.ftc.teamcode.commands.HandleLauncherMotorsCommand;
 import org.firstinspires.ftc.teamcode.commands.HandleLifterCommand;
@@ -32,6 +34,7 @@ import org.firstinspires.ftc.teamcode.commands.StopLauncherMotorsCommand;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.BeltwaySubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.ElevatorMotorsSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LauncherMotorsSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LifterSubsystem;
@@ -50,6 +53,7 @@ public class CommandTeleopRedV2 extends CommandOpMode {
     private LimelightSubsystem limelight;
     private GamepadEx driverGamepad;
     private NavigationSubsystem navigation;
+    private ElevatorMotorsSubsystem elevator; //moving on up in the world like elevators
 
     private final ElapsedTime runtime = new ElapsedTime();
     private boolean isRed = true;
@@ -66,6 +70,7 @@ public class CommandTeleopRedV2 extends CommandOpMode {
         beltway = new BeltwaySubsystem(hardwareMap, telemetry);
         intake = new IntakeSubsystem(hardwareMap, telemetry);
         lifter = new LifterSubsystem(hardwareMap, telemetry, navigation);
+        elevator = new ElevatorMotorsSubsystem(hardwareMap, telemetry);
 
         //default PID adjustments
         launcherMotors.adjustP(100);
@@ -107,6 +112,7 @@ public class CommandTeleopRedV2 extends CommandOpMode {
 
         launcherMotors.setDefaultCommand(new HandleLauncherMotorsCommand(launcherMotors, navigation));
         lifter.setDefaultCommand(new HandleLifterCommand(lifter, navigation));
+
 
         // Run the command scheduler
         super.run();
@@ -152,6 +158,14 @@ public class CommandTeleopRedV2 extends CommandOpMode {
                             new IntakeStopCommand(intake)
                     )
             );
+
+        //right bumper up
+        driverGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+                .whenHeld(new InstantCommand(() -> elevator.goUp()));
+
+        //left bumper down
+        driverGamepad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+                .whenHeld(new InstantCommand(() -> elevator.goDown()));
 
         //hold Y to move ball to the thrower
         driverGamepad.getGamepadButton(GamepadKeys.Button.Y)
@@ -202,27 +216,6 @@ public class CommandTeleopRedV2 extends CommandOpMode {
     }
 
     private void updateTelemetry() {
-        telemetry.addData("CanShoot", limelight.can_shoot());
-
-        LLResult result = limelight.result;
-        if (result != null && result.isValid()) {
-            double tx = result.getTx(); // How far left or right the target is (degrees)
-            double ty = result.getTy(); // How far up or down the target is (degrees)
-            double ta = result.getTa(); // How big the target looks (0%-100% of the image)
-
-            telemetry.addData("Target X", tx);
-            telemetry.addData("Target Y", ty);
-            telemetry.addData("Target Area", ta);
-        } else {
-            telemetry.addData("Limelight", "No Targets");
-        }
-
-        if (limelight.can_shoot()) {
-            telemetry.addData("Can shoot", "Yes");
-        } else {
-            telemetry.addData("Can shoot", "No");
-        }
-
         // Periodic updates for all subsystems
         launcherMotors.periodic();
         beltway.periodic();

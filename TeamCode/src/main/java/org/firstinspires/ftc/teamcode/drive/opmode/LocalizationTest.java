@@ -7,7 +7,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.AllianceColor;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.subsystems.LimelightSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.NavigationSubsystem;
 
 /**
  * This is a simple teleop routine for testing localization. Drive the robot around like a normal
@@ -18,14 +22,15 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
  */
 @TeleOp(group = "drive")
 public class LocalizationTest extends LinearOpMode {
+
+    private NavigationSubsystem navigation;
+    private LimelightSubsystem limelight;
     @Override
     public void runOpMode() throws InterruptedException {
-
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-
+        MecanumDriveSubsystem drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hardwareMap), true);
+        limelight = new LimelightSubsystem(hardwareMap, telemetry);
+        navigation = new NavigationSubsystem(limelight, hardwareMap, AllianceColor.Blue, telemetry);
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        //drive.setPoseEstimate(new Pose2d(-60, -60));
         waitForStart();
 
         while (!isStopRequested()) {

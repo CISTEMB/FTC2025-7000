@@ -20,6 +20,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.commands.AutoAlignCommand;
 import org.firstinspires.ftc.teamcode.commands.DecreaseLifterPositionCommand;
+import org.firstinspires.ftc.teamcode.commands.ElevatorStopCommand;
 import org.firstinspires.ftc.teamcode.commands.ForwardBeltwayCommand;
 import org.firstinspires.ftc.teamcode.commands.HandleLauncherMotorsCommand;
 import org.firstinspires.ftc.teamcode.commands.HandleLifterCommand;
@@ -130,6 +131,7 @@ public class CommandTeleopBlueV2 extends CommandOpMode {
         launcherMotors.setDefaultCommand(new HandleLauncherMotorsCommand(launcherMotors, navigation));
         lifter.setDefaultCommand(new HandleLifterCommand(lifter, navigation));
 
+
         // Run the command scheduler
         super.run();
 
@@ -166,10 +168,9 @@ public class CommandTeleopBlueV2 extends CommandOpMode {
         driverGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                         .whenHeld(new InstantCommand(() -> elevator.goUp()));
 
-
         //left bumper down
         driverGamepad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-                .whenHeld(new InstantCommand(() -> elevator.stop()));
+                .whenHeld(new InstantCommand(() -> elevator.goDown()));
 
         // Y button: Shoot (hold to shoot, release to stop)
         driverGamepad.getGamepadButton(GamepadKeys.Button.B)
@@ -235,27 +236,6 @@ public class CommandTeleopBlueV2 extends CommandOpMode {
     }
 
     private void updateTelemetry() {
-        telemetry.addData("CanShoot", limelight.can_shoot());
-
-        LLResult result = limelight.result;
-        if (result != null && result.isValid()) {
-            double tx = result.getTx(); // How far left or right the target is (degrees)
-            double ty = result.getTy(); // How far up or down the target is (degrees)
-            double ta = result.getTa(); // How big the target looks (0%-100% of the image)
-
-           // telemetry.addData("Target X", tx);
-            //telemetry.addData("Target Y", ty);
-            //telemetry.addData("Target Area", ta);
-        } else {
-            telemetry.addData("Limelight", "No Targets");
-        }
-
-//        if (limelight.can_shoot()) {
-//            telemetry.addData("Can shoot", "Yes");
-//        } else {
-//            telemetry.addData("Can shoot", "No");
-//        }
-
         // Periodic updates for all subsystems
         launcherMotors.periodic();
         beltway.periodic();
