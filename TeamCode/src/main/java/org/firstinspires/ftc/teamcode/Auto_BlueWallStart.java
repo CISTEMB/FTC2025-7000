@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.commands.AutoAlignCommand;
+import org.firstinspires.ftc.teamcode.commands.AutonomousAutoAlignCommand;
 import org.firstinspires.ftc.teamcode.commands.HandleLauncherMotorsCommand;
 import org.firstinspires.ftc.teamcode.commands.HandleLifterCommand;
 import org.firstinspires.ftc.teamcode.commands.ShootCommand;
@@ -69,6 +70,7 @@ public class Auto_BlueWallStart extends CommandOpMode {
 
         drive.setPoseEstimate(sequence1.start());
 
+
 //        launcherMotors.leftMotor.setVelocity(750);
 //        launcherMotors.rightMotor.setVelocity(750);
 //         lifter.setPosition(3);  // Position 3 = 0.8
@@ -84,7 +86,7 @@ public class Auto_BlueWallStart extends CommandOpMode {
                     new HandleLifterCommand(lifter, navigation),
                     new SequentialCommandGroup(
                             new TrajectoryFollowerCommand(drive, sequence1),
-                            new AutoAlignCommand(autoAlignDrive, navigation, telemetry, false),
+                            new AutonomousAutoAlignCommand(autoAlignDrive, navigation, telemetry, false),
                             new ShootCommand(beltway, intake, 8250),
                             new StopLauncherMotorsCommand(launcherMotors, beltway),
                             new WaitCommand(1000),

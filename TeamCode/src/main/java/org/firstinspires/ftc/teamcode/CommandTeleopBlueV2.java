@@ -19,6 +19,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.commands.AutoAlignCommand;
+import org.firstinspires.ftc.teamcode.commands.AutonomousAutoAlignCommand;
 import org.firstinspires.ftc.teamcode.commands.DecreaseLifterPositionCommand;
 import org.firstinspires.ftc.teamcode.commands.ElevatorStopCommand;
 import org.firstinspires.ftc.teamcode.commands.ForwardBeltwayCommand;
@@ -69,6 +70,8 @@ public class CommandTeleopBlueV2 extends CommandOpMode {
 
     @Override
     public void initialize() {
+
+
         // Initialize subsystems
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hardwareMap), true);
@@ -76,8 +79,6 @@ public class CommandTeleopBlueV2 extends CommandOpMode {
         packet = new TelemetryPacket();
         fieldOverlay = packet.fieldOverlay();
         fieldOverlay.setStroke("#3F51B5");
-
-        drive.setPoseEstimate(new Pose2d(0, 0, Math.toRadians(234)));
 
         limelight = new LimelightSubsystem(hardwareMap, telemetry);
         navigation = new NavigationSubsystem(limelight, hardwareMap, AllianceColor.Blue, telemetry);
@@ -200,7 +201,7 @@ public class CommandTeleopBlueV2 extends CommandOpMode {
 
         // X button: Auto-align to target
         driverGamepad.getGamepadButton(GamepadKeys.Button.X)
-            .whenPressed(new AutoAlignCommand(drive, navigation, telemetry, isRed));
+            .whenPressed(new AutonomousAutoAlignCommand(drive, navigation, telemetry, isRed));
 
         // A button: Pickup (hold to run, release to stop)
         driverGamepad.getGamepadButton(GamepadKeys.Button.A)

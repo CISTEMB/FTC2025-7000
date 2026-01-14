@@ -49,14 +49,14 @@ public class ElevatorMotorsSubsystem extends SubsystemBase {
     public void goUp() {
         leftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         rightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        leftMotor.setPower(.5);
-        rightMotor.setPower(.5);
+        leftMotor.setPower(1.0);
+        rightMotor.setPower(1.0);
     }
 
     public void goDown() {
         leftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         rightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftMotor.setPower(.5);
-        rightMotor.setPower(.5);
+        leftMotor.setPower(1.0);
+        rightMotor.setPower(1.0);
     }
 }
