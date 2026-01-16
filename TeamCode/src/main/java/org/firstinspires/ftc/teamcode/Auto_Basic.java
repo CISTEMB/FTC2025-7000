@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
-
+@Deprecated
+@Disabled
 @Autonomous(name = "Auto: Basic Drive", group = "Auto", preselectTeleOp = "Teleop")
 public class Auto_Basic extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();

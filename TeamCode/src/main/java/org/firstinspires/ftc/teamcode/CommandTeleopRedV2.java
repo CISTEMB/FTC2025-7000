@@ -185,7 +185,7 @@ public class CommandTeleopRedV2 extends CommandOpMode {
 
         // X button: Auto-align to target
         driverGamepad.getGamepadButton(GamepadKeys.Button.X)
-            .whenPressed(new AutonomousAutoAlignCommand(drive, navigation, telemetry, isRed));
+            .whenPressed(new AutonomousAutoAlignCommand(drive, navigation, isRed));
 
         // A button: Pickup (hold to run, release to stop)
         driverGamepad.getGamepadButton(GamepadKeys.Button.A)

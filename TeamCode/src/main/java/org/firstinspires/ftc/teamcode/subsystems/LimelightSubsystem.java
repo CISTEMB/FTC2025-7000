@@ -21,7 +21,7 @@ public class LimelightSubsystem extends SubsystemBase {
     private final IMU imu;
     private final IMU.Parameters imuParameters;
     private final Telemetry t;
-    public Pose3D botpose_mt2;
+    //public Pose3D botpose_mt2;
     public LLResult result;
 
     public LimelightSubsystem(HardwareMap hardwareMap, Telemetry t) {
@@ -32,7 +32,7 @@ public class LimelightSubsystem extends SubsystemBase {
 
         imuParameters = new IMU.Parameters(
                 new RevHubOrientationOnRobot(
-                        RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+                        RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
                         RevHubOrientationOnRobot.UsbFacingDirection.UP
                 )
         );
@@ -50,7 +50,7 @@ public class LimelightSubsystem extends SubsystemBase {
         // The last three parameters (tx, ty, ta) are for angular velocity, often set to 0 initially
         //LimelightHelpers.SetRobotOrientation("limelight-gurtcam", robotYaw, robotPitch, robotRoll, 0, 0, 0);
 
-        limelight.setPollRateHz(90);
+        limelight.setPollRateHz(150);
     }
 
     public void start() {
@@ -65,12 +65,12 @@ public class LimelightSubsystem extends SubsystemBase {
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
         limelight.updateRobotOrientation(orientation.getYaw(AngleUnit.DEGREES));
         LLResult result = limelight.getLatestResult();
-        this.botpose_mt2 = null;
+        //this.botpose_mt2 = null;
         this.result = null;
         if (result != null) {
             if (result.isValid()) {
                 this.result = result;
-                this.botpose_mt2 = result.getBotpose_MT2();
+                //this.botpose_mt2 = result.getBotpose_MT2();
                 //t.addData("botpose", botpose_mt2.toString());
             }
         }

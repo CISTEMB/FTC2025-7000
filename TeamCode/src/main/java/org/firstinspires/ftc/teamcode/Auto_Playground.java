@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -14,6 +15,8 @@ import org.firstinspires.ftc.teamcode.subsystems.LimelightSubsystem;
 import java.util.List;
 
 @Autonomous(name = "Auto: Playground", group = "Auto", preselectTeleOp = "Teleop")
+@Disabled
+@Deprecated
 public class Auto_Playground extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
 
@@ -42,7 +45,7 @@ public class Auto_Playground extends LinearOpMode {
         while (!isStarted() && !isStopRequested()) {
             limelight.read();
 
-            if (limelight.result != null && limelight.botpose_mt2 != null) {
+            if (limelight.result != null) {
                 // Get the detected AprilTag information
                 List<LLResultTypes.FiducialResult> fiducials = limelight.result.getFiducialResults();
 
@@ -50,7 +53,7 @@ public class Auto_Playground extends LinearOpMode {
                     // Get the first (closest/most confident) detected tag
                     LLResultTypes.FiducialResult detectedTag = fiducials.get(0);
                     detectedTagId = (int) detectedTag.getFiducialId();
-                    robotPose = limelight.botpose_mt2;
+
 
                     // Determine starting position based on AprilTag ID
                     startPosition = getStartPositionFromTag(detectedTagId);
@@ -58,9 +61,6 @@ public class Auto_Playground extends LinearOpMode {
                     telemetry.addData("Status", "AprilTag Detected!");
                     telemetry.addData("Tag ID", detectedTagId);
                     telemetry.addData("Starting Position", startPosition);
-                    telemetry.addData("Robot X", "%.2f", robotPose.getPosition().x);
-                    telemetry.addData("Robot Y", "%.2f", robotPose.getPosition().y);
-                    telemetry.addData("Robot Z", "%.2f", robotPose.getPosition().z);
                 } else {
                     telemetry.addData("Status", "Searching for AprilTag...");
                 }

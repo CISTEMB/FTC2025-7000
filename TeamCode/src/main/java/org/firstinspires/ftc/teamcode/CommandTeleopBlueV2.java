@@ -76,6 +76,7 @@ public class CommandTeleopBlueV2 extends CommandOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hardwareMap), true);
 
+        drive.setPoseEstimate(new Pose2d(0, 0, 0));
         packet = new TelemetryPacket();
         fieldOverlay = packet.fieldOverlay();
         fieldOverlay.setStroke("#3F51B5");
@@ -143,14 +144,15 @@ public class CommandTeleopBlueV2 extends CommandOpMode {
     private void configureButtonBindings() {
         // Set default drive command - matches original arcade drive behavior
         drive.setDefaultCommand(new RunCommand(() -> {
+            // Apply deadzone to prevent joystick drift from interrupting commands
+            double ly = Math.abs(gamepad1.left_stick_y) > 0.1 ? gamepad1.left_stick_y : 0;
+            double lx = Math.abs(gamepad1.left_stick_x) > 0.1 ? gamepad1.left_stick_x : 0;
+            double rx = Math.abs(gamepad1.right_stick_x) > 0.1 ? gamepad1.right_stick_x : 0;
+
             drive.fastMode = gamepad1.left_trigger >= 0.75;
-            drive.arcadeDrive(
-                gamepad1.left_stick_y,
-                gamepad1.left_stick_x,
-                -gamepad1.right_stick_x,
-                false
-            );
+            drive.arcadeDrive(ly, lx, -rx, false);
         }, drive));
+
 
         // Right trigger >= 0.75: Stop launcher motors
         new Trigger(() -> gamepad1.right_trigger >= 0.75)
@@ -201,7 +203,7 @@ public class CommandTeleopBlueV2 extends CommandOpMode {
 
         // X button: Auto-align to target
         driverGamepad.getGamepadButton(GamepadKeys.Button.X)
-            .whenPressed(new AutonomousAutoAlignCommand(drive, navigation, telemetry, isRed));
+            .whenHeld(new AutonomousAutoAlignCommand(drive, navigation, isRed));
 
         // A button: Pickup (hold to run, release to stop)
         driverGamepad.getGamepadButton(GamepadKeys.Button.A)

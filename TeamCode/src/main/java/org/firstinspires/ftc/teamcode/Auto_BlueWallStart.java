@@ -86,7 +86,7 @@ public class Auto_BlueWallStart extends CommandOpMode {
                     new HandleLifterCommand(lifter, navigation),
                     new SequentialCommandGroup(
                             new TrajectoryFollowerCommand(drive, sequence1),
-                            new AutonomousAutoAlignCommand(autoAlignDrive, navigation, telemetry, false),
+                            new AutonomousAutoAlignCommand(autoAlignDrive, navigation, false),
                             new ShootCommand(beltway, intake, 8250),
                             new StopLauncherMotorsCommand(launcherMotors, beltway),
                             new WaitCommand(1000),

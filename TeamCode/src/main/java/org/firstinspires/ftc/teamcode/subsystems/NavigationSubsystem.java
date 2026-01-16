@@ -20,11 +20,18 @@ import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
 
 public class NavigationSubsystem extends SubsystemBase {
-    private final MecanumDriveSubsystem drive;
+    //private final MecanumDriveSubsystem drive;
     private final Telemetry telemetry;
     private final LimelightSubsystem limelight;
 
     private double last_distance;
+
+    public double angleMin;
+    public double angleMax;
+    private double blueMin = -.5;
+    private double blueMax = 0.0;
+    private double redMin = 0.0;
+    private double redMax = 0.5;
 
     @Nullable
     @CheckForNull
@@ -37,19 +44,26 @@ public class NavigationSubsystem extends SubsystemBase {
 
     public NavigationSubsystem(LimelightSubsystem limelightSubsystem, HardwareMap hardwareMap, AllianceColor color, Telemetry telemetry) {
         //TODO: pass this value from the end of the autonomous: https://learnroadrunner.com/advanced.html#transferring-pose-between-opmodes
-        drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hardwareMap), true);
+        //drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hardwareMap), true);
 
-        TrajectorySequence sequence1 = drive.trajectorySequenceBuilder(new Pose2d(60, -20, Math.toRadians(180))) //starting position
-                .back(10)
-                .turn(Math.toRadians(30))
-                .build();
-        sequence1.end();
+//        TrajectorySequence sequence1 = drive.trajectorySequenceBuilder(new Pose2d(60, -20, Math.toRadians(180))) //starting position
+//                .back(10)
+//                .turn(Math.toRadians(30))
+//                .build();
+//        sequence1.end();
 
-        drive.setPoseEstimate(sequence1.end());
+        //drive.setPoseEstimate(sequence1.end());
 
         this.telemetry = telemetry;
         this.limelight = limelightSubsystem;
         this.color = color;
+        if (color == AllianceColor.Red) {
+            this.angleMax = this.redMax;
+            this.angleMin = this.redMin;
+        } else {
+            this.angleMax = this.blueMax;
+            this.angleMin = this.blueMin;
+        }
     }
 
     public boolean hasSeenTag()
@@ -62,46 +76,33 @@ public class NavigationSubsystem extends SubsystemBase {
         //telemetry.addData("Current pose", getPose());
         telemetry.addData("has target", this.hasTarget());
 
-        telemetry.addData("x", drive.getPoseEstimate().getX()); //these values will print out wrong until we scan the april tag
-        telemetry.addData("y", drive.getPoseEstimate().getY()); //these values will print out wrong until we scan the april tag
-        telemetry.addData("heading", drive.getPoseEstimate().getHeading());
-
-        telemetry.addData("distance from tag", this.getDistance()); //these values will print out wrong until we scan the april tag
-        telemetry.addData("angle from tag", this.getAngleOffset()); //these values will print out wrong until we scan the april tag
-
-
-
-        telemetry.update();
-
-        if (limelight.result != null && limelight.result.isValid() && limelight.botpose_mt2 != null) {
-            Position pos = limelight.botpose_mt2.getPosition().toUnit(DistanceUnit.INCH);
-
-
+        if (limelight.result != null && limelight.result.isValid()) {
             Position mt1 = limelight.result.getBotpose().getPosition().toUnit(DistanceUnit.INCH);
-
-            telemetry.addData("mt1 x", mt1.x);
-            telemetry.addData("mt1 y", mt1.y);
-            telemetry.addData("mt2 x", pos.x);
-            telemetry.addData("mt2 y", pos.y);
-
-            Pose2d apriltag_pose = this.currentTarget();
-            //Pose2d robot_pose = new Pose2d(pos.x - apriltag_pose.getX(), pos.y - apriltag_pose.getY(), limelight.botpose_mt2.getOrientation().getYaw() - apriltag_pose.getHeading());
-            Pose2d robot_pose = new Pose2d(mt1.x, mt1.y, limelight.botpose_mt2.getOrientation().getYaw(AngleUnit.DEGREES));
-
-            telemetry.addData("robot x", robot_pose.getX());
-            telemetry.addData("robot y", robot_pose.getY());
+            Pose2d robot_pose = new Pose2d(mt1.x, mt1.y, limelight.result.getBotpose().getOrientation().getYaw(AngleUnit.DEGREES));
 
             // Update the drive's pose estimate with limelight position
-            drive.setPoseEstimate(robot_pose);
+            //drive.setPoseEstimate(robot_pose);
 
             // Save pose for navigation calculations
             saved_pose = robot_pose;
+
+            telemetry.addData("x", saved_pose.getX()); //these values will print out wrong until we scan the april tag
+            telemetry.addData("y", saved_pose.getY()); //these values will print out wrong until we scan the april tag
+            telemetry.addData("heading", saved_pose.getHeading());
+
+            telemetry.addData("distance from tag", this.getDistance()); //these values will print out wrong until we scan the april tag
+            telemetry.addData("angle from tag", this.getAngleOffset()); //these values will print out wrong until we scan the april tag
+            telemetry.update();
+
         }
-        drive.update();
+
+
+
+        //drive.update();
     }
 
     public Pose2d getPose() {
-        return drive.getPoseEstimate();
+        return saved_pose;
     }
 
     public Pose2d currentTarget() {
@@ -113,26 +114,28 @@ public class NavigationSubsystem extends SubsystemBase {
     public Double getAngleOffset() {
         if (limelight.result != null) {
             return limelight.result.getTx();
-        } else if (saved_pose == null) {
-            return null;
         }
 
-        Pose2d currentPose = getPose();
+        return null;
 
-        // Calculate the angle from current position to saved_pose
-        double deltaX = this.currentTarget().getX() - currentPose.getX();
-        double deltaY = this.currentTarget().getY() - currentPose.getY();
-        double angleToTarget = Math.atan2(deltaY, deltaX);
 
-        // Calculate the difference between current heading and angle to target
-        double angleOffset = angleToTarget - currentPose.getHeading();
 
-        // Normalize to [-PI, PI]
-        while (angleOffset > Math.PI) angleOffset -= 2 * Math.PI;
-        while (angleOffset < -Math.PI) angleOffset += 2 * Math.PI;
-
-        // Convert to degrees to match limelight's getTx() format
-        return Math.toDegrees(angleOffset);
+//        Pose2d currentPose = getPose();
+//
+//        // Calculate the angle from current position to saved_pose
+//        double deltaX = this.currentTarget().getX() - currentPose.getX();
+//        double deltaY = this.currentTarget().getY() - currentPose.getY();
+//        double angleToTarget = Math.atan2(deltaY, deltaX);
+//
+//        // Calculate the difference between current heading and angle to target
+//        double angleOffset = angleToTarget - currentPose.getHeading();
+//
+//        // Normalize to [-PI, PI]
+//        while (angleOffset > Math.PI) angleOffset -= 2 * Math.PI;
+//        while (angleOffset < -Math.PI) angleOffset += 2 * Math.PI;
+//
+//        // Convert to degrees to match limelight's getTx() format
+//        return Math.toDegrees(angleOffset);
     }
 
     public boolean hasTarget() {

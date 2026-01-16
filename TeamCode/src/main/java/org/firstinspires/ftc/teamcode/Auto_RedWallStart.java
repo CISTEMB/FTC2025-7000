@@ -87,7 +87,7 @@ public class Auto_RedWallStart extends CommandOpMode {
                             new WaitCommand(1600)
 //                                new PrepareShootCommandV2(launcherMotors, lifter)
                     ),
-                    new AutonomousAutoAlignCommand(autoAlignDrive, navigation, telemetry, true),
+                    new AutonomousAutoAlignCommand(autoAlignDrive, navigation, true),
                     new ShootCommand(beltway, intake, 8250),
                     new StopLauncherMotorsCommand(launcherMotors, beltway),
                     new WaitCommand(1000),

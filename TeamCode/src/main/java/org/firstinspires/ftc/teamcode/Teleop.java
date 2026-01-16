@@ -31,6 +31,7 @@ import java.util.List;
 
 @TeleOp(name = "OLD Teleop", group = "000-Main")
 @Disabled
+@Deprecated
 public class Teleop extends LinearOpMode {
     private Limelight3A limelight;
     private IMU imu;

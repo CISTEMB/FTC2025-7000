@@ -135,4 +135,15 @@ public class MecanumDriveSubsystem extends SubsystemBase {
         return drive.getLocalizer();
     }
 
+    @Override
+    public void periodic() {
+        // This runs every loop - shows which command is controlling the drive subsystem
+        if (getCurrentCommand() != null) {
+            // Log current command name to see what's running
+            String commandName = getCurrentCommand().getClass().getSimpleName();
+            // You can add telemetry here if you have access to it
+            // For now, this allows you to set a breakpoint or add logging
+        }
+    }
+
 }

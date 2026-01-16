@@ -13,52 +13,47 @@ public class AutonomousAutoAlignCommand extends CommandBase {
 
     private MecanumDriveSubsystem drive;
     private NavigationSubsystem navigation;
-    private Telemetry telemetry;
-    private final Range<Double> alignmentRange = new Range<>(-0.5, 0.5);
+
     private boolean isRed;
-    private double angleOffset;
     private double turnSpeed = 0.0;
 
-    public AutonomousAutoAlignCommand(MecanumDriveSubsystem drive, NavigationSubsystem navigation, Telemetry telemetry, Boolean isRed) {
+    public AutonomousAutoAlignCommand(MecanumDriveSubsystem drive, NavigationSubsystem navigation, Boolean isRed) {
+
         this.drive = drive;
         this.navigation = navigation;
-        this.telemetry = telemetry;
         this.isRed = isRed;
 
-        if (this.isRed) {
-            angleOffset = 0.5;
-        } else {
-            angleOffset = -0.5;
-        }
-
-        addRequirements(drive, navigation);
+        addRequirements(drive);
     }
 
 
     @Override
     public void execute() {
         if (navigation.hasSeenTag() && navigation.getAngleOffset() != null) {
-            double x = navigation.getAngleOffset() + angleOffset;
-            turnSpeed = x * Math.abs(x) * 0.0067 + 0.1 * Math.signum(x);   // <-- turn the robot proportional to tx to have better accuracy
+
+            double x = navigation.getAngleOffset();
+            turnSpeed = Math.pow(x, 3) * 0.0067 + 0.1 * -Math.signum(x);   // <-- turn the robot proportional to tx to have better accuracy
             // Note: x^2 * 0.067 + 0.04 while maintaining whether x is positive or negative
 
             turnSpeed = Math.max(-0.4, Math.min(0.4, turnSpeed));
-
             if (Double.isNaN(turnSpeed)) turnSpeed = 0;
+
             drive.arcadeDrive(0.0, turnSpeed, 0.0, false);
+
         }
     }
 
+
     @Override
     public boolean isFinished() {
+        if(!navigation.hasTarget()) {
+            return true; //if we haven't seen the tag we can't auto aim
 
-        if (!navigation.hasTarget()) {
-            return true;
         }
 
         if (navigation.getAngleOffset() != null) {
-            double x = navigation.getAngleOffset() + angleOffset;
-            return alignmentRange.contains(x);
+            double x = navigation.getAngleOffset();
+            return navigation.angleMin >= x && x >= navigation.angleMax;
         }
 
         return false;
