@@ -29,7 +29,7 @@ import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.NavigationSubsystem;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
-@Autonomous(name = "Auto: Blue Goal Start", group = "Auto")
+@Autonomous(name = "Auto: Blue Goal Start 3", group = "Auto")
 public class Auto_BlueGoalStart extends CommandOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
     private BeltwaySubsystem beltway;
