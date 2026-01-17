@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.commands.HandleLauncherMotorsCommand;
 import org.firstinspires.ftc.teamcode.commands.HandleLifterCommand;
+import org.firstinspires.ftc.teamcode.commands.SetLauncherSpeedPositionCommand;
 import org.firstinspires.ftc.teamcode.commands.SetLifterPositionCommand;
 import org.firstinspires.ftc.teamcode.commands.ShootCommand;
 import org.firstinspires.ftc.teamcode.commands.StopLauncherMotorsCommand;
@@ -29,7 +30,7 @@ import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.NavigationSubsystem;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
-@Autonomous(name = "Auto: Blue Goal Start 3", group = "Auto")
+@Autonomous(name = "Auto: Blue Goal Start", group = "Auto")
 public class Auto_BlueGoalStart extends CommandOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
     private BeltwaySubsystem beltway;
@@ -56,6 +57,8 @@ public class Auto_BlueGoalStart extends CommandOpMode {
         navigation = new NavigationSubsystem(limelight, hardwareMap, AllianceColor.Blue, telemetry);
         launcherMotors = new LauncherMotorsSubsystem(hardwareMap, telemetry, navigation);
         lifter = new LifterSubsystem(hardwareMap, telemetry, navigation);
+        //launcherMotors.setDefaultCommand(new HandleLauncherMotorsCommand(launcherMotors, navigation));
+        //lifter.setDefaultCommand(new HandleLifterCommand(lifter, navigation));
 
 
         TrajectorySequence sequence1 = drive.trajectorySequenceBuilder(new Pose2d(-49.5, -49.5, Math.toRadians(234))) //starting position
@@ -101,21 +104,18 @@ public class Auto_BlueGoalStart extends CommandOpMode {
                 .build();
 
         schedule(
-                new ParallelCommandGroup(
-                        new HandleLauncherMotorsCommand(launcherMotors, navigation),
-                        new HandleLifterCommand(lifter, navigation),
-
                     new SequentialCommandGroup(
                             new TrajectoryFollowerCommand(drive, sequence1),
-                            new SetLifterPositionCommand(5, lifter),
+                            new SetLifterPositionCommand(0.2, lifter),
                             new ParallelCommandGroup(
+                                    new SetLauncherSpeedPositionCommand(0.2, launcherMotors),
                                     new WaitCommand(1600)
-    //                                new PrepareShootCommandV2(launcherMotors, lifter)
                             ),
                             new ShootCommand(beltway, intake, 3250),
                             new StopLauncherMotorsCommand(launcherMotors, beltway),
                             new WaitCommand(1000),
                             new TrajectoryFollowerCommand(drive, sequence5)
+
     //                        new TrajectoryFollowerCommand(drive, sequence2),
     //                        new ParallelCommandGroup(
     //                                new TrajectoryFollowerCommand(drive, sequence3)
@@ -129,7 +129,7 @@ public class Auto_BlueGoalStart extends CommandOpMode {
     //                        //new StopLauncherMotorsCommand(launcherMotors, beltway),
     //                        new TrajectoryFollowerCommand(drive, sequence5)
                     )
-                )
+
         );
     }
 

@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.commands.HandleLauncherMotorsCommand;
 import org.firstinspires.ftc.teamcode.commands.HandleLifterCommand;
+import org.firstinspires.ftc.teamcode.commands.SetLauncherSpeedPositionCommand;
 import org.firstinspires.ftc.teamcode.commands.SetLifterPositionCommand;
 import org.firstinspires.ftc.teamcode.commands.ShootCommand;
 import org.firstinspires.ftc.teamcode.commands.StopLauncherMotorsCommand;
@@ -102,14 +103,12 @@ public class Auto_RedGoalStart extends CommandOpMode {
 
         schedule(
             new ParallelCommandGroup(
-                new HandleLauncherMotorsCommand(launcherMotors, navigation),
-                new HandleLifterCommand(lifter, navigation),
                 new SequentialCommandGroup(
                     new TrajectoryFollowerCommand(drive, sequence1),
-                    new SetLifterPositionCommand(5, lifter),
+                    new SetLifterPositionCommand(0.2, lifter),
                     new ParallelCommandGroup(
-                        new WaitCommand(1600)
-//                            new PrepareShootCommandV2(launcherMotors, lifter)
+                            new SetLauncherSpeedPositionCommand(0.2, launcherMotors),
+                            new WaitCommand(1600)
                     ),
                     new ShootCommand(beltway, intake, 3250),
                     new StopLauncherMotorsCommand(launcherMotors, beltway),

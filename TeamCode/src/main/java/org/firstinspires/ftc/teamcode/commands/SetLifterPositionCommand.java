@@ -6,9 +6,9 @@ import org.firstinspires.ftc.teamcode.subsystems.LifterSubsystem;
 
 public class SetLifterPositionCommand extends InstantCommand {
     private LifterSubsystem lifter;
-    private int position;
+    private double position;
 
-    public SetLifterPositionCommand(int position, LifterSubsystem lifter) {
+    public SetLifterPositionCommand(double position, LifterSubsystem lifter) {
         this.lifter = lifter;
         this.position = position;
         addRequirements(lifter);

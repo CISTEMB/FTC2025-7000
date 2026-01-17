@@ -62,8 +62,8 @@ public class LauncherMotorsSubsystem extends SubsystemBase {
         motorVelocities.add(1.0, 746.0);
         motorVelocities.add(2.0, 832.0);
         motorVelocities.add(3.0, 878.0);
-        motorVelocities.add(4.0, 925.0);
-        motorVelocities.add(4.001, 925.0);
+        motorVelocities.add(4.0, 910.0);
+        motorVelocities.add(4.001, 910.0);
 
         motorVelocities.createLUT();
 
@@ -103,13 +103,15 @@ public class LauncherMotorsSubsystem extends SubsystemBase {
 //        tm.addData("D", "%.2f", kD);
 //        tm.addData("F", "%.2f", kF);
 
-        Double pos = navigation.getPosition();
-        if (pos == null) {
-            return;
-        }
+        if (navigation != null) {
+            Double pos = navigation.getPosition();
+            if (pos == null) {
+                return;
+            }
 
-        if (navigation.hasSeenTag() && pos > 0.0) {
-            setSpeedBasedOnLifterPosition(pos);
+            if (navigation.hasSeenTag() && pos > 0.0) {
+                setSpeedBasedOnLifterPosition(pos);
+            }
         }
     }
 

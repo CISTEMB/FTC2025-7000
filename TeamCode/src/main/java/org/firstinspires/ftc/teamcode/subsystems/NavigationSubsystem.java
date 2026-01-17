@@ -76,7 +76,7 @@ public class NavigationSubsystem extends SubsystemBase {
         //telemetry.addData("Current pose", getPose());
         telemetry.addData("has target", this.hasTarget());
 
-        if (limelight.result != null && limelight.result.isValid()) {
+        if (limelight != null && limelight.result != null && limelight.result.isValid()) {
             Position mt1 = limelight.result.getBotpose().getPosition().toUnit(DistanceUnit.INCH);
             Pose2d robot_pose = new Pose2d(mt1.x, mt1.y, limelight.result.getBotpose().getOrientation().getYaw(AngleUnit.DEGREES));
 

@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.commands.AutoAlignCommand;
 import org.firstinspires.ftc.teamcode.commands.AutonomousAutoAlignCommand;
 import org.firstinspires.ftc.teamcode.commands.HandleLauncherMotorsCommand;
 import org.firstinspires.ftc.teamcode.commands.HandleLifterCommand;
+import org.firstinspires.ftc.teamcode.commands.SetLauncherSpeedPositionCommand;
 import org.firstinspires.ftc.teamcode.commands.SetLifterPositionCommand;
 import org.firstinspires.ftc.teamcode.commands.ShootCommand;
 import org.firstinspires.ftc.teamcode.commands.StopLauncherMotorsCommand;
@@ -53,16 +54,20 @@ public class Auto_RedWallStart extends CommandOpMode {
         telemetry.update();
 
         drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hardwareMap), true);
+        limelight = new LimelightSubsystem(hardwareMap, telemetry);
+        navigation = new NavigationSubsystem(limelight, hardwareMap, AllianceColor.Blue, telemetry);
+        launcherMotors = new LauncherMotorsSubsystem(hardwareMap, telemetry, navigation);
         beltway = new BeltwaySubsystem(hardwareMap, telemetry);
         intake = new IntakeSubsystem(hardwareMap, telemetry);
-        navigation = new NavigationSubsystem(limelight, hardwareMap, AllianceColor.Red, telemetry);
-        launcherMotors = new LauncherMotorsSubsystem(hardwareMap, telemetry, navigation);
         lifter = new LifterSubsystem(hardwareMap, telemetry, navigation);
 
-        limelight = new LimelightSubsystem(hardwareMap, telemetry);
-        limelight.limelight.pipelineSwitch(0);
+        // Register subsystems
+        register(drive, launcherMotors, beltway, intake, lifter, limelight);
 
-        MecanumDriveSubsystem autoAlignDrive = new MecanumDriveSubsystem(new SampleMecanumDrive(hardwareMap), true);
+        // Start limelight
+        limelight.start();
+
+        limelight.limelight.pipelineSwitch(0);
 
         TrajectorySequence sequence1 = drive.trajectorySequenceBuilder(new Pose2d(60, 20, Math.toRadians(180))) //starting position
                 .back(10, minVolConstraint, minProfAccelConstraint)
@@ -77,22 +82,18 @@ public class Auto_RedWallStart extends CommandOpMode {
                 .build();
 
         schedule(
-            new ParallelCommandGroup(
-                new HandleLauncherMotorsCommand(launcherMotors, navigation),
-                new HandleLifterCommand(lifter, navigation),
-                new SequentialCommandGroup(
-                    new TrajectoryFollowerCommand(drive, sequence1),
-                    new SetLifterPositionCommand(6, lifter),
-                    new ParallelCommandGroup(
-                            new WaitCommand(1600)
-//                                new PrepareShootCommandV2(launcherMotors, lifter)
-                    ),
-                    new AutonomousAutoAlignCommand(autoAlignDrive, navigation, true),
-                    new ShootCommand(beltway, intake, 8250),
-                    new StopLauncherMotorsCommand(launcherMotors, beltway),
-                    new WaitCommand(1000),
-                    new TrajectoryFollowerCommand(drive, sequence2)
-                )
+            new SequentialCommandGroup(
+                new TrajectoryFollowerCommand(drive, sequence1),
+                new SetLifterPositionCommand(4.0, lifter),
+                new ParallelCommandGroup(
+                        new SetLauncherSpeedPositionCommand(4.0, launcherMotors),
+                        new WaitCommand(1600)
+                ),
+                new AutonomousAutoAlignCommand(drive, navigation, true),
+                new ShootCommand(beltway, intake, 8250),
+                new StopLauncherMotorsCommand(launcherMotors, beltway),
+                new WaitCommand(1000),
+                new TrajectoryFollowerCommand(drive, sequence2)
             )
         );
     }

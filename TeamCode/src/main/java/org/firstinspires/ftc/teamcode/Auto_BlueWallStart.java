@@ -16,11 +16,14 @@ import org.firstinspires.ftc.teamcode.commands.AutoAlignCommand;
 import org.firstinspires.ftc.teamcode.commands.AutonomousAutoAlignCommand;
 import org.firstinspires.ftc.teamcode.commands.HandleLauncherMotorsCommand;
 import org.firstinspires.ftc.teamcode.commands.HandleLifterCommand;
+import org.firstinspires.ftc.teamcode.commands.SetLauncherSpeedPositionCommand;
+import org.firstinspires.ftc.teamcode.commands.SetLifterPositionCommand;
 import org.firstinspires.ftc.teamcode.commands.ShootCommand;
 import org.firstinspires.ftc.teamcode.commands.StopLauncherMotorsCommand;
 import org.firstinspires.ftc.teamcode.commands.roadrunner.TrajectoryFollowerCommand;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.BeltwaySubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.ElevatorMotorsSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LauncherMotorsSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LifterSubsystem;
@@ -51,17 +54,21 @@ public class Auto_BlueWallStart extends CommandOpMode {
         telemetry.update();
 
         drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hardwareMap), true);
-        beltway = new BeltwaySubsystem(hardwareMap, telemetry);
-        intake = new IntakeSubsystem(hardwareMap, telemetry);
+        limelight = new LimelightSubsystem(hardwareMap, telemetry);
         navigation = new NavigationSubsystem(limelight, hardwareMap, AllianceColor.Blue, telemetry);
         launcherMotors = new LauncherMotorsSubsystem(hardwareMap, telemetry, navigation);
+        beltway = new BeltwaySubsystem(hardwareMap, telemetry);
+        intake = new IntakeSubsystem(hardwareMap, telemetry);
         lifter = new LifterSubsystem(hardwareMap, telemetry, navigation);
 
-        limelight = new LimelightSubsystem(hardwareMap, telemetry);
+
+        // Register subsystems
+        register(drive, launcherMotors, beltway, intake, lifter, limelight);
+
+        // Start limelight
+        limelight.start();
+
         limelight.limelight.pipelineSwitch(1);
-
-        MecanumDriveSubsystem autoAlignDrive = new MecanumDriveSubsystem(new SampleMecanumDrive(hardwareMap), true);
-
 
         TrajectorySequence sequence1 = drive.trajectorySequenceBuilder(new Pose2d(60, -20, Math.toRadians(180))) //starting position
                 .back(10, minVolConstraint, minProfAccelConstraint)
@@ -81,18 +88,19 @@ public class Auto_BlueWallStart extends CommandOpMode {
                 .build();
 
         schedule(
-                new ParallelCommandGroup(
-                    new HandleLauncherMotorsCommand(launcherMotors, navigation),
-                    new HandleLifterCommand(lifter, navigation),
-                    new SequentialCommandGroup(
-                            new TrajectoryFollowerCommand(drive, sequence1),
-                            new AutonomousAutoAlignCommand(autoAlignDrive, navigation, false),
-                            new ShootCommand(beltway, intake, 8250),
-                            new StopLauncherMotorsCommand(launcherMotors, beltway),
-                            new WaitCommand(1000),
-                            new TrajectoryFollowerCommand(drive, sequence2)
-                    )
-                )
+            new SequentialCommandGroup(
+                    new TrajectoryFollowerCommand(drive, sequence1),
+                    new SetLifterPositionCommand(4.0, lifter),
+                    new ParallelCommandGroup(
+                        new SetLauncherSpeedPositionCommand(4.0, launcherMotors),
+                        new WaitCommand(1600)
+                    ),
+                    new AutonomousAutoAlignCommand(drive, navigation, false) ,
+                    new ShootCommand(beltway, intake, 8250),
+                    new StopLauncherMotorsCommand(launcherMotors, beltway),
+                    new WaitCommand(1000),
+                    new TrajectoryFollowerCommand(drive, sequence2)
+            )
         );
     }
 
