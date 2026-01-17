@@ -20,6 +20,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.commands.AutoAlignCommand;
 import org.firstinspires.ftc.teamcode.commands.AutonomousAutoAlignCommand;
+import org.firstinspires.ftc.teamcode.commands.AutonomousAutoAlignCommandRyan;
 import org.firstinspires.ftc.teamcode.commands.DecreaseLifterPositionCommand;
 import org.firstinspires.ftc.teamcode.commands.ElevatorStopCommand;
 import org.firstinspires.ftc.teamcode.commands.ForwardBeltwayCommand;
@@ -205,7 +206,7 @@ public class CommandTeleopBlueV2 extends CommandOpMode {
 
         // X button: Auto-align to target
         driverGamepad.getGamepadButton(GamepadKeys.Button.X)
-            .whenPressed(new AutonomousAutoAlignCommand(drive, navigation, isRed, telemetry));
+            .whenHeld(new AutonomousAutoAlignCommandRyan(drive, navigation, isRed, telemetry));
 
         // A button: Pickup (hold to run, release to stop)
         driverGamepad.getGamepadButton(GamepadKeys.Button.A)

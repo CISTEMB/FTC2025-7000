@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.commands.AutoAlignCommand;
 import org.firstinspires.ftc.teamcode.commands.AutonomousAutoAlignCommand;
+import org.firstinspires.ftc.teamcode.commands.AutonomousAutoAlignCommandRyan;
 import org.firstinspires.ftc.teamcode.commands.HandleLauncherMotorsCommand;
 import org.firstinspires.ftc.teamcode.commands.HandleLifterCommand;
 import org.firstinspires.ftc.teamcode.commands.SetLauncherSpeedPositionCommand;
@@ -89,7 +90,7 @@ public class Auto_RedWallStart extends CommandOpMode {
                         new SetLauncherSpeedPositionCommand(4.0, launcherMotors),
                         new WaitCommand(1600)
                 ),
-                new AutonomousAutoAlignCommand(drive, navigation, true, telemetry),
+                new AutonomousAutoAlignCommandRyan(drive, navigation, true, telemetry),
                 new ShootCommand(beltway, intake, 8250),
                 new StopLauncherMotorsCommand(launcherMotors, beltway),
                 new WaitCommand(1000),

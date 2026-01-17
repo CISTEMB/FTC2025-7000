@@ -48,32 +48,32 @@ public class AutonomousAutoAlignCommandRyan extends SequentialCommandGroup {
 
         addCommands(
                 new WaitUntilCommand(() -> {
-                    telemetry.addData("Auto Align state", "waiting");
+                    //telemetry.addData("Auto Align state", "waiting");
                      offset = navigation.getAngleOffset();
 
                     return navigation.hasSeenTag() && offset != null;
                 }),
                 new InstantCommand(() -> {
-                    telemetry.addData("Auto Align state", "Building trajectory");
+                    //telemetry.addData("Auto Align state", "Building trajectory");
                     double x = offset;
                     double maxAccel = 1.0;
                     double targetAngle = offset + colorBump;
-                    telemetry.addData("Auto Align Turn offset", x);
+                    //telemetry.addData("Auto Align Turn offset", x);
                     sequence1 = drive.trajectorySequenceBuilder(drive.getPoseEstimate()) //starting position
 //                             .forward(12)
                             .turn(Math.toRadians(-x), 3.0, 3.0)
                             .build();
 
-                    telemetry.addData("Auto Align Sequence start", sequence1.start().toString());
-                    telemetry.addData("Auto Align Sequence End", sequence1.end().toString());
+                    //telemetry.addData("Auto Align Sequence start", sequence1.start().toString());
+                    //telemetry.addData("Auto Align Sequence End", sequence1.end().toString());
 
                 }),
                 new ParallelDeadlineGroup(
                     new DeferredCommand(() -> new TrajectoryFollowerCommand(drive, sequence1), Set.of(drive)),
                     new RunCommand(() -> {
-                        telemetry.addData("Auto Align state", "Running trajectory");
-                        telemetry.addData("Auto Align Sequence start (follower)", sequence1.start().toString());
-                        telemetry.addData("Auto Align Sequence End (follower)", sequence1.end().toString());
+                        //telemetry.addData("Auto Align state", "Running trajectory");
+                        //telemetry.addData("Auto Align Sequence start (follower)", sequence1.start().toString());
+                        //telemetry.addData("Auto Align Sequence End (follower)", sequence1.end().toString());
 
                     })
                 ),

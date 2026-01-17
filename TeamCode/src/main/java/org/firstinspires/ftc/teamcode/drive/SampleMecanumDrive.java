@@ -218,10 +218,8 @@ public class SampleMecanumDrive extends MecanumDrive {
         updatePoseEstimate();
         DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
         if (signal != null) {
-            telemetry.addData("RR Drive: Signal", signal.toString());
+            //telemetry.addData("RR Drive: Signal", signal.toString());
             setDriveSignal(signal);
-        } else {
-            telemetry.addData("RR Drive: Signal", "is null");
         }
     }
 
