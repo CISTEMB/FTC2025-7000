@@ -74,7 +74,7 @@ public class CommandTeleopBlueV2 extends CommandOpMode {
 
         // Initialize subsystems
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hardwareMap), true);
+        drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hardwareMap, telemetry), true);
 
         drive.setPoseEstimate(new Pose2d(0, 0, 0));
         packet = new TelemetryPacket();
@@ -113,6 +113,8 @@ public class CommandTeleopBlueV2 extends CommandOpMode {
 
         telemetry.addData("Team", "Blue");
         telemetry.update();
+        configureButtonBindings();
+
     }
 
     @Override
@@ -121,7 +123,6 @@ public class CommandTeleopBlueV2 extends CommandOpMode {
         if (!hasStarted && opModeIsActive()) {
             hasStarted = true;
             runtime.reset();
-            configureButtonBindings();
             telemetry.addData("Status", "Running");
             telemetry.addData("Motors", "Off");
         }
@@ -151,6 +152,7 @@ public class CommandTeleopBlueV2 extends CommandOpMode {
 
             drive.fastMode = gamepad1.left_trigger >= 0.75;
             drive.arcadeDrive(ly, lx, -rx, false);
+            drive.update();
         }, drive));
 
 
@@ -203,7 +205,7 @@ public class CommandTeleopBlueV2 extends CommandOpMode {
 
         // X button: Auto-align to target
         driverGamepad.getGamepadButton(GamepadKeys.Button.X)
-            .whenHeld(new AutonomousAutoAlignCommand(drive, navigation, isRed));
+            .whenPressed(new AutonomousAutoAlignCommand(drive, navigation, isRed, telemetry));
 
         // A button: Pickup (hold to run, release to stop)
         driverGamepad.getGamepadButton(GamepadKeys.Button.A)

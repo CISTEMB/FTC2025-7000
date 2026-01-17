@@ -28,10 +28,10 @@ public class NavigationSubsystem extends SubsystemBase {
 
     public double angleMin;
     public double angleMax;
-    private double blueMin = -.5;
+    private double blueMin = -2.5;
     private double blueMax = 0.0;
     private double redMin = 0.0;
-    private double redMax = 0.5;
+    private double redMax = 2.5;
 
     @Nullable
     @CheckForNull

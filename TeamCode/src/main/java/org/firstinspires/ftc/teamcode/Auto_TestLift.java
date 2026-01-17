@@ -43,7 +43,7 @@ public class Auto_TestLift extends CommandOpMode {
         telemetry.addData("intialized", "true");
         telemetry.update();
 
-        drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hardwareMap), true);
+        drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hardwareMap, telemetry), true);
         beltway = new BeltwaySubsystem(hardwareMap, telemetry);
         intake = new IntakeSubsystem(hardwareMap, telemetry);
         LimelightSubsystem limelight = new LimelightSubsystem(hardwareMap, telemetry);

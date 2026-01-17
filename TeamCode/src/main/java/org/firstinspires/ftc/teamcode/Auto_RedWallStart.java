@@ -53,9 +53,9 @@ public class Auto_RedWallStart extends CommandOpMode {
         telemetry.addData("Initialized", "true");
         telemetry.update();
 
-        drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hardwareMap), true);
+        drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hardwareMap, telemetry), true);
         limelight = new LimelightSubsystem(hardwareMap, telemetry);
-        navigation = new NavigationSubsystem(limelight, hardwareMap, AllianceColor.Blue, telemetry);
+        navigation = new NavigationSubsystem(limelight, hardwareMap, AllianceColor.Red, telemetry);
         launcherMotors = new LauncherMotorsSubsystem(hardwareMap, telemetry, navigation);
         beltway = new BeltwaySubsystem(hardwareMap, telemetry);
         intake = new IntakeSubsystem(hardwareMap, telemetry);
@@ -89,7 +89,7 @@ public class Auto_RedWallStart extends CommandOpMode {
                         new SetLauncherSpeedPositionCommand(4.0, launcherMotors),
                         new WaitCommand(1600)
                 ),
-                new AutonomousAutoAlignCommand(drive, navigation, true),
+                new AutonomousAutoAlignCommand(drive, navigation, true, telemetry),
                 new ShootCommand(beltway, intake, 8250),
                 new StopLauncherMotorsCommand(launcherMotors, beltway),
                 new WaitCommand(1000),
@@ -101,6 +101,9 @@ public class Auto_RedWallStart extends CommandOpMode {
     @Override
     public void run() {
         super.run();
+
+        limelight.read();
+        telemetry.addData("angle", navigation.getAngleOffset());
         telemetry.update();
     }
 

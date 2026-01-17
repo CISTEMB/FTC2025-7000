@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.RunCommand;
@@ -17,6 +18,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.commands.AutoAlignCommand;
 import org.firstinspires.ftc.teamcode.commands.AutonomousAutoAlignCommand;
+import org.firstinspires.ftc.teamcode.commands.AutonomousAutoAlignCommandRyan;
 import org.firstinspires.ftc.teamcode.commands.DecreaseLifterPositionCommand;
 import org.firstinspires.ftc.teamcode.commands.ElevatorStopCommand;
 import org.firstinspires.ftc.teamcode.commands.ForwardBeltwayCommand;
@@ -32,6 +34,7 @@ import org.firstinspires.ftc.teamcode.commands.SetLifterForPickupCommand;
 import org.firstinspires.ftc.teamcode.commands.SetLifterPositionCommand;
 import org.firstinspires.ftc.teamcode.commands.StopBeltwayCommand;
 import org.firstinspires.ftc.teamcode.commands.StopLauncherMotorsCommand;
+import org.firstinspires.ftc.teamcode.commands.roadrunner.TrajectoryFollowerCommand;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.BeltwaySubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
@@ -64,7 +67,7 @@ public class CommandTeleopRedV2 extends CommandOpMode {
     public void initialize() {
         // Initialize subsystems
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hardwareMap), true);
+        drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hardwareMap, telemetry), true);
         limelight = new LimelightSubsystem(hardwareMap, telemetry);
         navigation = new NavigationSubsystem(limelight, hardwareMap, AllianceColor.Red, telemetry);
         launcherMotors = new LauncherMotorsSubsystem(hardwareMap, telemetry, navigation);
@@ -98,6 +101,7 @@ public class CommandTeleopRedV2 extends CommandOpMode {
 
         telemetry.addData("Team", "Red");
         telemetry.update();
+        configureButtonBindings();
     }
 
     @Override
@@ -106,7 +110,6 @@ public class CommandTeleopRedV2 extends CommandOpMode {
         if (!hasStarted && opModeIsActive()) {
             hasStarted = true;
             runtime.reset();
-            configureButtonBindings();
             telemetry.addData("Status", "Running");
             telemetry.addData("Motors", "Off");
         }
@@ -120,6 +123,14 @@ public class CommandTeleopRedV2 extends CommandOpMode {
 
         // Update limelight
         limelight.read();
+
+
+        if (drive.getCurrentCommand() != null) {
+            telemetry.addData("Drive: Current command", drive.getCurrentCommand().getName());
+        } else {
+            telemetry.addData("Drive: Current command", "n/a");
+
+        }
 
         // Update telemetry
         updateTelemetry();
@@ -135,6 +146,7 @@ public class CommandTeleopRedV2 extends CommandOpMode {
                 -gamepad1.right_stick_x,
                 false
             );
+            drive.update();
         }, drive));
 
         // Right trigger >= 0.75: Stop launcher motors
@@ -185,7 +197,7 @@ public class CommandTeleopRedV2 extends CommandOpMode {
 
         // X button: Auto-align to target
         driverGamepad.getGamepadButton(GamepadKeys.Button.X)
-            .whenPressed(new AutonomousAutoAlignCommand(drive, navigation, isRed));
+            .whenHeld(new AutonomousAutoAlignCommandRyan(drive, navigation, isRed, telemetry));
 
         // A button: Pickup (hold to run, release to stop)
         driverGamepad.getGamepadButton(GamepadKeys.Button.A)
@@ -221,6 +233,10 @@ public class CommandTeleopRedV2 extends CommandOpMode {
         launcherMotors.periodic();
         beltway.periodic();
         lifter.periodic();
+
+//        telemetry.addData("x", drive.getPoseEstimate().getX());
+//        telemetry.addData("y", drive.getPoseEstimate().getY());
+//        telemetry.addData("heading", drive.getPoseEstimate().getHeading());
         telemetry.update();
     }
 

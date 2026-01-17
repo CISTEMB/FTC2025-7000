@@ -27,7 +27,7 @@ public class LocalizationTest extends LinearOpMode {
     private LimelightSubsystem limelight;
     @Override
     public void runOpMode() throws InterruptedException {
-        MecanumDriveSubsystem drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hardwareMap), true);
+        MecanumDriveSubsystem drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hardwareMap, telemetry), true);
         limelight = new LimelightSubsystem(hardwareMap, telemetry);
         navigation = new NavigationSubsystem(limelight, hardwareMap, AllianceColor.Blue, telemetry);
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

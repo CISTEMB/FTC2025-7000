@@ -143,6 +143,7 @@ public class MecanumDriveSubsystem extends SubsystemBase {
             String commandName = getCurrentCommand().getClass().getSimpleName();
             // You can add telemetry here if you have access to it
             // For now, this allows you to set a breakpoint or add logging
+
         }
     }
 

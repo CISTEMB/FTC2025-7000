@@ -53,7 +53,7 @@ public class Auto_BlueWallStart extends CommandOpMode {
         telemetry.addData("Initialized", "true");
         telemetry.update();
 
-        drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hardwareMap), true);
+        drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hardwareMap, telemetry), true);
         limelight = new LimelightSubsystem(hardwareMap, telemetry);
         navigation = new NavigationSubsystem(limelight, hardwareMap, AllianceColor.Blue, telemetry);
         launcherMotors = new LauncherMotorsSubsystem(hardwareMap, telemetry, navigation);
@@ -95,7 +95,7 @@ public class Auto_BlueWallStart extends CommandOpMode {
                         new SetLauncherSpeedPositionCommand(4.0, launcherMotors),
                         new WaitCommand(1600)
                     ),
-                    new AutonomousAutoAlignCommand(drive, navigation, false) ,
+                    new AutonomousAutoAlignCommand(drive, navigation, false, telemetry) ,
                     new ShootCommand(beltway, intake, 8250),
                     new StopLauncherMotorsCommand(launcherMotors, beltway),
                     new WaitCommand(1000),
@@ -107,6 +107,7 @@ public class Auto_BlueWallStart extends CommandOpMode {
     @Override
     public void run() {
         super.run();
+        limelight.read();
         telemetry.update();
     }
 

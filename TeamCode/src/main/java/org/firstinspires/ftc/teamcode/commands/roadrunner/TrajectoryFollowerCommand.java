@@ -25,7 +25,7 @@ public class TrajectoryFollowerCommand extends CommandBase {
 
     @Override
     public void execute() {
-        drive.update();
+         drive.update();
     }
 
     @Override
