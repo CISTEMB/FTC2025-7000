@@ -36,6 +36,11 @@ public class LEDSubsystem extends SubsystemBase {
             led2.setPosition(rawColor);
         }
     }
+
+    public void displayRawColor(double color1, double color2) {
+        led1.setPosition(color1);
+        led2.setPosition(color2);
+    }
     public void displayColor2(Color color) {
         if (color == Color.OFF) {
             led2.setPosition(led1.getPosition());

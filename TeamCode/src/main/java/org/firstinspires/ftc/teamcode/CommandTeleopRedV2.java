@@ -27,6 +27,7 @@ import org.firstinspires.ftc.teamcode.commands.HandleLifterCommand;
 import org.firstinspires.ftc.teamcode.commands.IncreaseLifterPositionCommand;
 import org.firstinspires.ftc.teamcode.commands.IntakeSlowRollCommand;
 import org.firstinspires.ftc.teamcode.commands.IntakeStopCommand;
+import org.firstinspires.ftc.teamcode.commands.LaserLightShowCommand;
 import org.firstinspires.ftc.teamcode.commands.PickupCommand;
 import org.firstinspires.ftc.teamcode.commands.ReverseBeltwayCommand;
 import org.firstinspires.ftc.teamcode.commands.ReverseIntakeCommand;
@@ -40,11 +41,14 @@ import org.firstinspires.ftc.teamcode.subsystems.BeltwaySubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.ElevatorMotorsSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.LAZER;
+import org.firstinspires.ftc.teamcode.subsystems.LEDSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LauncherMotorsSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LifterSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LimelightSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.NavigationSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.LAZER;
 
 @Config
 @TeleOp(name = "CommandTeleopV2 Red", group = "drive")
@@ -58,7 +62,8 @@ public class CommandTeleopRedV2 extends CommandOpMode {
     private GamepadEx driverGamepad;
     private NavigationSubsystem navigation;
     private ElevatorMotorsSubsystem elevator; //moving on up in the world like elevators
-
+    private LAZER laser;
+    private LEDSubsystem led;
     private final ElapsedTime runtime = new ElapsedTime();
     private boolean isRed = true;
     private boolean hasStarted = false;
@@ -75,6 +80,8 @@ public class CommandTeleopRedV2 extends CommandOpMode {
         intake = new IntakeSubsystem(hardwareMap, telemetry);
         lifter = new LifterSubsystem(hardwareMap, telemetry, navigation);
         elevator = new ElevatorMotorsSubsystem(hardwareMap, telemetry);
+        laser = new LAZER(hardwareMap, telemetry);
+        led = new LEDSubsystem(hardwareMap, telemetry);
 
         //default PID adjustments
         launcherMotors.adjustP(100);
@@ -112,10 +119,14 @@ public class CommandTeleopRedV2 extends CommandOpMode {
             runtime.reset();
             telemetry.addData("Status", "Running");
             telemetry.addData("Motors", "Off");
+            telemetry.addData("laser left distance", laser.getLeftDistance());
+            telemetry.addData("laser right distance", laser.getRightDistance());
+
         }
 
         launcherMotors.setDefaultCommand(new HandleLauncherMotorsCommand(launcherMotors, navigation));
         lifter.setDefaultCommand(new HandleLifterCommand(lifter, navigation));
+        led.setDefaultCommand(new LaserLightShowCommand(laser, led));
 
 
         // Run the command scheduler
@@ -125,12 +136,12 @@ public class CommandTeleopRedV2 extends CommandOpMode {
         limelight.read();
 
 
-        if (drive.getCurrentCommand() != null) {
-            telemetry.addData("Drive: Current command", drive.getCurrentCommand().getName());
-        } else {
-            telemetry.addData("Drive: Current command", "n/a");
-
-        }
+//        if (drive.getCurrentCommand() != null) {
+//            telemetry.addData("Drive: Current command", drive.getCurrentCommand().getName());
+//        } else {
+//            telemetry.addData("Drive: Current command", "n/a");
+//
+//        }
 
         // Update telemetry
         updateTelemetry();

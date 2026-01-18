@@ -29,6 +29,7 @@ import org.firstinspires.ftc.teamcode.commands.HandleLifterCommand;
 import org.firstinspires.ftc.teamcode.commands.IncreaseLifterPositionCommand;
 import org.firstinspires.ftc.teamcode.commands.IntakeSlowRollCommand;
 import org.firstinspires.ftc.teamcode.commands.IntakeStopCommand;
+import org.firstinspires.ftc.teamcode.commands.LaserLightShowCommand;
 import org.firstinspires.ftc.teamcode.commands.PickupCommand;
 import org.firstinspires.ftc.teamcode.commands.ReverseBeltwayCommand;
 import org.firstinspires.ftc.teamcode.commands.ReverseIntakeCommand;
@@ -41,6 +42,8 @@ import org.firstinspires.ftc.teamcode.subsystems.BeltwaySubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.ElevatorMotorsSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.LAZER;
+import org.firstinspires.ftc.teamcode.subsystems.LEDSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LauncherMotorsSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LifterSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LimelightSubsystem;
@@ -68,6 +71,8 @@ public class CommandTeleopBlueV2 extends CommandOpMode {
     private boolean hasStarted = false;
     private Canvas fieldOverlay;
     private TelemetryPacket packet;
+    private LAZER laser;
+    private LEDSubsystem led;
 
     @Override
     public void initialize() {
@@ -89,6 +94,8 @@ public class CommandTeleopBlueV2 extends CommandOpMode {
         intake = new IntakeSubsystem(hardwareMap, telemetry);
         lifter = new LifterSubsystem(hardwareMap, telemetry, navigation);
         elevator = new ElevatorMotorsSubsystem(hardwareMap, telemetry);
+        laser = new LAZER(hardwareMap, telemetry);
+        led = new LEDSubsystem(hardwareMap, telemetry);
 
         //default PID adjustments
         launcherMotors.adjustP(100);
@@ -130,6 +137,7 @@ public class CommandTeleopBlueV2 extends CommandOpMode {
 
         launcherMotors.setDefaultCommand(new HandleLauncherMotorsCommand(launcherMotors, navigation));
         lifter.setDefaultCommand(new HandleLifterCommand(lifter, navigation));
+        led.setDefaultCommand(new LaserLightShowCommand(laser, led));
 
 
         // Run the command scheduler
